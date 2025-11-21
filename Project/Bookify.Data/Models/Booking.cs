@@ -27,7 +27,7 @@ namespace Bookify.Data.Models
         // Navigation Properties
         public ApplicationUser? User { get; set; } 
         public Room? Room { get; set; } 
-        public ICollection<BookingStatusHistory> StatusHistories { get; set; } = new List<BookingStatusHistory>();
+        public ICollection<BookingStatusHistory> StatusHistory { get; set; } = new List<BookingStatusHistory>();
         public ICollection<BookingPayment> Payments { get; set; } = new List<BookingPayment>();
 
     }
