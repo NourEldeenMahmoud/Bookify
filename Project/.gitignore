@@ -1,39 +1,6 @@
-# Visual Studio / .NET
 .vs/
 bin/
 obj/
 *.user
 *.suo
 *.DS_Store
-
-# Build results
-[Dd]ebug/
-[Rr]elease/
-*.dll
-*.pdb
-*.cache
-
-# NuGet
-*.nupkg
-*.snupkg
-project.lock.json
-project.fragment.lock.json
-artifacts/
-
-# User-specific files
-*.rsuser
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# OS
-.DS_Store
-Thumbs.db

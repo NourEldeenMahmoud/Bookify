@@ -8,7 +8,7 @@ namespace Bookify.Services.Interfaces
 {
     public interface IPaymentService
     {
-        public Task<string> CreateStripeCheckoutSession(decimal amount, string currency, int bookingId);
+        Task<string> CreateStripeCheckoutSessionAsync(int bookingId, string successUrl, string cancelUrl);
         Task<bool> ProcessStripeWebhookAsync(string json, string signature);
         Task<bool> RefundPaymentAsync(int bookingId);
     }
