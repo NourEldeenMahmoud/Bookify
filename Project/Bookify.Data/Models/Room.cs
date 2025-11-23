@@ -17,7 +17,7 @@ namespace Bookify.Data.Models
 
 
         // Navigation Properties
-        public RoomType? RoomType { get; set; }
+        public RoomType RoomType { get; set; } = null!;
         public ICollection<GalleryImage> GalleryImages { get; set; } = new List<GalleryImage>();
         public ICollection<Booking> Bookings { get; set; } = new List<Booking>();
     }
