@@ -11,5 +11,7 @@ namespace Bookify.Services.Interfaces
         public Task SendBookingConfirmation(string toEmail,int bookingId, string userName, DateTime checkIn, DateTime checkOut, decimal totalAmount);
         public Task SendBookingPayment(string toEmail, string userName, int bookingId, decimal totalAmount);
         public Task SendBookingCancellation(string toEmail, string userName, int bookingId);
+        public Task SendPasswordResetEmailAsync(string toEmail, string userName, string resetLink);
+
     }
 }
