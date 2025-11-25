@@ -1,8 +1,145 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@using Bookify.Data.Models
+@using Bookify.Web.ViewModels
+@model RoomSearchViewModel
+@{
+    ViewData["Title"] = "Find Your Perfect Room";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="row mb-4">
+    <div class="col-12">
+        <div class="card shadow">
+            <div class="card-body">
+                <h2 class="card-title mb-4"><i class="fas fa-search"></i> Search Available Rooms</h2>
+                <form asp-action="Index" method="get" class="row g-3">
+                    <div class="col-md-3">
+                        <label asp-for="CheckInDate" class="form-label">Check-in Date</label>
+                        <input asp-for="CheckInDate" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-md-3">
+                        <label asp-for="CheckOutDate" class="form-label">Check-out Date</label>
+                        <input asp-for="CheckOutDate" type="date" class="form-control" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="RoomTypeId" class="form-label">Room Type</label>
+                        <select asp-for="RoomTypeId" class="form-select" asp-items="ViewBag.RoomTypes">
+                            <option value="">All Types</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label asp-for="MinCapacity" class="form-label">Min Guests</label>
+                        <input asp-for="MinCapacity" type="number" class="form-control" min="1" />
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-search"></i> Search
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+
+@if (ViewBag.AvailableRooms != null)
+{
+    var rooms = ViewBag.AvailableRooms as IEnumerable<Room>;
+    @if (rooms != null && rooms.Any())
+    {
+        <div class="row">
+            <h3 class="mb-4">Available Rooms</h3>
+            @foreach (var room in rooms)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (room.GalleryImages != null && room.GalleryImages.Any())
+                        {
+                            <img src="@room.GalleryImages.First().ImageUrl" class="card-img-top" alt="@room.RoomNumber" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                <i class="fas fa-image fa-3x text-white"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@room.RoomType.Name - @room.RoomNumber</h5>
+                            <p class="card-text">@room.RoomType.Description</p>
+                            <ul class="list-unstyled">
+                                <li><i class="fas fa-users"></i> Capacity: @room.RoomType.MaxOccupancy guests</li>
+                                <li><i class="fas fa-dollar-sign"></i> Price: $@room.RoomType.PricePerNight.ToString("F2")/night</li>
+                            </ul>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <a asp-controller="Rooms" asp-action="Details"
+                               asp-route-id="@room.Id"
+                               asp-route-checkIn="@Model?.CheckInDate?.ToString("yyyy-MM-dd")"
+                               asp-route-checkOut="@Model?.CheckOutDate?.ToString("yyyy-MM-dd")"
+                               class="btn btn-primary w-100">
+                                <i class="fas fa-eye"></i> View Details
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No rooms available for the selected dates. Please try different dates.
+        </div>
+    }
+}
+else
+{
+    <div class="row">
+        <div class="col-12 text-center py-5">
+            <i class="fas fa-hotel fa-5x text-primary mb-3"></i>
+            <h2>Welcome to Bookify</h2>
+            <p class="lead">Find and book your perfect hotel room</p>
+            <p>Use the search form above to find available rooms for your dates.</p>
+            @if (User.Identity != null && !User.Identity.IsAuthenticated)
+            {
+                <div class="mt-4">
+                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
+                        <i class="bi bi-box-arrow-in-right"></i> Login
+                    </a>
+                </div>
+            }
+            else if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                <div class="mt-4 d-flex gap-3 justify-content-center">
+                    <a asp-controller="Profile" asp-action="Index" class="btn btn-primary btn-lg">
+                        <i class="bi bi-person-circle"></i> My Profile
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-outline-danger btn-lg">
+                            <i class="bi bi-box-arrow-right"></i> Logout
+                        </button>
+                    </form>
+                </div>
+            }
+        </div>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Set minimum dates
+            var today = new Date().toISOString().split('T')[0];
+            $('input[type="date"]').attr('min', today);
+
+            // Update checkout minimum based on check-in
+            $('#CheckInDate').on('change', function() {
+                var checkIn = new Date($(this).val());
+                checkIn.setDate(checkIn.getDate() + 1);
+                $('#CheckOutDate').attr('min', checkIn.toISOString().split('T')[0]);
+            });
+        });
+    </script>
+}

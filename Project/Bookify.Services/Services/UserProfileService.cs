@@ -14,13 +14,14 @@ namespace Bookify.Services.Services
 {
     public class UserProfileService : IUserProfileService
     {
-        private readonly UnitOfWork _unitOfWork ;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger _logger = Log.ForContext<UserProfileService>();
-        public UserProfileService(UnitOfWork UnitOfWork, UserManager<ApplicationUser> UserManager)
+        
+        public UserProfileService(IUnitOfWork unitOfWork, UserManager<ApplicationUser> userManager)
         {
-            _unitOfWork= UnitOfWork;
-            _userManager= UserManager;
+            _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
         }
         public async Task<IEnumerable<Booking>> GetPastBookingsAsync(string userId)
         {

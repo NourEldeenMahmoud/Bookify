@@ -1,17 +1,17 @@
-﻿using Bookify.Data.Data.Enums;
+﻿using Bookify.Data.Data;
+using Bookify.Data.Data.Enums;
 using Bookify.Data.Models;
-using Bookify.Data.Repositories.Implementations;
 using Bookify.Data.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
-namespace Bookify.Data.Repositories;
+namespace Bookify.Data.Repositories.Implementations;
 
 public class BookingRepository : Repository<Booking>, IBookingRepository
 {
     private new readonly ILogger _logger;
 
-    public BookingRepository(DbContext context) : base(context)
+    public BookingRepository(AppDbContext context) : base(context)
     {
         _logger = Log.ForContext<BookingRepository>();
     }

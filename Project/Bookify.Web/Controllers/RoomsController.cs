@@ -1,12 +1,11 @@
 ﻿using Bookify.Data.Repositories;
 using Bookify.Services.Interfaces;
-using Bookify.Web.Models;
 using Bookify.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using System.Security.Claims;
 using System.Text.Json;
+using Serilog;
 
 namespace Bookify.Web.Controllers;
 
@@ -184,7 +183,7 @@ public class RoomsController : Controller
 
             var cart = HttpContext.Session.GetString("Cart");
             var cartItems = new List<ReservationCartItem>();
-
+            
             if (!string.IsNullOrEmpty(cart))
             {
                 try
@@ -198,8 +197,8 @@ public class RoomsController : Controller
                     cartItems = new List<ReservationCartItem>();
                 }
 
-                cartItems.Add(cartItem);
-                HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
+            cartItems.Add(cartItem);
+            HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
             }
 
             _logger.LogInformation("Room {RoomId} added to cart successfully for user {UserId}", roomId, userId);

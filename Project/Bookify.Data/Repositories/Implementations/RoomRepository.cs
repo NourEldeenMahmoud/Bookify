@@ -8,13 +8,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Serilog;
+using Bookify.Data.Data;
 
 namespace Bookify.Data.Repositories.Implementations
 {
     public class RoomRepository : Repository<Room>, IRoomRepository
     {
         private new readonly ILogger _logger;
-        public RoomRepository(DbContext Context) : base(Context)
+        public RoomRepository(AppDbContext Context) : base(Context)
         {
             _logger = Log.ForContext<RoomRepository>();
         }
@@ -180,5 +181,6 @@ namespace Bookify.Data.Repositories.Implementations
                 throw;
             }
         }
+
     }
 }
