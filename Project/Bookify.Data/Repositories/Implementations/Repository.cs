@@ -12,11 +12,11 @@ namespace Bookify.Data.Repositories.Implementations
 {
     public class Repository<T> : IRepository<T> where T : class
     {
-        protected readonly DbContext _context;
+        protected readonly AppDbContext _context;
         protected readonly DbSet<T> _dbSet;
         protected readonly ILogger _logger;
 
-        public Repository(DbContext Context)
+        public Repository(AppDbContext Context)
         {
             _context = Context;
             _dbSet = _context.Set<T>();

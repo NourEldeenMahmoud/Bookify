@@ -1,0 +1,97 @@
+/* Base styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f7f7f7;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+/* Left image overlay */
+.image-overlay {
+  background-image: url('../images/photo-1760067538068-03d10481bacb.jpeg');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.image-overlay::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+}
+
+/* Form container */
+form {
+  width: 100%;
+}
+
+/* Input fields */
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+  width: 100%;
+  padding: 0.75rem;
+  border: 2px solid #FCD34D; /* amber-200 */
+  border-radius: 0.5rem;
+  outline: none;
+  background-color: #ffffff;
+  color: #B45309; /* amber-900 */
+}
+
+input:focus {
+  border-color: #FB923C; /* orange-400 */
+  box-shadow: 0 0 0 2px rgba(251, 146, 60, 0.3);
+}
+
+/* Lucide icons inside inputs */
+.lucide {
+  position: absolute;
+  right: 0.75rem;
+  top: 1rem;
+  height: 1.25rem;
+  width: 1.25rem;
+  color: #D97706; /* amber-600 */
+}
+
+/* Submit button */
+button[type="submit"] {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(to right, #F59E0B, #EA580C); /* from-amber-500 to-orange-600 */
+  color: #ffffff;
+  border-radius: 0.5rem;
+  font-weight: bold;
+  font-size: 1.125rem;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+button[type="submit"]:hover {
+  background: linear-gradient(to right, #D97706, #C2410C); /* hover gradient */
+  transform: scale(1.02);
+  box-shadow: 0 6px 10px rgba(0,0,0,0.15);
+}
+
+/* Message box */
+#message-box {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1024px) {
+  .image-overlay {
+    display: none;
+  }
+}
+.text-royal-dark{
+  color: #ac613e;
+}

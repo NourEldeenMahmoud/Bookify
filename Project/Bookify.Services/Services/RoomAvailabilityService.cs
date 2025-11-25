@@ -14,10 +14,10 @@ namespace Bookify.Services.Services
 {
     public class RoomAvailabilityService : IRoomAvailabilityService
     {
-        private readonly UnitOfWork _unitOfWork;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly ILogger _logger;
 
-        public RoomAvailabilityService(UnitOfWork unitOfWork,ILogger logger)
+        public RoomAvailabilityService(IUnitOfWork unitOfWork)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
             _logger = Log.ForContext<RoomAvailabilityService>();

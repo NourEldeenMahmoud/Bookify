@@ -1,4 +1,4 @@
-﻿using System.Diagnostics;
+using System.Diagnostics;
 using Bookify.Data.Repositories;
 using Bookify.Services.Interfaces;
 using Bookify.Web.Models;
@@ -15,7 +15,7 @@ namespace Bookify.Web.Controllers
         private readonly IRoomAvailabilityService _roomAvailabilityService;
 
 
-        public HomeController(ILogger<HomeController> logger, IUnitOfWork unitOfWork, IRoomAvailabilityService roomAvailabilityService)
+        public HomeController(ILogger<HomeController> logger , IUnitOfWork unitOfWork, IRoomAvailabilityService roomAvailabilityService)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));

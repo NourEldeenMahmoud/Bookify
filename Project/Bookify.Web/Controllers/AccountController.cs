@@ -83,6 +83,15 @@ public class AccountController : Controller
                     return View(model);
                 }
 
+                // Check if email already exists
+                var existingUser = await _userManager.FindByEmailAsync(model.Email);
+                if (existingUser != null)
+                {
+                    _logger.LogWarning("Registration attempt with existing email: {Email}", model.Email);
+                    ModelState.AddModelError("Email", "This email address is already registered. Please use a different email or try logging in.");
+                    return View(model);
+                }
+
                 var user = new ApplicationUser
                 {
                     UserName = model.Email,
@@ -95,11 +104,35 @@ public class AccountController : Controller
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await _userManager.AddToRoleAsync(user, "Customer");
-                    await _signInManager.SignInAsync(user, isPersistent: false);
-                    _logger.LogInformation("User {Email} registered successfully", model.Email);
-                    TempData["Success"] = "Registration successful! Welcome to Bookify.";
-                    return RedirectToAction("Index", "Home");
+                    try
+                    {
+                        // Add user to Customer role (if role doesn't exist, it will be created or ignored)
+                        var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
+                        if (!roleResult.Succeeded)
+                        {
+                            _logger.LogWarning("Failed to add user {Email} to Customer role. Errors: {Errors}",
+                                model.Email, string.Join(", ", roleResult.Errors.Select(e => e.Description)));
+                        }
+                    }
+                    catch (Exception roleEx)
+                    {
+                        _logger.LogWarning(roleEx, "Error adding user {Email} to Customer role. Continuing with registration.", model.Email);
+                    }
+
+                    try
+                    {
+                        await _signInManager.SignInAsync(user, isPersistent: false);
+                        _logger.LogInformation("User {Email} registered successfully and signed in", model.Email);
+                        TempData["Success"] = "Registration successful! Welcome to Bookify.";
+                        return RedirectToAction("Index", "Home");
+                    }
+                    catch (Exception signInEx)
+                    {
+                        _logger.LogError(signInEx, "Error signing in user {Email} after registration", model.Email);
+                        // Even if sign-in fails, redirect to login page
+                        TempData["Success"] = "Registration successful! Please log in.";
+                        return RedirectToAction("Login", "Account");
+                    }
                 }
 
                 _logger.LogWarning("Registration failed for {Email}. Errors: {Errors}",
@@ -130,6 +163,7 @@ public class AccountController : Controller
     {
         try
         {
+
             _logger.LogDebug("Login page accessed - ReturnUrl: {ReturnUrl}", returnUrl);
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -174,7 +208,9 @@ public class AccountController : Controller
                     return View(model);
                 }
 
+                var user = await _userManager.FindByEmailAsync(model.Email);
                 var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, model.RememberMe, lockoutOnFailure: true);
+                
                 if (result.Succeeded)
                 {
                     _logger.LogInformation("User {Email} logged in successfully", model.Email);
@@ -195,8 +231,39 @@ public class AccountController : Controller
                     return View(model);
                 }
 
-                _logger.LogWarning("Invalid login attempt for {Email}", model.Email);
-                ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                // Handle failed login attempt - show remaining attempts
+                // PasswordSignInAsync automatically increments AccessFailedCount on failure
+                // So we need to get the user again to get the updated count
+                if (user != null)
+                {
+                    // Refresh user to get updated AccessFailedCount after the failed attempt
+                    user = await _userManager.FindByEmailAsync(model.Email);
+                    
+                    // Get lockout settings from IdentityOptions
+                    var lockoutOptions = _userManager.Options.Lockout;
+                    int maxFailedAttempts = lockoutOptions.MaxFailedAccessAttempts;
+                    int currentFailedCount = user?.AccessFailedCount ?? 0;
+                    int remainingAttempts = maxFailedAttempts - currentFailedCount;
+                    
+                    if (remainingAttempts > 0)
+                    {
+                        _logger.LogWarning("Invalid login attempt for {Email}. {RemainingAttempts} attempts remaining", 
+                            model.Email, remainingAttempts);
+                        ModelState.AddModelError(string.Empty, 
+                            $"Invalid email or password. You have {remainingAttempts} attempt(s) remaining before your account is locked.");
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Invalid login attempt for {Email}. Account will be locked on next failed attempt", model.Email);
+                        ModelState.AddModelError(string.Empty, 
+                            "Invalid email or password. Your account will be locked on the next failed attempt.");
+                    }
+                }
+                else
+                {
+                    _logger.LogWarning("Invalid login attempt for {Email} - user not found", model.Email);
+                    ModelState.AddModelError(string.Empty, "Invalid email or password.");
+                }
             }
             else
             {
@@ -294,12 +361,22 @@ public class AccountController : Controller
                 return View(model);
             }
 
-            await _emailService.SendPasswordResetEmailAsync(
+            var emailSent = await _emailService.SendPasswordResetEmailAsync(
                 user.Email!,
                 $"{user.FirstName} {user.LastName}".Trim(),
                 resetUrl);
 
-            _logger.LogInformation("Password reset email sent to {Email}", model.Email);
+            if (emailSent)
+            {
+                _logger.LogInformation("Password reset email sent successfully to {Email}", model.Email);
+                TempData["Success"] = "Password reset link has been sent to your email address. Please check your inbox.";
+            }
+            else
+            {
+                _logger.LogWarning("Failed to send password reset email to {Email}", model.Email);
+                TempData["Error"] = "Failed to send password reset email. Please check your email configuration or try again later.";
+            }
+
             return RedirectToAction(nameof(ForgotPasswordConfirmation));
         }
         catch (ArgumentException ex)
@@ -402,6 +479,84 @@ public class AccountController : Controller
     public IActionResult ResetPasswordConfirmation()
     {
         return View();
+    }
+
+    [HttpGet]
+    [Authorize]
+    public IActionResult ChangePassword()
+    {
+        try
+        {
+            _logger.LogDebug("Change password page accessed");
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading change password page");
+            return RedirectToAction("Index", "Profile");
+        }
+    }
+
+    [HttpPost]
+    [Authorize]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ChangePassword(ChangePasswordViewModel model)
+    {
+        try
+        {
+            if (model == null)
+            {
+                _logger.LogWarning("Change password attempted with null model");
+                ModelState.AddModelError("", "Invalid password data.");
+                return View();
+            }
+
+            if (!ModelState.IsValid)
+            {
+                _logger.LogWarning("Change password submitted with invalid model state");
+                return View(model);
+            }
+
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("User ID not found in claims for change password");
+                return RedirectToAction("Login", "Account");
+            }
+
+            var user = await _userManager.FindByIdAsync(userId);
+            if (user == null)
+            {
+                _logger.LogWarning("User {UserId} not found for change password", userId);
+                TempData["Error"] = "User not found.";
+                return RedirectToAction("Index", "Profile");
+            }
+
+            var result = await _userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+            if (result.Succeeded)
+            {
+                _logger.LogInformation("Password changed successfully for user {UserId}", userId);
+                await _signInManager.RefreshSignInAsync(user);
+                TempData["Success"] = "Your password has been changed successfully.";
+                return RedirectToAction("Index", "Profile");
+            }
+
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError(string.Empty, error.Description);
+            }
+
+            _logger.LogWarning("Change password failed for user {UserId}. Errors: {Errors}",
+                userId, string.Join(", ", result.Errors.Select(e => e.Description)));
+
+            return View(model);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error during change password");
+            TempData["Error"] = "An error occurred while changing your password. Please try again.";
+            return View(model);
+        }
     }
 
     private IActionResult RedirectToLocal(string? returnUrl)
