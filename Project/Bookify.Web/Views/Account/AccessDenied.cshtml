@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "Access Denied";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body.account-page-body {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background-color: #f7f7f7 !important;
+        }
+        
+        body.account-page-body .page-wrapper {
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .content-wrapper {
+            margin-left: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            height: 100vh !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .main-content {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            height: 100vh !important;
+            padding: 20px !important;
+            margin: 0 !important;
+        }
+        
+        .login-form-container {
+            margin: 0 auto !important;
+        }
+    </style>
+}
+
+<div class="login-form-container w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden" style="min-height: 600px;">
+    <!-- Left Side -->
+    <div class="image-overlay relative text-white lg:w-5/12 w-full flex-shrink-0">
+        <div class="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-6 py-10">
+            <h1 class="text-4xl font-extrabold mb-4 border-b border-white/50 pb-2">Access Denied</h1>
+            <p class="text-lg font-light max-w-xs">
+                You don't have permission to access this page. Please contact support if you believe this is an error.
+            </p>
+        </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="lg:w-7/12 w-full p-8 sm:p-12 bg-royal-light flex-grow overflow-y-auto">
+        <div class="max-w-md mx-auto text-center">
+            <div class="mb-6">
+                <i class="lucide lucide-shield-alert text-6xl text-red-500 mb-4" data-lucide="shield-alert"></i>
+            </div>
+            
+            <h2 class="text-3xl font-bold text-royal-dark mb-4">Access Denied</h2>
+            
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-left">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="lucide lucide-alert-circle text-red-500" data-lucide="alert-circle"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            You do not have permission to access this page. If you believe this is an error, please contact our support team.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <a asp-controller="Home" asp-action="Index" 
+                   class="block w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02]">
+                    <i class="lucide lucide-home inline-block mr-2" data-lucide="home"></i>
+                    Return to Home
+                </a>
+
+                <a asp-controller="Account" asp-action="Login" 
+                   class="block w-full py-3 bg-gray-200 text-gray-700 text-center rounded-lg hover:bg-gray-300 transition-all">
+                    <i class="lucide lucide-log-in inline-block mr-2" data-lucide="log-in"></i>
+                    Back to Login
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    </script>
+}

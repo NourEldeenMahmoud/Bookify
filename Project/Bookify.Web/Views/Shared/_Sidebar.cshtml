@@ -1,0 +1,67 @@
+@using Microsoft.AspNetCore.Identity
+@using Bookify.Data.Models
+@inject UserManager<ApplicationUser> UserManager
+
+<!-- Sidebar -->
+<div class="sidebar d-flex flex-column align-items-center custom-sidebar">
+  <!-- RH Logo Button -->
+  <div class="sidebar-rh-logo">RH</div>
+
+  @if (User.Identity?.IsAuthenticated == true)
+  {
+      <!-- User Button -->
+      <a href="@Url.Action("Index", "Profile")" class="sidebar-user-button" id="sidebar-login">
+        <div class="user-icon-circle">
+          <i class="fa-solid fa-user"></i>
+        </div>
+        @{
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var user = userId != null ? await UserManager.FindByIdAsync(userId) : null;
+            var displayName = user?.FirstName ?? User.Identity.Name?.Split('@')[0] ?? "User";
+        }
+        <span class="user-name">@displayName</span>
+      </a>
+      <div class="sidebar-divider"></div>
+  }
+  else
+  {
+      <a href="@Url.Action("Login", "Account")" class="sidebar-user-button" id="sidebar-login">
+        <div class="user-icon-circle login-icon-circle">
+          <i class="fa-solid fa-right-to-bracket"></i>
+        </div>
+        <span class="user-name">Login</span>
+      </a>
+      <div class="sidebar-divider"></div>
+  }
+
+  <!-- Navigation Items -->
+  <ul class="nav flex-column text-center w-100 nav-items">
+    <li class="nav-item">
+      <a href="@Url.Action("Index", "Home")" class="nav-link"><i class="fa-solid fa-house"></i><span>Home</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#rooms" class="nav-link"><i class="fa-solid fa-bed"></i><span>Rooms</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#amenities" class="nav-link"><i class="fa-solid fa-star"></i><span>Amenities</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#gallery" class="nav-link"><i class="fa-solid fa-image"></i><span>Gallery</span></a>
+    </li>
+    <li class="nav-item">
+      <a href="#about" class="nav-link"><i class="fa-solid fa-circle-info"></i><span>Info</span></a>
+    </li>
+    @if (User.IsInRole("Admin"))
+    {
+        <li class="nav-item">
+          <a href="@Url.Action("Dashboard", "Admin")" class="nav-link"><i class="fa-solid fa-shield"></i><span>Admin</span></a>
+        </li>
+    }
+    <li class="nav-item">
+      <a href="#contact" class="nav-link"><i class="fa-solid fa-phone"></i><span>Contact</span></a>
+    </li>
+  </ul>
+  
+  <div class="sidebar-divider-bottom"></div>
+</div>
+

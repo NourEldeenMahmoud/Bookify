@@ -1,8 +1,307 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@using Bookify.Data.Models
+@model IEnumerable<Room>
+
+@{
+    ViewData["Title"] = "Home - RoyalHaven";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- Hero Section -->
+@await Html.PartialAsync("_HeroPartial")
+
+<!-- Rooms Section -->
+@await Html.PartialAsync("_RoomsPartial")
+
+<!-- Amenities Section -->
+@await Html.PartialAsync("_AmenitiesPartial")
+
+<!-- Gallery Section -->
+@await Html.PartialAsync("_GalleryPartial")
+
+<!-- About Section -->
+@await Html.PartialAsync("_AboutPartial")
+
+<!-- Contact Section -->
+@await Html.PartialAsync("_ContactPartial")
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/rooms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/gallery.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/amenities.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contact.css" asp-append-version="true" />
+}
+
+@section Scripts {
+    <script>
+        $(function () {
+            // Set minimum dates
+            const today = new Date().toISOString().split('T')[0];
+            $('#checkIn').attr('min', today);
+            $('#checkOut').attr('min', new Date(Date.now() + 86400000).toISOString().split('T')[0]);
+
+            // Update check-out minimum when check-in changes
+            $('#checkIn').on('change', function() {
+                const checkInDate = new Date($(this).val());
+                if (checkInDate) {
+                    const minCheckOut = new Date(checkInDate);
+                    minCheckOut.setDate(minCheckOut.getDate() + 1);
+                    $('#checkOut').attr('min', minCheckOut.toISOString().split('T')[0]);
+                    
+                    // If check-out is before new minimum, clear it
+                    const checkOutDate = new Date($('#checkOut').val());
+                    if ($('#checkOut').val() && checkOutDate <= checkInDate) {
+                        $('#checkOut').val('');
+                    }
+                }
+                clearErrors();
+            });
+
+            // Validation on check-out change
+            $('#checkOut').on('change', function() {
+                validateDates();
+            });
+
+            // Validate dates function
+            function validateDates() {
+                clearErrors();
+                let isValid = true;
+                const checkIn = $('#checkIn').val();
+                const checkOut = $('#checkOut').val();
+
+                if (!checkIn) {
+                    showError('checkInError', 'Check-in date is required.');
+                    isValid = false;
+                } else {
+                    const checkInDate = new Date(checkIn);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (checkInDate < today) {
+                        showError('checkInError', 'Check-in date cannot be in the past.');
+                        isValid = false;
+                    }
+                }
+
+                if (!checkOut) {
+                    showError('checkOutError', 'Check-out date is required.');
+                    isValid = false;
+                } else if (checkIn) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    
+                    if (checkOutDate <= checkInDate) {
+                        showError('checkOutError', 'Check-out date must be after check-in date.');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            function showError(elementId, message) {
+                $('#' + elementId).text(message).show();
+            }
+
+            function clearErrors() {
+                $('.validation-error').hide().text('');
+            }
+
+            // Validate price range
+            function validatePrices() {
+                const minPrice = parseFloat($('#minPrice').val()) || 0;
+                const maxPrice = parseFloat($('#maxPrice').val()) || 0;
+                
+                if (minPrice > 0 && maxPrice > 0 && minPrice > maxPrice) {
+                    alert('Minimum price cannot be greater than maximum price.');
+                    return false;
+                }
+                return true;
+            }
+
+            // Store search parameters globally for pagination
+            window.currentSearchParams = {};
+
+            // Handle search button click
+            $('#searchButton').on('click', function(e) {
+                e.preventDefault();
+                
+                if (!validateDates()) {
+                    return;
+                }
+                
+                if (!validatePrices()) {
+                    return;
+                }
+
+                // Get form data
+                const formData = {
+                    checkIn: $('#checkIn').val(),
+                    checkOut: $('#checkOut').val(),
+                    guests: $('#guests').val() || null,
+                    minPrice: $('#minPrice').val() || null,
+                    maxPrice: $('#maxPrice').val() || null,
+                    page: 1
+                };
+
+                // Store search parameters for pagination
+                window.currentSearchParams = formData;
+
+                // Show loading state
+                $(this).prop('disabled', true).text('Searching...');
+
+                // Scroll to rooms section
+                $('html, body').animate({
+                    scrollTop: $('#rooms').offset().top - 100
+                }, 500);
+
+                // AJAX call to filter rooms
+                $.ajax({
+                    url: '@Url.Action("SearchRooms", "Home")',
+                    type: 'GET',
+                    data: formData,
+                    success: function (html) {
+                        // Replace the container content inside #rooms section
+                        const $roomsSection = $('#rooms');
+                        if ($roomsSection.length > 0) {
+                            const $parsedHtml = $(html);
+                            const $container = $roomsSection.find('.container');
+                            if ($container.length > 0) {
+                                // Replace container content
+                                $container.html($parsedHtml.find('.container').html());
+                            } else {
+                                // If no container, replace section content
+                                $roomsSection.html($parsedHtml.html());
+                            }
+                        } else {
+                            // If section doesn't exist, append it
+                            $('body').append(html);
+                        }
+                        $('#searchButton').prop('disabled', false).text('Search');
+                        attachPaginationHandlers();
+                    },
+                    error: function () {
+                        alert('An error occurred while searching. Please try again.');
+                        $('#searchButton').prop('disabled', false).text('Search');
+                    }
+                });
+            });
+
+            // Function to attach pagination handlers
+function attachPaginationHandlers() {
+  // تفويض حدث النقر على روابط pagination — مستقر حتى بعد استبدال محتوى الـ DOM
+$(document).off('click.roomsPagination', '.pagination-link');
+$(document).on('click.roomsPagination', '.pagination-link', function (e) {
+  e.preventDefault();
+
+  const $clicked = $(this);
+  const page = $clicked.data('page');
+  if (!page) return;
+
+  // حفظ موضع التمرير الحالي
+  const currentScrollY = window.scrollY || window.pageYOffset;
+
+  const searchParams = (window.currentSearchParams && Object.keys(window.currentSearchParams).length > 0)
+    ? { ...window.currentSearchParams }
+    : {
+        checkIn: $('#checkIn').val() || null,
+        checkOut: $('#checkOut').val() || null,
+        guests: $('#guests').val() || null,
+        minPrice: $('#minPrice').val() || null,
+        maxPrice: $('#maxPrice').val() || null
+      };
+
+  searchParams.page = page;
+
+  $.ajax({
+    url: '@Url.Action("SearchRooms", "Home")',
+    type: 'GET',
+    data: searchParams,
+    success: function (html) {
+      const $roomsSection = $('#rooms');
+      const $parsedHtml = $(html);
+      const $targetContainer = $roomsSection.find('.container');
+      const $sourceContainer = $parsedHtml.find('.container');
+
+      if ($targetContainer.length > 0 && $sourceContainer.length > 0) {
+        // استبدال المحتوى دون أي scroll
+        $targetContainer.html($sourceContainer.html());
+      } else {
+        $roomsSection.html($parsedHtml.html());
+      }
+
+      // إعادة تهيئة أي مكتبات إن لزم (masonry, sliders...)
+      if (typeof imagesLoaded !== 'undefined' && typeof msnry !== 'undefined') {
+        imagesLoaded($roomsSection[0], function () {
+          msnry.layout();
+          // بعد أن تُعاد التهيئة نُعيد الموضع السابق للتمرير
+          window.scrollTo(window.scrollX || 0, currentScrollY);
+        });
+      } else {
+        // إعادة الموضع فورًا (بدون animation)
+        window.scrollTo(window.scrollX || 0, currentScrollY);
+      }
+
+      // نعيد تركيز العنصر الذي ضغطه المستخدم (accessibility + بقاء المستخدم في نفس المكان)
+      $clicked.focus();
+
+      // تحديث عنوان URL بدون إعادة تحميل الصفحة (اختياري)
+      if (history && history.pushState) {
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        history.pushState({}, '', url);
+      }
+    },
+    error: function () {
+      alert('An error occurred while loading the page. Please try again.');
+    }
+  });
+});
+
+}
+
+// نفّذ attachPaginationHandlers مرة عند تحميل الصفحة
+$(document).ready(function () {
+  attachPaginationHandlers();
+});
+
+
+            // Attach pagination handlers on page load
+            attachPaginationHandlers();
+
+            // Handle View Details click -> open modal and load partial via AJAX
+            $(document).on('click', '.view-room-details-btn', function (e) {
+                e.preventDefault();
+
+                const roomId = $(this).data('room-id');
+                if (!roomId) return;
+
+                $.ajax({
+                    url: '@Url.Action("DetailsPartial", "Rooms")',
+                    type: 'GET',
+                    data: { id: roomId },
+                    success: function (html) {
+                        // Create modal container if not exists
+                        let $modalContainer = $('#room-details-modal-container');
+                        if ($modalContainer.length === 0) {
+                            $modalContainer = $('<div id="room-details-modal-container"></div>');
+                            $('body').append($modalContainer);
+                        }
+
+                        $modalContainer.html(html);
+
+                        const modalEl = document.getElementById('roomDetailsModal');
+                        if (modalEl) {
+                            const bsModal = new bootstrap.Modal(modalEl);
+                            bsModal.show();
+                        }
+                    },
+                    error: function () {
+                        alert('Unable to load room details at the moment. Please try again.');
+                    }
+                });
+            });
+        });
+    </script>
+}
+

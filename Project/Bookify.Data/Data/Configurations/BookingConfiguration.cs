@@ -1,4 +1,5 @@
-﻿using Bookify.Data.Data.Enums;
+﻿using Bookify.Data.Data;
+using Bookify.Data.Data.Enums;
 using Bookify.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -39,7 +40,8 @@ namespace Bookify.Data.Data.Configurations
 
             builder.HasIndex(e => new { e.RoomId, e.CheckInDate, e.CheckOutDate });
 
-
+            // Note: SeedBookings is called separately after users are created
+            // Use: await SeedData.SeedBookingsAsync(context);
         }
     }
 }

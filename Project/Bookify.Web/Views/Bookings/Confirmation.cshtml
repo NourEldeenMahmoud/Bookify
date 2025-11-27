@@ -1,0 +1,276 @@
+@model Bookify.Data.Models.Booking
+@{
+    ViewData["Title"] = "Booking Confirmation";
+}
+
+@section Styles {
+    <style>
+        .confirmation-container {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .confirmation-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .success-icon i {
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .booking-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+
+        .detail-label {
+            font-size: 0.875rem;
+            color: #6b7280;
+            margin-bottom: 0.25rem;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .price-summary {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .price-row.total {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ea580c;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-action {
+            flex: 1;
+            min-width: 150px;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .btn-primary-action {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary-action:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+            color: white;
+        }
+
+        .btn-secondary-action {
+            background: white;
+            color: #374151;
+            border: 2px solid #d1d5db;
+        }
+
+        .btn-secondary-action:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+            color: #374151;
+        }
+
+        @@media (max-width: 768px) {
+            .confirmation-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .confirmation-card {
+                padding: 1.5rem;
+            }
+
+            .booking-details-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn-action {
+                width: 100%;
+            }
+        }
+    </style>
+}
+
+<div class="confirmation-container">
+    <!-- Success Message -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="confirmation-card">
+        <!-- Success Icon -->
+        <div class="success-icon">
+            <i class="fas fa-check"></i>
+        </div>
+
+        <!-- Confirmation Message -->
+        <h2 class="text-center fw-bold mb-3">Booking Confirmed!</h2>
+        <p class="text-center text-muted mb-4">
+            Thank you for your booking. Your reservation has been confirmed and a confirmation email has been sent to your email address.
+        </p>
+
+        <!-- Booking Details -->
+        <div class="booking-details-grid">
+            <div class="detail-item">
+                <div class="detail-label">Booking ID</div>
+                <div class="detail-value">#@Model.Id</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Room</div>
+                <div class="detail-value">@(Model.Room?.RoomType?.Name ?? "N/A")</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Room Number</div>
+                <div class="detail-value">@(Model.Room?.RoomNumber ?? "N/A")</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Check-in Date</div>
+                <div class="detail-value">@Model.CheckInDate.ToString("MMM dd, yyyy")</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Check-out Date</div>
+                <div class="detail-value">@Model.CheckOutDate.ToString("MMM dd, yyyy")</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Number of Guests</div>
+                <div class="detail-value">@Model.NumberOfGuests</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Number of Nights</div>
+                <div class="detail-value">@((Model.CheckOutDate - Model.CheckInDate).Days)</div>
+            </div>
+            <div class="detail-item">
+                <div class="detail-label">Status</div>
+                <div class="detail-value">
+                    <span class="badge bg-success">@Model.Status</span>
+                </div>
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(Model.SpecialRequests))
+        {
+            <div class="mt-3">
+                <div class="detail-label">Special Requests</div>
+                <div class="detail-value">@Model.SpecialRequests</div>
+            </div>
+        }
+
+        <!-- Price Summary -->
+        <div class="price-summary">
+            <h5 class="fw-bold mb-3">Payment Summary</h5>
+            @{
+                var nights = (Model.CheckOutDate - Model.CheckInDate).Days;
+                var pricePerNight = Model.Room?.RoomType?.PricePerNight ?? 0;
+                var subtotal = pricePerNight * nights;
+                var taxAmount = subtotal * 0.14m;
+                var total = Model.TotalAmount;
+            }
+            <div class="price-row">
+                <span>@pricePerNight.ToString("N0") EGP × @nights nights</span>
+                <span>@subtotal.ToString("N0") EGP</span>
+            </div>
+            <div class="price-row">
+                <span>Tax (14%)</span>
+                <span>@taxAmount.ToString("N0") EGP</span>
+            </div>
+            <div class="price-row total">
+                <span>Total Paid</span>
+                <span>@total.ToString("N0") EGP</span>
+            </div>
+        </div>
+
+        <!-- Payment Information -->
+        @if (Model.Payments != null && Model.Payments.Any())
+        {
+            var payment = Model.Payments.FirstOrDefault(p => p.PaymentStatus == Bookify.Data.Data.Enums.PaymentStatus.Completed);
+            if (payment != null)
+            {
+                <div class="mt-3">
+                    <div class="detail-label">Payment Method</div>
+                    <div class="detail-value">Card Payment via Stripe</div>
+                    @if (!string.IsNullOrEmpty(payment.PaymentIntentId))
+                    {
+                        <div class="detail-label mt-2">Transaction ID</div>
+                        <div class="detail-value small">@payment.PaymentIntentId</div>
+                    }
+                </div>
+            }
+        }
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a asp-controller="Profile" asp-action="Index" class="btn btn-primary-action">
+                <i class="fas fa-list me-2"></i>View My Bookings
+            </a>
+            <a asp-controller="Home" asp-action="Index" class="btn btn-secondary-action">
+                <i class="fas fa-home me-2"></i>Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
