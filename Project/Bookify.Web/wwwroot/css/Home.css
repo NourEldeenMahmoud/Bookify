@@ -394,13 +394,6 @@ body.profile-page-body .main-content {
   min-width: 180px;
 }
 
-.search-field.price-field {
-  display: flex;
-  flex-direction: column;
-  flex: 0 0 auto;
-  min-width: 150px;
-}
-
 .validation-error {
   display: block;
   margin-top: 4px;
