@@ -69,7 +69,7 @@ namespace Bookify.Services.Services
                                         Booking ID: #{bookingId}
                                         Status: Cancelled
                                         
-                                        RoyalHaven • Metropolitan City
+                                        RoyalHaven • Mansoura City
                                         Contact: info@royalhaven.com
                                         ";
 
@@ -121,7 +121,7 @@ namespace Bookify.Services.Services
                                                 <hr style='border:none; border-top:1px solid #e6dfd7; margin:22px 0;' />
                                     
                                                 <p style='font-size:12px; color:#9c8f87; text-align:center; margin:0;'>
-                                                  RoyalHaven • Metropolitan City<br/>
+                                                  RoyalHaven • Mansoura City<br/>
                                                   <a href='mailto:info@royalhaven.com' style='color:#9c8f87; text-decoration:underline;'>info@royalhaven.com</a>
                                                 </p>
                                               </td>
@@ -200,8 +200,7 @@ namespace Bookify.Services.Services
                 var from = new EmailAddress(_configuration["SendGrid:FromEmail"] ?? "noreply@bookify.com", "Bookify");
                 var to = new EmailAddress(toEmail, userName);
                 var subject = "Booking Confirmation - Bookify";
-                var plainTextContent = $"RoyalHaven\r\nWhere luxury meets comfort\r\n--------------------------------------------------\r\n\r\nBooking Confirmed\r\n\r\nHi {{userName}},\r\nYour reservation at RoyalHaven has been successfully confirmed.\r\n\r\nHere are your stay details:\r\n\r\nBooking ID: #{{bookingId}}\r\nCheck-in:" +
-                    $" {{checkIn:yyyy-MM-dd}}\r\nCheck-out: {{checkOut:yyyy-MM-dd}}\r\nTotal Amount: ${{totalAmount:F2}}\r\n\r\n--------------------------------------------------\r\nRoyalHaven • Metropolitan City\r\nContact: info@royalhaven.com";
+                var plainTextContent = $"RoyalHaven\r\nWhere luxury meets comfort\r\n--------------------------------------------------\r\n\r\nBooking Confirmed\r\n\r\nHi {userName},\r\nYour reservation at RoyalHaven has been successfully confirmed.\r\n\r\nHere are your stay details:\r\n\r\nBooking ID: #{bookingId}\r\nCheck-in: {checkIn:yyyy-MM-dd}\r\nCheck-out: {checkOut:yyyy-MM-dd}\r\nTotal Amount: ${totalAmount:F2}\r\n\r\n--------------------------------------------------\r\nRoyalHaven • Mansoura City\r\nContact: info@royalhaven.com";
                 var htmlContent = $@"
                                     <table width='100%' cellpadding='0' cellspacing='0' role='presentation' 
                                     style='font-family: ""Inter"", Arial, Helvetica, sans-serif; background-color:#f3ede6; padding:24px;'>
@@ -263,7 +262,7 @@ namespace Bookify.Services.Services
                                                 <hr style='border:none; border-top:1px solid #e6dfd7; margin:24px 0;' />
                                     
                                                 <p style='font-size:12px; color:#9c8f87; text-align:center; margin:0;'>
-                                                  RoyalHaven • Metropolitan City<br>
+                                                  RoyalHaven • Mansoura City<br>
                                                   <a href='mailto:info@royalhaven.com' 
                                                   style='color:#9c8f87; text-decoration:underline;'>info@royalhaven.com</a>
                                                 </p>
@@ -389,7 +388,7 @@ namespace Bookify.Services.Services
                                     
                                                 <!-- Footer -->
                                                 <p style='font-size:12px; color:#9c8f87; text-align:center; margin:0;'>
-                                                  RoyalHaven • Metropolitan City<br/>
+                                                  RoyalHaven • Mansoura City<br/>
                                                   <a href='mailto:info@royalhaven.com'
                                                   style='color:#9c8f87; text-decoration:underline;'>info@royalhaven.com</a>
                                                 </p>
@@ -495,7 +494,7 @@ namespace Bookify.Services.Services
                                         Amount Paid: ${totalAmount:F2}
                                         Status: Paid
                                         
-                                        RoyalHaven • Metropolitan City
+                                        RoyalHaven • Mansoura City
                                         Contact: info@royalhaven.com
                                         ";
                 var htmlContent = $@"
@@ -551,7 +550,7 @@ namespace Bookify.Services.Services
                                                 <hr style='border:none; border-top:1px solid #e6dfd7; margin:22px 0;' />
                                     
                                                 <p style='font-size:12px; color:#9c8f87; text-align:center; margin:0;'>
-                                                  RoyalHaven • Metropolitan City<br/>
+                                                  RoyalHaven • Mansoura City<br/>
                                                   <a href='mailto:info@royalhaven.com' style='color:#9c8f87; text-decoration:underline;'>info@royalhaven.com</a>
                                                 </p>
                                               </td>

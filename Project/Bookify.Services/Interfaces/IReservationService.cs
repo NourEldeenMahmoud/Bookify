@@ -9,8 +9,8 @@ namespace Bookify.Services.Interfaces
 {
     public interface IReservationService
     {
-        Task<Booking> CreateReservationAsync(string userId, int roomId, DateTime checkIn, DateTime checkOut, int numberOfGuests, string? specialRequests = null);
-        Task<bool> CancelReservationAsync(int bookingId, string userId);
-        Task<decimal> CalculateTotalAmountAsync(int roomId, DateTime checkIn, DateTime checkOut);
+        public Task<Booking> CreateReservationAsync(string userId, int roomId, DateTime checkIn, DateTime checkOut, int numberOfGuests, string? specialRequests = null);
+        public Task<bool> CancelReservationAsync(int bookingId, string userId);
+        public Task<decimal> CalculateTotalAmountAsync(int roomId, DateTime checkIn, DateTime checkOut);
     }
 }

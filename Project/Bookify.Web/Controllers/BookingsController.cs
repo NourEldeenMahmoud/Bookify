@@ -4,6 +4,8 @@ using Bookify.Services.Interfaces;
 using Bookify.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System.Linq;
 
 namespace Bookify.Web.Controllers;
 
@@ -15,213 +17,252 @@ public class BookingsController : Controller
     private readonly IReservationService _reservationService;
     private readonly IPaymentService _paymentService;
     private readonly IEmailService _emailService;
+    private readonly IConfiguration _configuration;
 
     public BookingsController(
         ILogger<BookingsController> logger,
         IUnitOfWork unitOfWork,
         IReservationService reservationService,
         IPaymentService paymentService,
-        IEmailService emailService)
+        IEmailService emailService,
+        IConfiguration configuration)
     {
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _reservationService = reservationService ?? throw new ArgumentNullException(nameof(reservationService));
         _paymentService = paymentService ?? throw new ArgumentNullException(nameof(paymentService));
         _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
+        _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
     }
 
-    public IActionResult Cart()
+    [HttpGet]
+    public async Task<IActionResult> Checkout(int roomId, string? checkIn, string? checkOut, int? numberOfGuests)
     {
         try
         {
+            _logger.LogInformation("Checkout GET called - RoomId: {RoomId}, CheckIn: {CheckIn}, CheckOut: {CheckOut}, Guests: {Guests}", 
+                roomId, checkIn, checkOut, numberOfGuests);
+            
             var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            _logger.LogDebug("Cart page accessed - UserId: {UserId}", userId);
-
-            var cartJson = HttpContext.Session.GetString("Cart");
-            var cartItems = new List<ReservationCartItem>();
-
-            if (!string.IsNullOrEmpty(cartJson))
-            {
-                try
-                {
-                    cartItems = System.Text.Json.JsonSerializer.Deserialize<List<ReservationCartItem>>(cartJson)
-                        ?? new List<ReservationCartItem>();
-                    _logger.LogDebug("Loaded {Count} items from cart", cartItems.Count);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error deserializing cart. Starting with empty cart.");
-                    cartItems = new List<ReservationCartItem>();
-                    HttpContext.Session.Remove("Cart");
-                }
-            }
-
-            return View(cartItems);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error loading cart");
-            TempData["Error"] = "An error occurred while loading your cart. Please try again.";
-            return RedirectToAction("Index", "Home");
-        }
-    }
-
-    [HttpPost]
-    public IActionResult RemoveFromCart(int index)
-    {
-        try
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            _logger.LogInformation("Remove from cart attempt - UserId: {UserId}, Index: {Index}", userId, index);
-
-            if (index < 0)
-            {
-                _logger.LogWarning("Invalid index provided: {Index}", index);
-                TempData["Error"] = "Invalid item selected.";
-                return RedirectToAction("Cart");
-            }
-
-            var cartJson = HttpContext.Session.GetString("Cart");
-            if (string.IsNullOrEmpty(cartJson))
-            {
-                _logger.LogWarning("Attempt to remove from empty cart");
-                TempData["Error"] = "Cart is empty.";
-                return RedirectToAction("Cart");
-            }
-
-            var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<ReservationCartItem>>(cartJson)
-                ?? new List<ReservationCartItem>();
-
-            if (index >= cartItems.Count)
-            {
-                _logger.LogWarning("Index {Index} out of range for cart with {Count} items", index, cartItems.Count);
-                TempData["Error"] = "Invalid item selected.";
-                return RedirectToAction("Cart");
-            }
-
-            var removedItem = cartItems[index];
-            cartItems.RemoveAt(index);
-            HttpContext.Session.SetString("Cart", System.Text.Json.JsonSerializer.Serialize(cartItems));
-
-            _logger.LogInformation("Item removed from cart - RoomId: {RoomId}, UserId: {UserId}", removedItem.RoomId, userId);
-            TempData["Success"] = "Item removed from cart successfully.";
-            return RedirectToAction("Cart");
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error removing item from cart - Index: {Index}", index);
-            TempData["Error"] = "An error occurred while removing item from cart. Please try again.";
-            return RedirectToAction("Cart");
-        }
-    }
-
-    [HttpPost]
-    public async Task<IActionResult> Checkout(int index)
-    {
-        try
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            _logger.LogInformation("Checkout attempt - UserId: {UserId}, Index: {Index}", userId, index);
-
             if (string.IsNullOrEmpty(userId))
             {
-                _logger.LogWarning("Unauthenticated user attempted checkout");
-                return RedirectToAction("Login", "Account");
+                _logger.LogWarning("Unauthenticated user attempted checkout - redirecting to login");
+                // Store return URL for after login
+                var returnUrl = Url.Action("Checkout", "Bookings", new { roomId, checkIn, checkOut, numberOfGuests });
+                return RedirectToAction("Login", "Account", new { returnUrl });
             }
 
-            if (index < 0)
+            _logger.LogInformation("Authenticated user {UserId} attempting checkout", userId);
+
+            // Validation
+            if (roomId <= 0)
             {
-                _logger.LogWarning("Invalid index provided: {Index}", index);
-                TempData["Error"] = "Invalid item selected.";
-                return RedirectToAction("Cart");
-            }
-
-            var cartJson = HttpContext.Session.GetString("Cart");
-            if (string.IsNullOrEmpty(cartJson))
-            {
-                _logger.LogWarning("Checkout attempt with empty cart - UserId: {UserId}", userId);
-                TempData["Error"] = "Your cart is empty.";
-                return RedirectToAction("Cart");
-            }
-
-            var cartItems = System.Text.Json.JsonSerializer.Deserialize<List<ReservationCartItem>>(cartJson)
-                ?? new List<ReservationCartItem>();
-
-            if (index >= cartItems.Count)
-            {
-                _logger.LogWarning("Index {Index} out of range for cart with {Count} items", index, cartItems.Count);
-                TempData["Error"] = "Invalid item selected.";
-                return RedirectToAction("Cart");
-            }
-
-            var cartItem = cartItems[index];
-
-            // Validate cart item
-            if (cartItem.RoomId <= 0)
-            {
-                _logger.LogWarning("Invalid RoomId in cart item: {RoomId}", cartItem.RoomId);
+                _logger.LogWarning("Invalid roomId provided: {RoomId}", roomId);
                 TempData["Error"] = "Invalid room selected.";
-                return RedirectToAction("Cart");
+                return RedirectToAction("Index", "Home");
             }
 
-            if (cartItem.CheckInDate >= cartItem.CheckOutDate)
+            // Parse dates from string or use defaults
+            DateTime checkInDate;
+            DateTime checkOutDate;
+            
+            if (!string.IsNullOrEmpty(checkIn) && DateTime.TryParse(checkIn, out var parsedCheckIn))
             {
-                _logger.LogWarning("Invalid date range in cart item");
-                TempData["Error"] = "Invalid date range selected.";
-                return RedirectToAction("Cart");
+                checkInDate = parsedCheckIn;
             }
-
-            // Create booking
-            var booking = await _reservationService.CreateReservationAsync(
-                userId,
-                cartItem.RoomId,
-                cartItem.CheckInDate,
-                cartItem.CheckOutDate,
-                cartItem.NumberOfGuests
-            );
-
-            _logger.LogInformation("Booking created successfully - BookingId: {BookingId}, UserId: {UserId}", booking.Id, userId);
-
-            // Remove from cart
-            cartItems.RemoveAt(index);
-            HttpContext.Session.SetString("Cart", System.Text.Json.JsonSerializer.Serialize(cartItems));
-
-            // Create Stripe checkout session
-            var successUrl = Url.Action("PaymentSuccess", "Payment", new { bookingId = booking.Id }, Request.Scheme);
-            var cancelUrl = Url.Action("PaymentCancel", "Payment", new { bookingId = booking.Id }, Request.Scheme);
-
-            if (string.IsNullOrEmpty(successUrl) || string.IsNullOrEmpty(cancelUrl))
+            else
             {
-                _logger.LogError("Failed to generate payment URLs");
-                TempData["Error"] = "An error occurred while processing payment. Please try again.";
-                return RedirectToAction("Cart");
+                checkInDate = DateTime.Today.AddDays(1);
+            }
+            
+            if (!string.IsNullOrEmpty(checkOut) && DateTime.TryParse(checkOut, out var parsedCheckOut))
+            {
+                checkOutDate = parsedCheckOut;
+            }
+            else
+            {
+                checkOutDate = DateTime.Today.AddDays(2);
+            }
+            
+            _logger.LogInformation("Parsed dates - CheckIn: {CheckIn}, CheckOut: {CheckOut}", checkInDate, checkOutDate);
+
+            // Get room details
+            var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(roomId);
+            if (room == null || room.RoomType == null)
+            {
+                _logger.LogWarning("Room {RoomId} not found", roomId);
+                TempData["Error"] = "Room not found.";
+                return RedirectToAction("Index", "Home");
             }
 
-            var checkoutUrl = await _paymentService.CreateStripeCheckoutSessionAsync(booking.Id, successUrl, cancelUrl);
+            var numberOfGuestsValue = numberOfGuests ?? room.RoomType.MaxOccupancy;
 
-            _logger.LogInformation("Redirecting to Stripe checkout - BookingId: {BookingId}", booking.Id);
-            return Redirect(checkoutUrl);
+            // Validate dates - but allow user to change them on checkout page
+            // Only show warnings, don't redirect
+            if (checkInDate >= checkOutDate)
+            {
+                _logger.LogWarning("Invalid date range - CheckIn {CheckIn} must be before CheckOut {CheckOut}", checkInDate, checkOutDate);
+                TempData["Warning"] = "Please select valid dates. Check-in date must be before check-out date.";
+                // Use default dates instead of redirecting
+                checkInDate = DateTime.Today.AddDays(1);
+                checkOutDate = DateTime.Today.AddDays(2);
+            }
+
+            if (checkInDate < DateTime.Today)
+            {
+                _logger.LogWarning("Check-in date is in the past: {CheckIn}", checkInDate);
+                TempData["Warning"] = "Check-in date cannot be in the past. Using tomorrow's date.";
+                checkInDate = DateTime.Today.AddDays(1);
+                checkOutDate = DateTime.Today.AddDays(2);
+            }
+
+            if (numberOfGuestsValue <= 0 || numberOfGuestsValue > room.RoomType.MaxOccupancy)
+            {
+                _logger.LogWarning("Invalid numberOfGuests provided: {NumberOfGuests}", numberOfGuestsValue);
+                TempData["Warning"] = $"Number of guests must be between 1 and {room.RoomType.MaxOccupancy}. Using default value.";
+                numberOfGuestsValue = Math.Min(room.RoomType.MaxOccupancy, Math.Max(1, numberOfGuestsValue));
+            }
+
+            // Note: Availability check will be done when user submits the form, not here
+            // This allows user to select different dates on checkout page
+
+            // Calculate pricing
+            var numberOfNights = (checkOutDate - checkInDate).Days;
+            var pricePerNight = room.RoomType.PricePerNight;
+            var subtotal = pricePerNight * numberOfNights;
+            var taxRate = 0.14m; // 14% tax
+            var taxAmount = subtotal * taxRate;
+            var discount = 0m; // Can be calculated based on promotions
+            var totalAmount = subtotal + taxAmount - discount;
+
+            // Get room image
+            var roomImageUrl = room.GalleryImages?.FirstOrDefault()?.ImageUrl ?? room.RoomType.ImageUrl;
+            if (string.IsNullOrEmpty(roomImageUrl))
+            {
+                roomImageUrl = Url.Content("~/images/G1.jpg");
+            }
+            else if (!roomImageUrl.StartsWith("http") && !roomImageUrl.StartsWith("/") && !roomImageUrl.StartsWith("~/"))
+            {
+                // Only add ~/images/ if the URL doesn't already contain it
+                roomImageUrl = Url.Content($"~/images/{roomImageUrl}");
+            }
+            else if (roomImageUrl.StartsWith("~/"))
+            {
+                // If it already starts with ~/, just use Url.Content to convert it
+                roomImageUrl = Url.Content(roomImageUrl);
+            }
+
+            // Get services based on room type
+            var includedServices = new List<string>();
+            var typeName = room.RoomType.Name?.ToLower() ?? string.Empty;
+            
+            if (typeName.Contains("suite"))
+            {
+                includedServices = new List<string> { "Cleaning", "Open Buffet", "Room Service", "Concierge" };
+            }
+            else if (typeName.Contains("deluxe"))
+            {
+                includedServices = new List<string> { "Breakfast", "Airport Pickup", "WiFi", "Room Service" };
+            }
+            else // standard / others
+            {
+                includedServices = new List<string> { "WiFi", "Breakfast", "Air Conditioning" };
+            }
+
+            var amenities = new List<string> 
+            { 
+                "Free WiFi", 
+                "Flat-screen TV", 
+                "Air Conditioning", 
+                "Mini Bar", 
+                "Room Service",
+                "Private Bathroom",
+                "Safe"
+            };
+
+            // Create view model
+            var viewModel = new CheckoutViewModel
+            {
+                RoomId = roomId,
+                RoomNumber = room.RoomNumber,
+                RoomTypeName = room.RoomType!.Name ?? string.Empty,
+                RoomImageUrl = roomImageUrl,
+                RoomDescription = room.RoomType!.Description,
+                MaxOccupancy = room.RoomType!.MaxOccupancy,
+                CheckIn = checkInDate,
+                CheckOut = checkOutDate,
+                NumberOfGuests = numberOfGuestsValue,
+                PricePerNight = pricePerNight,
+                NumberOfNights = numberOfNights,
+                Subtotal = subtotal,
+                TaxRate = taxRate,
+                TaxAmount = taxAmount,
+                Discount = discount,
+                TotalAmount = totalAmount,
+                IncludedServices = includedServices,
+                Amenities = amenities,
+                StripePublishableKey = _configuration["Stripe:PublishableKey"]
+            };
+
+            return View(viewModel);
         }
         catch (ArgumentException ex)
         {
             _logger.LogWarning(ex, "Validation error during checkout - UserId: {UserId}",
                 User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             TempData["Error"] = ex.Message;
-            return RedirectToAction("Cart");
-        }
-        catch (InvalidOperationException ex)
-        {
-            _logger.LogWarning(ex, "Business logic error during checkout - UserId: {UserId}",
-                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
-            TempData["Error"] = ex.Message;
-            return RedirectToAction("Cart");
+            return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during checkout - UserId: {UserId}",
                 User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             TempData["Error"] = "An error occurred during checkout. Please try again.";
-            return RedirectToAction("Cart");
+            return RedirectToAction("Index", "Home");
+        }
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Confirmation(int bookingId)
+    {
+        try
+        {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("Unauthenticated user attempted to view confirmation");
+                return RedirectToAction("Login", "Account");
+            }
+
+            if (bookingId <= 0)
+            {
+                _logger.LogWarning("Invalid bookingId provided: {BookingId}", bookingId);
+                return NotFound();
+            }
+
+            var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(bookingId);
+            if (booking == null)
+            {
+                _logger.LogWarning("Booking {BookingId} not found", bookingId);
+                TempData["Error"] = "Booking not found.";
+                return RedirectToAction("Index", "Profile");
+            }
+
+            // Verify booking belongs to user
+            if (booking.UserId != userId)
+            {
+                _logger.LogWarning("User {UserId} attempted to access booking {BookingId} belonging to another user", userId, bookingId);
+                TempData["Error"] = "Access denied.";
+                return RedirectToAction("Index", "Profile");
+            }
+
+            return View(booking);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading confirmation - BookingId: {BookingId}", bookingId);
+            TempData["Error"] = "An error occurred while loading confirmation. Please try again.";
+            return RedirectToAction("Index", "Profile");
         }
     }
 
@@ -269,7 +310,7 @@ public class BookingsController : Controller
             {
                 _logger.LogWarning("Invalid booking ID provided: {BookingId}", id);
                 TempData["Error"] = "Invalid booking selected.";
-                return RedirectToAction("MyBookings");
+                return RedirectToAction("Index", "Profile");
             }
 
             _logger.LogInformation("Cancelling booking - BookingId: {BookingId}, UserId: {UserId}", id, userId);
@@ -279,6 +320,38 @@ public class BookingsController : Controller
             {
                 _logger.LogInformation("Booking {BookingId} cancelled successfully by user {UserId}", id, userId);
                 TempData["Success"] = "Booking cancelled successfully.";
+                
+                // Send cancellation email (non-blocking - don't fail cancellation if email fails)
+                try
+                {
+                    var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(id);
+                    if (booking != null && booking.User != null && !string.IsNullOrWhiteSpace(booking.User.Email))
+                    {
+                        var userName = !string.IsNullOrWhiteSpace(booking.User.FirstName) 
+                            ? $"{booking.User.FirstName} {booking.User.LastName}".Trim() 
+                            : booking.User.UserName ?? "Guest";
+                        
+                        await _emailService.SendBookingCancellationAsync(
+                            booking.User.Email,
+                            userName,
+                            id
+                        );
+                        
+                        _logger.LogInformation("Booking cancellation email sent successfully - BookingId: {BookingId}, Email: {Email}", 
+                            id, booking.User.Email);
+                    }
+                    else
+                    {
+                        _logger.LogWarning("User not found or email is empty - BookingId: {BookingId}, UserId: {UserId}", 
+                            id, userId);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    // Log error but don't fail the cancellation - email is non-critical
+                    _logger.LogError(ex, "Failed to send booking cancellation email - BookingId: {BookingId}, UserId: {UserId}. Booking was still cancelled successfully.", 
+                        id, userId);
+                }
             }
             else
             {
@@ -286,20 +359,20 @@ public class BookingsController : Controller
                 TempData["Error"] = "Unable to cancel booking. It may have already been cancelled or completed.";
             }
 
-            return RedirectToAction("MyBookings");
+            return RedirectToAction("Index", "Profile");
         }
         catch (ArgumentException ex)
         {
             _logger.LogWarning(ex, "Validation error cancelling booking {BookingId}", id);
             TempData["Error"] = ex.Message;
-            return RedirectToAction("MyBookings");
+            return RedirectToAction("Index", "Profile");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error cancelling booking {BookingId} - UserId: {UserId}",
                 id, User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
             TempData["Error"] = "An error occurred while cancelling the booking. Please try again.";
-            return RedirectToAction("MyBookings");
+            return RedirectToAction("Index", "Profile");
         }
     }
 }

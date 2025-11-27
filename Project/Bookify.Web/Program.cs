@@ -1,9 +1,12 @@
 using Bookify.Data.Data;
+using Bookify.Data.Data.Seeding;
 using Bookify.Data.Models;
 using Bookify.Data.Repositories;
 using Bookify.Services.Interfaces;
 using Bookify.Services.Services;
+using Bookify.Web.Filters;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -25,8 +28,9 @@ builder.Host.UseSerilog();
 // Add services to the container
 builder.Services.AddControllersWithViews(options =>
 {
-    // Add CSRF protection
-    options.Filters.Add(new Microsoft.AspNetCore.Mvc.AutoValidateAntiforgeryTokenAttribute());
+    // Add CSRF protection, but exclude API routes
+    options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
+    options.Filters.Add<ValidateAntiforgeryTokenForNonApiAttribute>();
 });
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
@@ -67,15 +71,6 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
 .AddEntityFrameworkStores<AppDbContext>()
 .AddDefaultTokenProviders();
 
-// Configure Session (for reservation cart)
-builder.Services.AddSession(options =>
-{
-    options.IdleTimeout = TimeSpan.FromMinutes(15); // Cart expiration: 15 minutes
-    options.Cookie.HttpOnly = true;
-    options.Cookie.IsEssential = true;
-    options.Cookie.SameSite = SameSiteMode.Strict;
-    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-});
 
 // Configure cookies
 builder.Services.ConfigureApplicationCookie(options =>
@@ -102,34 +97,34 @@ else
     app.UseHsts();
 }
 
-// Security headers
-app.Use(async (context, next) =>
+// Seed database only in Development environment or when explicitly needed
+if (app.Environment.IsDevelopment())
 {
-    context.Response.Headers["X-Content-Type-Options"] = "nosniff";
-    context.Response.Headers["X-Frame-Options"] = "DENY";
-    context.Response.Headers["X-XSS-Protection"] = "1; mode=block";
-    context.Response.Headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
-
-    // Content Security Policy
-    if (!context.Response.Headers.ContainsKey("Content-Security-Policy"))
+    using (var scope = app.Services.CreateScope())
     {
-        context.Response.Headers["Content-Security-Policy"] =
-            "default-src 'self'; " +
-            "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://code.jquery.com https://cdn.datatables.net https://cdn.tailwindcss.com https://unpkg.com; " +
-            "style-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://cdn.datatables.net https://cdn.tailwindcss.com https://cdnjs.cloudflare.com; " +
-            "img-src 'self' data: https:; " +
-            "font-src 'self' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; " +
-            "connect-src 'self' https://api.stripe.com;";
+        var services = scope.ServiceProvider;
+        var context = services.GetRequiredService<AppDbContext>();
+        
+        // Ensure database is created and migrations are applied
+        
+        var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        
+        // Seed users and roles first (bookings need users to exist)
+        await IdentitySeeder.SeedUsersAndRolesAsync(userManager, roleManager);
+        
+        // Then seed bookings
+        await BookingSeeder.SeedBookingsAsync(context);
     }
-
-    await next();
-});
-
-
-if (!app.Environment.IsDevelopment())
+}
+else
 {
-    app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();
+    // In Production, only apply migrations (seeding should be done manually or via deployment scripts)
+    using (var scope = app.Services.CreateScope())
+    {
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        await context.Database.MigrateAsync();
+    }
 }
 
 app.UseHttpsRedirection();
@@ -138,7 +133,6 @@ app.UseRouting();
 
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseSession();
 
 app.MapStaticAssets();
 

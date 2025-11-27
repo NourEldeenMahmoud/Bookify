@@ -16,7 +16,6 @@ namespace Bookify.Data.Data
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<BookingPayment> BookingPayments { get; set; }
         public DbSet<BookingStatusHistory> BookingStatusHistory { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }
         public DbSet<GalleryImage> GalleryImages { get; set; }
 
        

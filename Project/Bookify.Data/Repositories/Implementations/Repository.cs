@@ -175,7 +175,7 @@ namespace Bookify.Data.Repositories.Implementations
                 var result = await _dbSet.FindAsync(id);
                 if (result == null)
                 {
-                    _logger.Warning("{EntityType} with ID: {Id} is nto found", typeof(T).Name, id);
+                    _logger.Warning("{EntityType} with ID: {Id} is not found", typeof(T).Name, id);
                 }
                 else
                 {

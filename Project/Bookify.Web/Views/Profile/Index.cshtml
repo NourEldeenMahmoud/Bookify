@@ -9,11 +9,17 @@
     var upcomingBookings = ViewBag.UpcomingBookings as IEnumerable<Booking> ?? Enumerable.Empty<Booking>();
     var pastBookings = ViewBag.PastBookings as IEnumerable<Booking> ?? Enumerable.Empty<Booking>();
     
+    // Get all bookings (upcoming + past) for accurate statistics
+    var allBookings = upcomingBookings.Concat(pastBookings).ToList();
+    
     // Calculate statistics
-    var totalBookings = upcomingBookings.Count() + pastBookings.Count();
-    var totalSpent = pastBookings.Sum(b => b.TotalAmount);
+    var totalBookings = allBookings.Count();
+    // Total Spent should include all Paid and Completed bookings (regardless of date)
+    var totalSpent = allBookings
+        .Where(b => b.Status == BookingStatus.Paid || b.Status == BookingStatus.Completed)
+        .Sum(b => b.TotalAmount);
     var upcomingCount = upcomingBookings.Count();
-    var completedCount = pastBookings.Count(b => b.Status == BookingStatus.Completed);
+    var completedCount = allBookings.Count(b => b.Status == BookingStatus.Completed);
     
     // Calculate age if DateOfBirth is available
     int? age = null;
@@ -29,9 +35,124 @@
 @section Styles {
     <link rel="stylesheet" href="~/css/login.css" />
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Profile Page Overrides - Must override all conflicting styles */
+        body.profile-page-body {
+            display: block !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            background-color: #f8f8f8 !important;
+            position: static !important;
+        }
+
+        body.profile-page-body .profile-page {
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        body.profile-page-body .content-wrapper {
+            margin-left: 100px !important;
+            width: calc(100% - 100px) !important;
+            max-width: none !important;
+            display: block !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            padding: 0 !important;
+            flex: none !important;
+        }
+
+        body.profile-page-body .main-content {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+            min-height: auto !important;
+            height: auto !important;
+            padding: 40px 60px !important;
+            margin: 0 !important;
+            flex: none !important;
+            box-sizing: border-box !important;
+        }
+
+        body.profile-page-body .page-wrapper {
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            display: flex !important;
+            flex-direction: row !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        /* Ensure profile content is not compressed */
+        body.profile-page-body .w-full {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Exception for modal - don't apply w-full rule */
+        #cancelBookingModal .w-full,
+        #cancelBookingModal > div {
+            width: auto !important;
+            max-width: 640px !important;
+        }
+
+        body.profile-page-body .space-y-6 > * + * {
+            margin-top: 1.5rem !important;
+        }
+        
+        /* Cancel Booking Modal Styles - High specificity to override everything */
+        #cancelBookingModal {
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        #cancelBookingModal > div.bg-white.rounded-lg.shadow-2xl,
+        #cancelBookingModal > div[style*="max-width"] {
+            animation: slideUp 0.3s ease-out;
+            max-width: 640px !important; /* للضعف بالضبط (320 × 2) */
+            width: auto !important;
+            min-width: 320px !important; /* حد أدنى */
+        }
+        
+        /* Force override for modal content div */
+        div#cancelBookingModal > div.bg-white {
+            max-width: 640px !important;
+            width: auto !important;
+        }
+
+        @@keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @@keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
 }
 
-<div class="w-full max-w-7xl mx-auto my-8 space-y-6">
+<div class="w-full space-y-6" style="max-width: 100%;">
     <!-- Success/Error Messages -->
     @if (TempData["Success"] != null)
     {
@@ -169,7 +290,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-gray-600 text-sm font-medium mb-1">Total Spent</p>
-                    <p class="text-3xl font-bold text-royal-dark">$@totalSpent.ToString("F0")</p>
+                    <p class="text-3xl font-bold text-royal-dark">@totalSpent.ToString("F0") EGP</p>
                 </div>
                 <div class="bg-purple-100 p-4 rounded-full">
                     <i class="lucide lucide-dollar-sign text-purple-600 text-2xl" data-lucide="dollar-sign"></i>
@@ -346,7 +467,7 @@
                                                     @booking.Status
                                                 </span>
                                             </div>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-royal-dark/80">
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-royal-dark/80 mb-4">
                                                 <div class="flex items-center">
                                                     <i class="lucide lucide-calendar text-amber-600 mr-2" data-lucide="calendar"></i>
                                                     <span><strong>Check-in:</strong> @booking.CheckInDate.ToString("MMM dd, yyyy")</span>
@@ -361,9 +482,29 @@
                                                 </div>
                                                 <div class="flex items-center">
                                                     <i class="lucide lucide-dollar-sign text-amber-600 mr-2" data-lucide="dollar-sign"></i>
-                                                    <span><strong>Total:</strong> $@booking.TotalAmount.ToString("F2")</span>
+                                                    <span><strong>Total:</strong> @booking.TotalAmount.ToString("N0") EGP</span>
                                                 </div>
                                             </div>
+                                            @if (booking.Status == BookingStatus.Paid || booking.Status == BookingStatus.Completed)
+                                            {
+                                                <div class="flex gap-2">
+                                                    <button type="button" 
+                                                            class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center cancel-booking-btn"
+                                                            data-booking-id="@booking.Id"
+                                                            data-booking-room="@(booking.Room?.RoomType?.Name ?? "Room") @(booking.Room?.RoomNumber ?? "")"
+                                                            data-booking-checkin="@booking.CheckInDate.ToString("MMM dd, yyyy")"
+                                                            data-booking-checkout="@booking.CheckOutDate.ToString("MMM dd, yyyy")"
+                                                            data-booking-total="@booking.TotalAmount.ToString("N0")">
+                                                        <i class="lucide lucide-x-circle mr-2" data-lucide="x-circle"></i>
+                                                        Cancel Booking
+                                                    </button>
+                                                    <a asp-controller="Bookings" asp-action="Confirmation" asp-route-bookingId="@booking.Id" 
+                                                       class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center">
+                                                        <i class="lucide lucide-eye mr-2" data-lucide="eye"></i>
+                                                        View Details
+                                                    </a>
+                                                </div>
+                                            }
                                         </div>
                                     </div>
                                 </div>
@@ -501,12 +642,145 @@
     </div>
 </div>
 
+<!-- Cancel Booking Confirmation Modal -->
+<div id="cancelBookingModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" style="display: none;">
+    <div class="bg-white rounded-lg shadow-2xl mx-4 transform transition-all" style="max-width: 640px !important; width: auto !important;">
+        <!-- Modal Header -->
+        <div class="bg-gradient-to-r from-red-500 to-red-600 px-3 py-2.5 rounded-t-lg">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-1.5">
+                    <div class="bg-white bg-opacity-20 rounded-full p-1">
+                        <i class="lucide lucide-alert-triangle text-white text-base" data-lucide="alert-triangle"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-white">Cancel Booking</h3>
+                </div>
+                <button type="button" id="closeCancelModal" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-0.5 transition-colors">
+                    <i class="lucide lucide-x text-base" data-lucide="x"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="px-3 py-3">
+            <p class="text-gray-700 mb-2.5 text-xs">Are you sure you want to cancel this booking?</p>
+            
+            <!-- Booking Details -->
+            <div class="bg-gray-50 rounded-lg p-2.5 mb-2.5 border border-gray-200">
+                <div class="space-y-1 text-xs">
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Room:</span>
+                        <span class="text-gray-900 font-semibold text-right" id="modalBookingRoom">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Check-in:</span>
+                        <span class="text-gray-900 font-semibold" id="modalBookingCheckIn">-</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-600 font-medium">Check-out:</span>
+                        <span class="text-gray-900 font-semibold" id="modalBookingCheckOut">-</span>
+                    </div>
+                    <div class="flex justify-between pt-1 border-t border-gray-200">
+                        <span class="text-gray-600 font-medium">Total:</span>
+                        <span class="text-red-600 font-bold" id="modalBookingTotal">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border-l-4 border-amber-400 p-2 rounded mb-2.5">
+                <p class="text-xs text-amber-800 leading-tight">
+                    <i class="lucide lucide-info inline-block mr-1" data-lucide="info"></i>
+                    <strong>Note:</strong> Refund will be processed per cancellation policy.
+                </p>
+            </div>
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="px-3 py-2.5 bg-gray-50 rounded-b-lg flex justify-end space-x-2">
+            <button type="button" id="cancelModalBtn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-xs font-medium transition-colors">
+                Keep
+            </button>
+            <form id="confirmCancelForm" method="post" asp-controller="Bookings" asp-action="Cancel" class="inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" id="modalBookingId" value="" />
+                <button type="submit" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors flex items-center">
+                    <i class="lucide lucide-x-circle mr-1 text-xs" data-lucide="x-circle"></i>
+                    Cancel
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
 @section Scripts {
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
             lucide.createIcons();
         }
+
+        // Cancel Booking Modal
+        (function() {
+            const modal = document.getElementById('cancelBookingModal');
+            const closeBtn = document.getElementById('closeCancelModal');
+            const cancelBtn = document.getElementById('cancelModalBtn');
+            const confirmForm = document.getElementById('confirmCancelForm');
+            const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
+
+            function showModal(bookingId, room, checkIn, checkOut, total) {
+                document.getElementById('modalBookingId').value = bookingId;
+                document.getElementById('modalBookingRoom').textContent = room;
+                document.getElementById('modalBookingCheckIn').textContent = checkIn;
+                document.getElementById('modalBookingCheckOut').textContent = checkOut;
+                document.getElementById('modalBookingTotal').textContent = total + ' EGP';
+                
+                modal.style.display = 'flex';
+                modal.classList.remove('hidden');
+                document.body.style.overflow = 'hidden';
+                
+                // Re-initialize lucide icons
+                if (typeof lucide !== 'undefined' && lucide.createIcons) {
+                    lucide.createIcons();
+                }
+            }
+
+            function hideModal() {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+                document.body.style.overflow = '';
+            }
+
+            // Open modal when cancel button is clicked
+            cancelButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const bookingId = this.getAttribute('data-booking-id');
+                    const room = this.getAttribute('data-booking-room');
+                    const checkIn = this.getAttribute('data-booking-checkin');
+                    const checkOut = this.getAttribute('data-booking-checkout');
+                    const total = this.getAttribute('data-booking-total');
+                    
+                    showModal(bookingId, room, checkIn, checkOut, total);
+                });
+            });
+
+            // Close modal handlers
+            closeBtn.addEventListener('click', hideModal);
+            cancelBtn.addEventListener('click', hideModal);
+
+            // Close modal when clicking outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    hideModal();
+                }
+            });
+
+            // Close modal on Escape key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    hideModal();
+                }
+            });
+        })();
     </script>
     <partial name="_ValidationScriptsPartial" />
 }

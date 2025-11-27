@@ -1,0 +1,46 @@
+<!-- Hero Section -->
+<section id="home" class="hero-section d-flex flex-column justify-content-center align-items-center text-center text-white">
+  <div class="hero-content">
+    <h1 class="hero-title">Welcome to RoyalHaven</h1>
+    <p class="hero-subtitle">Where luxury meets comfort in perfect harmony. Experience the finest hospitality.</p>
+    
+    <!-- Search Filter -->
+    <div class="search-filter-container">
+      <form id="searchForm" class="search-form" onsubmit="return false;">
+        <div class="search-field">
+          <label>Check In</label>
+          <input type="date" id="checkIn" name="checkIn" class="form-control date-input" min="@DateTime.Today.ToString("yyyy-MM-dd")" required>
+          <span class="text-danger small validation-error" id="checkInError" style="display: none;"></span>
+        </div>
+        <div class="search-field">
+          <label>Check Out</label>
+          <input type="date" id="checkOut" name="checkOut" class="form-control date-input" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required>
+          <span class="text-danger small validation-error" id="checkOutError" style="display: none;"></span>
+        </div>
+        <div class="search-field guests-field">
+          <label>Guests</label>
+          <select name="guests" id="guests" class="form-control guests-select">
+            <option value="">Any</option>
+            <option value="1">1 Guest</option>
+            <option value="2">2 Guests</option>
+            <option value="3">3 Guests</option>
+            <option value="4">4 Guests</option>
+            <option value="5">5+ Guests</option>
+          </select>
+        </div>
+        <div class="search-field price-field">
+          <label>Min Price (EGP/night)</label>
+          <input type="number" id="minPrice" name="minPrice" class="form-control" placeholder="Any" min="0" step="100">
+        </div>
+        <div class="search-field price-field">
+          <label>Max Price (EGP/night)</label>
+          <input type="number" id="maxPrice" name="maxPrice" class="form-control" placeholder="Any" min="0" step="100">
+        </div>
+        <button type="button" id="searchButton" class="search-button">
+          Search
+        </button>
+      </form>
+    </div>
+  </div>
+</section>
+

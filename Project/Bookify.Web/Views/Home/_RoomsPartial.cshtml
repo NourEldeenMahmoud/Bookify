@@ -1,0 +1,160 @@
+@using Bookify.Data.Models
+@model IEnumerable<Room>
+
+@functions {
+    string GetFallbackImage(string? roomTypeImageUrl)
+    {
+        if (!string.IsNullOrEmpty(roomTypeImageUrl))
+        {
+            if (roomTypeImageUrl.StartsWith("~/"))
+            {
+                return Url.Content(roomTypeImageUrl);
+            }
+            else if (roomTypeImageUrl.StartsWith("/"))
+            {
+                return roomTypeImageUrl;
+            }
+            else
+            {
+                return Url.Content($"~/images/{roomTypeImageUrl}");
+            }
+        }
+        return Url.Content("~/images/G1.jpg");
+    }
+}
+
+<!-- Rooms Section -->
+<section id="rooms" class="rooms-section py-5">
+  <div class="container">
+    @if (ViewBag.HideTitle != true)
+    {
+    <div class="text-center mb-5">
+      <h2 class="section-title">Our Rooms & Suites</h2>
+      <p class="section-subtitle">
+        Discover elegantly designed accommodations that blend comfort with sophistication
+      </p>
+    </div>
+    }
+
+    <!-- Rooms Container -->
+    <div class="row" id="rooms-container" style="margin: 0 -12px;">
+      @if (Model != null && Model.Any())
+      {
+          @foreach (var room in Model)
+          {
+              <div class="col-lg-3 col-md-6 col-sm-12" style="padding: 0 12px; margin-bottom: 24px;">
+                <div class="room-card">
+                  <div class="room-img">
+                    @{
+                        string roomImagePath;
+                        // Priority: Use first image from GalleryImages, then RoomType.ImageUrl, then default
+                        if (room.GalleryImages != null && room.GalleryImages.Any())
+                        {
+                            var galleryImg = room.GalleryImages.First().ImageUrl;
+                            if (!string.IsNullOrEmpty(galleryImg))
+                            {
+                                if (galleryImg.StartsWith("~/"))
+                                {
+                                    roomImagePath = Url.Content(galleryImg);
+                                }
+                                else if (galleryImg.StartsWith("/"))
+                                {
+                                    roomImagePath = galleryImg;
+                                }
+                                else
+                                {
+                                    roomImagePath = Url.Content($"~/images/{galleryImg}");
+                                }
+                            }
+                            else
+                            {
+                                roomImagePath = GetFallbackImage(room.RoomType?.ImageUrl);
+                            }
+                        }
+                        else
+                        {
+                            roomImagePath = GetFallbackImage(room.RoomType?.ImageUrl);
+                        }
+                    }
+                    <img src="@roomImagePath" alt="@room.RoomType?.Name" class="w-100" style="object-fit: cover; height: 250px;" asp-append-version="true">
+                    <div class="price-badge">
+                        @($"{room.RoomType?.PricePerNight.ToString("N0")} EGP per night")
+                    </div>
+                  </div>
+                  <div class="room-info">
+                    <h3 class="room-title">@room.RoomType?.Name</h3>
+                    <div class="room-details">
+                      <span class="room-detail-item">
+                        <i class="fa-solid fa-users"></i>
+                        @(room.RoomType?.MaxOccupancy ?? 1) Guests
+                      </span>
+                      <span class="room-detail-item">
+                        <i class="fa-solid fa-square"></i>
+                        35 m²
+                      </span>
+                    </div>
+                    <div class="room-amenities">
+                      <span class="amenity-tag">WiFi</span>
+                      <span class="amenity-tag">Breakfast</span>
+                      <span class="amenity-tag">TV</span>
+                      <span class="amenity-tag">AC</span>
+                    </div>
+                    <button type="button"
+                            class="book-now-btn view-room-details-btn"
+                            data-room-id="@room.Id">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              </div>
+          }
+      }
+      else
+      {
+          <div class="col-12 text-center">
+            <p class="text-muted">No available rooms at the moment.</p>
+          </div>
+      }
+    </div>
+
+    <!-- Pagination -->
+    @if (ViewBag.TotalPages > 1)
+    {
+        <div class="pagination-container mt-5">
+          <nav aria-label="Rooms pagination">
+            <ul class="pagination justify-content-center" id="rooms-pagination">
+              @if (ViewBag.CurrentPage > 1)
+              {
+                  <li class="page-item">
+                    <a class="page-link pagination-link" href="#" data-page="@(ViewBag.CurrentPage - 1)">Previous</a>
+                  </li>
+              }
+              
+              @for (int i = 1; i <= ViewBag.TotalPages; i++)
+              {
+                  if (i == ViewBag.CurrentPage)
+                  {
+                      <li class="page-item active">
+                        <span class="page-link">@i</span>
+                      </li>
+                  }
+                  else
+                  {
+                      <li class="page-item">
+                        <a class="page-link pagination-link" href="#" data-page="@i">@i</a>
+                      </li>
+                  }
+              }
+              
+              @if (ViewBag.CurrentPage < ViewBag.TotalPages)
+              {
+                  <li class="page-item">
+                    <a class="page-link pagination-link" href="#" data-page="@(ViewBag.CurrentPage + 1)">Next</a>
+                  </li>
+              }
+            </ul>
+          </nav>
+        </div>
+    }
+  </div>
+</section>

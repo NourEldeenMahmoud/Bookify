@@ -119,45 +119,6 @@ namespace Bookify.Data.Migrations
                     b.ToTable("ApplicationUsers", (string)null);
                 });
 
-            modelBuilder.Entity("Bookify.Data.Models.AuditLog", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Action")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<DateTime>("ChangedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("ChangedByUserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Changes")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(500)
-                        .HasColumnType("nvarchar(500)");
-
-                    b.Property<string>("EntityType")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("AuditLogs", (string)null);
-                });
-
             modelBuilder.Entity("Bookify.Data.Models.Booking", b =>
                 {
                     b.Property<int>("Id")
@@ -398,6 +359,168 @@ namespace Bookify.Data.Migrations
                     b.HasIndex("RoomTypeId");
 
                     b.ToTable("Rooms", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            IsAvailable = true,
+                            Notes = "Ground floor, near elevator",
+                            RoomNumber = "101",
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 2,
+                            IsAvailable = true,
+                            Notes = "Ground floor, quiet area",
+                            RoomNumber = "102",
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 3,
+                            IsAvailable = false,
+                            Notes = "Under maintenance",
+                            RoomNumber = "103",
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 4,
+                            IsAvailable = true,
+                            Notes = "Second floor, city view",
+                            RoomNumber = "201",
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 5,
+                            IsAvailable = true,
+                            Notes = "Second floor, garden view",
+                            RoomNumber = "202",
+                            RoomTypeId = 1
+                        },
+                        new
+                        {
+                            Id = 6,
+                            IsAvailable = true,
+                            Notes = "Third floor, balcony",
+                            RoomNumber = "301",
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 7,
+                            IsAvailable = true,
+                            Notes = "Third floor, sea view",
+                            RoomNumber = "302",
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 8,
+                            IsAvailable = false,
+                            Notes = "Currently occupied",
+                            RoomNumber = "303",
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 9,
+                            IsAvailable = true,
+                            Notes = "Third floor, corner room",
+                            RoomNumber = "304",
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 10,
+                            IsAvailable = true,
+                            Notes = "Third floor, premium view",
+                            RoomNumber = "305",
+                            RoomTypeId = 2
+                        },
+                        new
+                        {
+                            Id = 11,
+                            IsAvailable = true,
+                            Notes = "Fourth floor, luxury suite",
+                            RoomNumber = "401",
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 12,
+                            IsAvailable = true,
+                            Notes = "Fourth floor, jacuzzi included",
+                            RoomNumber = "402",
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 13,
+                            IsAvailable = false,
+                            Notes = "Reserved for VIP",
+                            RoomNumber = "403",
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 14,
+                            IsAvailable = true,
+                            Notes = "Fifth floor, panoramic view",
+                            RoomNumber = "501",
+                            RoomTypeId = 3
+                        },
+                        new
+                        {
+                            Id = 15,
+                            IsAvailable = true,
+                            Notes = "Sixth floor, family friendly",
+                            RoomNumber = "601",
+                            RoomTypeId = 4
+                        },
+                        new
+                        {
+                            Id = 16,
+                            IsAvailable = true,
+                            Notes = "Sixth floor, connecting rooms available",
+                            RoomNumber = "602",
+                            RoomTypeId = 4
+                        },
+                        new
+                        {
+                            Id = 17,
+                            IsAvailable = false,
+                            Notes = "Currently booked",
+                            RoomNumber = "603",
+                            RoomTypeId = 4
+                        },
+                        new
+                        {
+                            Id = 18,
+                            IsAvailable = true,
+                            Notes = "Seventh floor, presidential suite",
+                            RoomNumber = "701",
+                            RoomTypeId = 5
+                        },
+                        new
+                        {
+                            Id = 19,
+                            IsAvailable = true,
+                            Notes = "Seventh floor, exclusive access",
+                            RoomNumber = "702",
+                            RoomTypeId = 5
+                        },
+                        new
+                        {
+                            Id = 20,
+                            IsAvailable = false,
+                            Notes = "Under renovation",
+                            RoomNumber = "703",
+                            RoomTypeId = 5
+                        });
                 });
 
             modelBuilder.Entity("Bookify.Data.Models.RoomType", b =>
@@ -438,6 +561,53 @@ namespace Bookify.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("RoomTypes", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            Description = "Comfortable single room with one bed, perfect for solo travelers.",
+                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G1.jpg",
+                            MaxOccupancy = 1,
+                            Name = "Single Room",
+                            PricePerNight = 2000.00m
+                        },
+                        new
+                        {
+                            Id = 2,
+                            Description = "Spacious double room with two beds, ideal for couples or friends.",
+                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G2.jpg",
+                            MaxOccupancy = 2,
+                            Name = "Double Room",
+                            PricePerNight = 3500.00m
+                        },
+                        new
+                        {
+                            Id = 3,
+                            Description = "Luxurious suite with separate living area and premium amenities.",
+                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G3.jpg",
+                            MaxOccupancy = 4,
+                            Name = "Deluxe Suite",
+                            PricePerNight = 10000.00m
+                        },
+                        new
+                        {
+                            Id = 4,
+                            Description = "Large family room with multiple beds, perfect for families.",
+                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G4.jpg",
+                            MaxOccupancy = 5,
+                            Name = "Family Room",
+                            PricePerNight = 50000.00m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            Description = "Ultra-luxurious presidential suite with all premium features.",
+                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G55.jpg",
+                            MaxOccupancy = 6,
+                            Name = "Presidential Suite",
+                            PricePerNight = 20000.00m
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>

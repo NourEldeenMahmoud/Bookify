@@ -24,16 +24,18 @@ namespace Bookify.Data.Repositories.Implementations
         {
             try
             {
-                _logger.Information("Getting all rooms with room type");
+                _logger.Information("Getting all rooms with room type, gallery images, and bookings");
                 var result = await _dbSet
                 .Include(r => r.RoomType)
+                .Include(r => r.GalleryImages)
+                .Include(r => r.Bookings)
                 .ToListAsync();
-                _logger.Debug("Retrieved {Count} rooms with room type", result.Count);
+                _logger.Debug("Retrieved {Count} rooms with room type, gallery images, and bookings", result.Count);
                 return result;
             }
             catch (Exception ex)
             {
-                _logger.Error(ex, "Error getting all rooms with room type");
+                _logger.Error(ex, "Error getting all rooms with room type, gallery images, and bookings");
                 throw;
             }
         }
@@ -83,6 +85,7 @@ namespace Bookify.Data.Repositories.Implementations
                 var result = await _dbSet
                 .Include(r => r.RoomType)
                 .Include(r => r.GalleryImages)
+                .Include(r => r.Bookings)
                 .FirstOrDefaultAsync(r => r.Id == id);
                 if (result == null)
                     _logger.Warning("Room with ID {RoomId} not found", id);
