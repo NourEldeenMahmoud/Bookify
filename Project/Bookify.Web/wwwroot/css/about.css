@@ -1,0 +1,238 @@
+/*  General Body */
+body {
+  background-color: #f6f2ec; 
+  color: #3e2c1c; 
+  font-family: 'Inter', sans-serif;
+  margin: 0;
+  padding: 0;
+  font-size: 16px;
+}
+
+/*  About Section */
+.about-section {
+  margin-left: 100px;
+  padding: 80px 40px;
+  text-align: center;
+  background: #f7f4ef;
+}
+
+.about-container {
+  background: #FFFFFF; 
+  border-radius: 24px;
+  color: #4d3b2a;
+  padding: 60px;
+  max-width: 1000px;
+  margin: 0 auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(255, 140, 66, 0.1);
+  transition: all 0.4s ease-in-out;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+.about-container:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 16px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 140, 66, 0.2);
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #3b2c2c;
+  margin-bottom: 30px;
+  position: relative;
+  display: inline-block;
+  padding-bottom: 15px;
+  border-bottom: 4px solid #FF8C42;
+  letter-spacing: -0.5px;
+  font-family: 'Inter', sans-serif;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #FF8C42 0%, #FF6B1A 100%);
+  border-radius: 2px;
+}
+
+.about-container p {
+  font-size: 16px;
+  color: #5b4636;
+  line-height: 1.75;
+  margin-bottom: 25px;
+  text-align: justify;
+  text-justify: inter-word;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+}
+
+/*  Policies Section */
+.policies-section {
+  margin-left: 220px;
+  padding: 40px 20px 100px;
+}
+
+.policies-card {
+  background-color: #f1e8dd; 
+  border-radius: 16px;
+  padding: 40px;
+  color: #3e2c1c;
+  line-height: 1.8;
+  border: 1px solid rgba(179, 139, 89, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+
+.policies-card h3 {
+  color: #b38b59; 
+  margin-bottom: 25px;
+  font-weight: 700;
+}
+
+.policies-card h5 {
+  color: #704e2e;
+  margin-top: 25px;
+  font-weight: 600;
+}
+
+.policies-card p {
+  color: #4e3b29;
+  font-size: 15px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .about-section,
+  .policies-section,
+  footer {
+    margin-left: 180px;
+  }
+}
+
+@media (max-width: 992px) {
+  .about-section,
+  .policies-section,
+  footer {
+    margin-left: 0;
+    padding: 60px 20px;
+  }
+
+  .about-container,
+  .policies-card {
+    padding: 30px 20px;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .about-container p {
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about-section,
+  .policies-section {
+    padding: 40px 15px;
+  }
+  .about-container{
+    margin-right: -90px;
+  }
+
+  .about-container {
+    border-radius: 14px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    
+  }
+
+  .policies-card {
+    padding: 25px 15px;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+ 
+}
+
+@media (max-width: 576px) {
+  .about-container
+   {
+    padding: 20px 10px;
+    margin-left: 100px;
+  }
+.policies-card {
+    width: 85%; 
+    margin: 0 auto; 
+    margin-left: -40px; 
+  }
+
+  .section-title {
+    font-size: 1.6rem;
+  }
+
+  .about-container p {
+    font-size: 14px;
+  }
+}
+.custom-sidebar {
+  background: linear-gradient(to bottom, #78350f, #451a03);
+  width: 90px;
+  min-height: 100vh;
+  padding-top: 20px;
+  color: #fff;
+  position: fixed;
+  left: 0;
+  top: 0;
+}
+
+.custom-sidebar .nav-link {
+  color: #fff !important;
+}
+
+.custom-sidebar .nav-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+.custom-footer {
+  background: linear-gradient(to bottom, #78350f, #451a03); 
+  color: #fff;
+}
+
+.custom-footer a {
+  color: #fff;
+  text-decoration: none;
+}
+
+.custom-footer a:hover {
+  color: #fcd34d;
+}
+.custom-logo {
+  background: linear-gradient(to bottom right, #fbbf24, #ea580c); /* amber-400 → orange-600 */
+  color: white;
+    font-size: 18px;
+    width: 45px;
+    height: 45px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    margin: 20px 0;
+}
+.button-sidebar .nav-items li a:hover i {
+  transform: scale(1.2);
+  color: #ffb300;
+}
+/* .button-sidebar .nav-items li a span {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: 0.3s ease;
+} */
+.button-sidebar:hover .nav-items li a span {
+  opacity: 1;
+  transform: translateX(0);
+}

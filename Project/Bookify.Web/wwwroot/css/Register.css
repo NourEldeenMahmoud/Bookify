@@ -11,13 +11,18 @@ body {
 
 /* Left image overlay */
 .image-overlay {
-  background-image: url('../images/photo-1760067538068-03d10481bacb.jpeg');
+  background-image: url('/images/photo-1760067538068-03d10481bacb.jpeg');
   background-size: cover;
-  background-position: center;
+  background-position: center center;
+  background-repeat: no-repeat;
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
 }
 
 .image-overlay::before {

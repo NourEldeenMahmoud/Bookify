@@ -114,8 +114,27 @@ namespace Bookify.Services.Services
                     booking.Status = BookingStatus.Cancelled;
                     booking.UpdatedAt = DateTime.UtcNow;
                     
+                    // Check if room has any other non-cancelled bookings
+                    // If not, set IsAvailable back to true
+                    var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(booking.RoomId);
+                    if (room != null)
+                    {
+                        var hasOtherBookings = room.Bookings.Any(b => 
+                            b.Id != bookingId && 
+                            b.Status != BookingStatus.Cancelled && 
+                            b.CheckOutDate > DateTime.Today);
+                        
+                        if (!hasOtherBookings && !room.IsAvailable)
+                        {
+                            room.IsAvailable = true;
+                            _unitOfWork.Rooms.Update(room);
+                            _logger.Information("Updated room {RoomId} availability to true after booking cancellation", booking.RoomId);
+                        }
+                    }
+                    
                     await _unitOfWork.BookingStatusHistory.AddAsync(statusHistory);
                     _unitOfWork.Bookings.Update(booking);
+                    await _unitOfWork.SaveChangesAsync();
                     await _unitOfWork.CommitTransactionAsync();
                     
                     _logger.Debug("Successfully cancelled reservation - BookingId: {BookingId}, UserId: {UserId}", bookingId, userId);
@@ -211,6 +230,15 @@ namespace Bookify.Services.Services
                     await _unitOfWork.Bookings.AddAsync(newBooking);
                     await _unitOfWork.SaveChangesAsync(); // Save to get the booking ID
 
+                    // Update room availability to false when booking is created (regardless of check-in date)
+                    // This ensures the room is removed from available rooms list immediately
+                    if (room.IsAvailable)
+                    {
+                        room.IsAvailable = false;
+                        _unitOfWork.Rooms.Update(room);
+                        _logger.Information("Updated room {RoomId} availability to false due to booking (CheckIn: {CheckIn})", roomId, checkIn);
+                    }
+
                     var statusHistory = new BookingStatusHistory
                     {
                         BookingId = newBooking.Id,
@@ -222,6 +250,7 @@ namespace Bookify.Services.Services
                     };
 
                     await _unitOfWork.BookingStatusHistory.AddAsync(statusHistory);
+                    await _unitOfWork.SaveChangesAsync();
                     await _unitOfWork.CommitTransactionAsync();
 
                     _logger.Debug("Successfully created reservation - UserId: {UserId}, RoomId: {RoomId}, BookingId: {BookingId}", userId, roomId, newBooking.Id);

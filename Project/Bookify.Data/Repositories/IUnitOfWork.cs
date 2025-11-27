@@ -10,13 +10,12 @@ using System.Transactions;
 
 namespace Bookify.Data.Repositories
 {
-    public interface IUnitOfWork:IDisposable
+    public interface IUnitOfWork : IDisposable, IAsyncDisposable
     {
         public IRepository<RoomType> RoomTypes { get; }
         public IRoomRepository Rooms { get; }
         public IBookingRepository Bookings { get; }
         public IRepository<BookingPayment> BookingPayments { get; }
-        public IRepository<AuditLog> AuditLogs { get; }
         public IRepository<GalleryImage> GalleryImages { get; }
         public IRepository<BookingStatusHistory> BookingStatusHistory { get; }
 

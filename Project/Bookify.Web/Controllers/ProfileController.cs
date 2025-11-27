@@ -65,7 +65,7 @@ namespace Bookify.Web.Controllers
         {
             try
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var userId = User.FindFirst( ClaimTypes.NameIdentifier)?.Value;
                 if (string.IsNullOrEmpty(userId))
                 {
                     _logger.LogWarning("Unauthenticated user attempted to update profile");
@@ -146,7 +146,7 @@ namespace Bookify.Web.Controllers
             }
             catch (ArgumentException ex)
             {
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 _logger.LogWarning(ex, "Validation error updating profile - UserId: {UserId}", userId);
                 ModelState.AddModelError("", ex.Message);
                 
@@ -164,7 +164,7 @@ namespace Bookify.Web.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error updating profile - UserId: {UserId}",
-                    User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+                    User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
                 TempData["Error"] = "An error occurred while updating your profile. Please try again.";
                 return RedirectToAction("Index");
             }

@@ -4,6 +4,7 @@ using Bookify.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace Bookify.Web.Controllers;
 
@@ -231,15 +232,10 @@ public class AccountController : Controller
                     return View(model);
                 }
 
-                // Handle failed login attempt - show remaining attempts
-                // PasswordSignInAsync automatically increments AccessFailedCount on failure
-                // So we need to get the user again to get the updated count
                 if (user != null)
                 {
-                    // Refresh user to get updated AccessFailedCount after the failed attempt
                     user = await _userManager.FindByEmailAsync(model.Email);
                     
-                    // Get lockout settings from IdentityOptions
                     var lockoutOptions = _userManager.Options.Lockout;
                     int maxFailedAttempts = lockoutOptions.MaxFailedAccessAttempts;
                     int currentFailedCount = user?.AccessFailedCount ?? 0;
@@ -247,10 +243,8 @@ public class AccountController : Controller
                     
                     if (remainingAttempts > 0)
                     {
-                        _logger.LogWarning("Invalid login attempt for {Email}. {RemainingAttempts} attempts remaining", 
-                            model.Email, remainingAttempts);
-                        ModelState.AddModelError(string.Empty, 
-                            $"Invalid email or password. You have {remainingAttempts} attempt(s) remaining before your account is locked.");
+                        _logger.LogWarning("Invalid login attempt for {Email}. {RemainingAttempts} attempts remaining", model.Email, remainingAttempts);
+                        ModelState.AddModelError(string.Empty, $"Invalid email or password. You have {remainingAttempts} attempt(s) remaining before your account is locked.");
                     }
                     else
                     {
@@ -286,7 +280,7 @@ public class AccountController : Controller
     {
         try
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User {UserId} logged out", userId);
             TempData["Success"] = "You have been logged out successfully.";
@@ -304,7 +298,7 @@ public class AccountController : Controller
     {
         try
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst( ClaimTypes.NameIdentifier)?.Value;
             _logger.LogWarning("Access denied for user {UserId} - Path: {Path}", userId, HttpContext.Request.Path);
             return View();
         }
@@ -361,10 +355,7 @@ public class AccountController : Controller
                 return View(model);
             }
 
-            var emailSent = await _emailService.SendPasswordResetEmailAsync(
-                user.Email!,
-                $"{user.FirstName} {user.LastName}".Trim(),
-                resetUrl);
+            var emailSent = await _emailService.SendPasswordResetEmailAsync(user.Email!,$"{user.FirstName} {user.LastName}".Trim(),resetUrl);
 
             if (emailSent)
             {
@@ -517,7 +508,7 @@ public class AccountController : Controller
                 return View(model);
             }
 
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("User ID not found in claims for change password");

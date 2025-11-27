@@ -53,7 +53,83 @@
 *::selection{
  background-color:var(--color-orange-400);
 }
-body {
+/* Account Pages Styles - Apply to all Account controller pages */
+body.account-page-body {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    width: 100% !important;
+    background-color: #f7f7f7 !important;
+    position: relative !important;
+}
+
+body.account-page-body html {
+    height: auto !important;
+    overflow: visible !important;
+}
+
+body.account-page-body .account-page {
+    width: 100% !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 20px !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+}
+
+body.account-page-body .sidebar {
+    display: none !important;
+}
+
+body.account-page-body .content-wrapper {
+    margin-left: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    min-height: 100vh !important;
+    flex: 1 !important;
+    padding: 0 !important;
+}
+
+body.account-page-body .main-content {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-height: 100vh !important;
+    padding: 20px !important;
+    margin: 0 !important;
+    flex: 1 !important;
+    box-sizing: border-box !important;
+}
+
+body.account-page-body .footer {
+    display: none !important;
+}
+
+body.account-page-body .page-wrapper {
+    width: 100% !important;
+    min-height: 100vh !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+    flex-direction: row !important;
+}
+
+body:not(.profile-page-body) {
     font-family: 'Inter', sans-serif;
     background-color: #f7f7f7;
     min-height: 100vh;
@@ -61,16 +137,84 @@ body {
     justify-content: center;
     align-items: center;
     padding: 20px;
-  }
+}
+
+/* Profile Page Styles */
+body.profile-page-body {
+    display: block !important;
+    min-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+    background-color: #f8f8f8 !important;
+    position: static !important;
+}
+
+body.profile-page-body .profile-page {
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+body.profile-page-body .content-wrapper {
+    margin-left: 100px !important;
+    width: calc(100% - 100px) !important;
+    max-width: none !important;
+    display: block !important;
+    flex-direction: column !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    padding: 0 !important;
+    flex: none !important;
+}
+
+body.profile-page-body .main-content {
+    display: block !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 40px 60px !important;
+    margin: 0 !important;
+    flex: none !important;
+    box-sizing: border-box !important;
+}
+
+body.profile-page-body .page-wrapper {
+    width: 100% !important;
+    min-height: 100vh !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: row !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    position: relative !important;
+}
+
+.profile-page .footer {
+    display: none !important;
+}
 
 .image-overlay {
-    background-image: url('../images/r17.jpg');
+    background-image: url('/images/r17.jpg');
     background-size: cover;
-    background-position: center;
+    background-position: center center;
+    background-repeat: no-repeat;
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 .image-overlay::before {
@@ -98,3 +242,38 @@ body {
 .flex label {
   color: var(--color-orange-700);
 }
+
+.login-form-container {
+    margin: 0 auto !important;
+    display: flex !important;
+    justify-content: stretch !important;
+    align-items: stretch !important;
+    min-height: 600px;
+    max-height: 90vh;
+}
+
+.login-form-container .image-overlay {
+    min-height: 600px;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.login-form-container .bg-royal-light {
+    min-height: 600px;
+    height: 100%;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.login-form-container .bg-royal-light > div {
+    margin: 0 !important;
+    padding: 2rem 3rem !important;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+

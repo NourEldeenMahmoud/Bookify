@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Bookify.Data.Repositories
 {
-    public class UnitOfWork : IUnitOfWork
+    public class UnitOfWork : IUnitOfWork, IAsyncDisposable
     {
         private readonly AppDbContext _context;
         private IDbContextTransaction? _transaction;
@@ -21,7 +21,6 @@ namespace Bookify.Data.Repositories
         private IRoomRepository? _rooms;
         private IBookingRepository? _bookings;
         private IRepository<BookingPayment>? _bookingPayments;
-        private IRepository<AuditLog>? _auditLogs;
         private IRepository<GalleryImage>? _galleryImages;
         private IRepository<BookingStatusHistory>? _bookingStatusHistory;
         
@@ -48,8 +47,6 @@ namespace Bookify.Data.Repositories
         public IRepository<GalleryImage> GalleryImages =>
             _galleryImages ??= new Repository<GalleryImage>(_context);
 
-        public IRepository<AuditLog> AuditLogs =>
-            _auditLogs ??= new Repository<AuditLog>(_context);
 
         public async Task BeginTransactionAsync()
         {
@@ -80,6 +77,15 @@ namespace Bookify.Data.Repositories
         public void Dispose()
         {
             _transaction?.Dispose();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            if (_transaction != null)
+            {
+                await _transaction.DisposeAsync();
+                _transaction = null;
+            }
         }
 
         public async Task RollbackTransactionAsync()

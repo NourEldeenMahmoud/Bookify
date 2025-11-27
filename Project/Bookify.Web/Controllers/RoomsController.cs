@@ -1,11 +1,8 @@
 ﻿using Bookify.Data.Repositories;
 using Bookify.Services.Interfaces;
-using Bookify.Web.ViewModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using System.Text.Json;
 using Serilog;
+using System.Linq;
 
 namespace Bookify.Web.Controllers;
 
@@ -21,24 +18,17 @@ public class RoomsController : Controller
         _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
         _roomAvailabilityService = roomAvailabilityService ?? throw new ArgumentNullException(nameof(roomAvailabilityService));
     }
-    public async Task<IActionResult> Index()
+    public IActionResult Index(DateTime? checkIn, DateTime? checkOut, int? guests, decimal? minPrice, decimal? maxPrice)
     {
-        try
-        {
-            _logger.LogInformation("Retrieving all rooms from database");
-            var rooms = await _unitOfWork.Rooms.GetAllAsync();
-
-            _logger.LogInformation("Successfully retrieved {0} rooms from database", rooms.Count());
-
-            return View(rooms);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "An error occurred while retrieving rooms at {time}", DateTime.UtcNow);
-
-            return View("Error");
-        }
-
+        // Redirect to Home page and scroll to rooms section
+        // This ensures consistent behavior and uses the same view as Home
+        return RedirectToAction("Index", "Home", new { 
+            checkIn = checkIn, 
+            checkOut = checkOut, 
+            guests = guests, 
+            minPrice = minPrice, 
+            maxPrice = maxPrice 
+        });
     }
     public async Task<IActionResult> Details(int id, DateTime? checkIn, DateTime? checkOut)
     {
@@ -95,122 +85,35 @@ public class RoomsController : Controller
         }
     }
 
-    [HttpPost]
-    [Authorize]
-    public async Task<IActionResult> AddToCart(int roomId, DateTime checkIn, DateTime checkOut, int numberOfGuests)
+    /// <summary>
+    /// Returns the room details partial view for use inside a modal (AJAX).
+    /// </summary>
+    [HttpGet]
+    public async Task<IActionResult> DetailsPartial(int id)
     {
         try
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            _logger.LogInformation("Add to cart attempt - UserId: {UserId}, RoomId: {RoomId}, CheckIn: {CheckIn}, CheckOut: {CheckOut}, Guests: {NumberOfGuests}",
-                userId, roomId, checkIn, checkOut, numberOfGuests);
-
-            if (!User.Identity?.IsAuthenticated ?? true)
+            if (id <= 0)
             {
-                _logger.LogWarning("Unauthenticated user attempted to add room to cart");
-                return RedirectToAction("Login", "Account");
+                _logger.LogWarning("Invalid room ID provided for DetailsPartial: {RoomId}", id);
+                return BadRequest("Invalid room id.");
             }
 
-            // Validation
-            if (roomId <= 0)
-            {
-                _logger.LogWarning("Invalid roomId provided: {RoomId}", roomId);
-                TempData["Error"] = "Invalid room selected.";
-                return RedirectToAction("Index", "Home");
-            }
-
-            if (checkIn >= checkOut)
-            {
-                _logger.LogWarning("Invalid date range - CheckIn {CheckIn} must be before CheckOut {CheckOut}", checkIn, checkOut);
-                TempData["Error"] = "Check-in date must be before check-out date.";
-                return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
-            }
-
-            if (checkIn < DateTime.Today)
-            {
-                _logger.LogWarning("Check-in date is in the past: {CheckIn}", checkIn);
-                TempData["Error"] = "Check-in date cannot be in the past.";
-                return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
-            }
-
-            if (numberOfGuests <= 0)
-            {
-                _logger.LogWarning("Invalid numberOfGuests provided: {NumberOfGuests}", numberOfGuests);
-                TempData["Error"] = "Number of guests must be greater than zero.";
-                return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
-            }
-
-            var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(roomId);
+            var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(id);
             if (room == null)
             {
-                _logger.LogWarning("Room with ID {RoomId} not found", roomId);
-                TempData["Error"] = "Room not found.";
-                return RedirectToAction("Index", "Home");
+                _logger.LogWarning("Room with ID {RoomId} not found for DetailsPartial", id);
+                return NotFound();
             }
 
-            if (numberOfGuests > room.RoomType.MaxOccupancy)
-            {
-                _logger.LogWarning("Number of guests {NumberOfGuests} exceeds room capacity {Capacity}",
-                    numberOfGuests, room.RoomType.MaxOccupancy);
-                TempData["Error"] = $"Number of guests exceeds room capacity ({room.RoomType.MaxOccupancy}).";
-                return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
-            }
-
-            var isAvailable = await _roomAvailabilityService.CheckRoomAvailabilityAsync(roomId, checkIn, checkOut);
-            if (!isAvailable)
-            {
-                _logger.LogWarning("Room {RoomId} is not available for dates {CheckIn} to {CheckOut}", roomId, checkIn, checkOut);
-                TempData["Error"] = "Room is not available for the selected dates.";
-                return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
-            }
-
-            // Calculate total amount
-            var nights = (checkOut - checkIn).Days;
-            var totalAmount = room.RoomType.PricePerNight * nights;
-
-            // add to session cart
-            var cartItem = new ReservationCartItem
-            {
-                RoomId = roomId,
-                RoomNumber = room.RoomNumber,
-                RoomTypeName = room.RoomType.Name,
-                CheckInDate = checkIn,
-                CheckOutDate = checkOut,
-                NumberOfGuests = numberOfGuests,
-                TotalAmount = totalAmount,
-                AddedAt = DateTime.UtcNow
-            };
-
-            var cart = HttpContext.Session.GetString("Cart");
-            var cartItems = new List<ReservationCartItem>();
-            
-            if (!string.IsNullOrEmpty(cart))
-            {
-                try
-                {
-                    cartItems = JsonSerializer.Deserialize<List<ReservationCartItem>>(cart)
-                        ?? new List<ReservationCartItem>();
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogWarning(ex, "Error deserializing cart. Starting with empty cart.");
-                    cartItems = new List<ReservationCartItem>();
-                }
-
-            cartItems.Add(cartItem);
-            HttpContext.Session.SetString("Cart", JsonSerializer.Serialize(cartItems));
-            }
-
-            _logger.LogInformation("Room {RoomId} added to cart successfully for user {UserId}", roomId, userId);
-            TempData["Success"] = "Room added to cart successfully!";
-            return RedirectToAction("Cart", "Bookings");
+            return PartialView("~/Views/Rooms/_RoomDetailsPartial.cshtml", room);
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error adding room to cart - RoomId: {RoomId}", roomId);
-            TempData["Error"] = "An error occurred while adding room to cart. Please try again.";
-            return RedirectToAction("Details", new { id = roomId, checkIn, checkOut });
+            _logger.LogError(ex, "Error loading room details partial - RoomId: {RoomId}", id);
+            return StatusCode(500, "An error occurred while loading room details.");
         }
     }
+
 }
 

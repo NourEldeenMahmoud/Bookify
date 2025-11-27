@@ -1,145 +1,307 @@
-﻿@using Bookify.Data.Models
-@using Bookify.Web.ViewModels
-@model RoomSearchViewModel
+@using Bookify.Data.Models
+@model IEnumerable<Room>
+
 @{
-    ViewData["Title"] = "Find Your Perfect Room";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-
+    ViewData["Title"] = "Home - RoyalHaven";
 }
 
-<div class="row mb-4">
-    <div class="col-12">
-        <div class="card shadow">
-            <div class="card-body">
-                <h2 class="card-title mb-4"><i class="fas fa-search"></i> Search Available Rooms</h2>
-                <form asp-action="Index" method="get" class="row g-3">
-                    <div class="col-md-3">
-                        <label asp-for="CheckInDate" class="form-label">Check-in Date</label>
-                        <input asp-for="CheckInDate" type="date" class="form-control" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
-                    </div>
-                    <div class="col-md-3">
-                        <label asp-for="CheckOutDate" class="form-label">Check-out Date</label>
-                        <input asp-for="CheckOutDate" type="date" class="form-control" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
-                    </div>
-                    <div class="col-md-2">
-                        <label asp-for="RoomTypeId" class="form-label">Room Type</label>
-                        <select asp-for="RoomTypeId" class="form-select" asp-items="ViewBag.RoomTypes">
-                            <option value="">All Types</option>
-                        </select>
-                    </div>
-                    <div class="col-md-2">
-                        <label asp-for="MinCapacity" class="form-label">Min Guests</label>
-                        <input asp-for="MinCapacity" type="number" class="form-control" min="1" />
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label">&nbsp;</label>
-                        <button type="submit" class="btn btn-primary w-100">
-                            <i class="fas fa-search"></i> Search
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- Hero Section -->
+@await Html.PartialAsync("_HeroPartial")
 
-@if (ViewBag.AvailableRooms != null)
-{
-    var rooms = ViewBag.AvailableRooms as IEnumerable<Room>;
-    @if (rooms != null && rooms.Any())
-    {
-        <div class="row">
-            <h3 class="mb-4">Available Rooms</h3>
-            @foreach (var room in rooms)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        @if (room.GalleryImages != null && room.GalleryImages.Any())
-                        {
-                            <img src="@room.GalleryImages.First().ImageUrl" class="card-img-top" alt="@room.RoomNumber" style="height: 200px; object-fit: cover;">
-                        }
-                        else
-                        {
-                            <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
-                                <i class="fas fa-image fa-3x text-white"></i>
-                            </div>
-                        }
-                        <div class="card-body">
-                            <h5 class="card-title">@room.RoomType.Name - @room.RoomNumber</h5>
-                            <p class="card-text">@room.RoomType.Description</p>
-                            <ul class="list-unstyled">
-                                <li><i class="fas fa-users"></i> Capacity: @room.RoomType.MaxOccupancy guests</li>
-                                <li><i class="fas fa-dollar-sign"></i> Price: $@room.RoomType.PricePerNight.ToString("F2")/night</li>
-                            </ul>
-                        </div>
-                        <div class="card-footer bg-white">
-                            <a asp-controller="Rooms" asp-action="Details"
-                               asp-route-id="@room.Id"
-                               asp-route-checkIn="@Model?.CheckInDate?.ToString("yyyy-MM-dd")"
-                               asp-route-checkOut="@Model?.CheckOutDate?.ToString("yyyy-MM-dd")"
-                               class="btn btn-primary w-100">
-                                <i class="fas fa-eye"></i> View Details
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            }
-        </div>
-    }
-    else
-    {
-        <div class="alert alert-info">
-            <i class="fas fa-info-circle"></i> No rooms available for the selected dates. Please try different dates.
-        </div>
-    }
-}
-else
-{
-    <div class="row">
-        <div class="col-12 text-center py-5">
-            <i class="fas fa-hotel fa-5x text-primary mb-3"></i>
-            <h2>Welcome to Bookify</h2>
-            <p class="lead">Find and book your perfect hotel room</p>
-            <p>Use the search form above to find available rooms for your dates.</p>
-            @if (User.Identity != null && !User.Identity.IsAuthenticated)
-            {
-                <div class="mt-4">
-                    <a asp-controller="Account" asp-action="Login" class="btn btn-primary btn-lg">
-                        <i class="bi bi-box-arrow-in-right"></i> Login
-                    </a>
-                </div>
-            }
-            else if (User.Identity != null && User.Identity.IsAuthenticated)
-            {
-                <div class="mt-4 d-flex gap-3 justify-content-center">
-                    <a asp-controller="Profile" asp-action="Index" class="btn btn-primary btn-lg">
-                        <i class="bi bi-person-circle"></i> My Profile
-                    </a>
-                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                        @Html.AntiForgeryToken()
-                        <button type="submit" class="btn btn-outline-danger btn-lg">
-                            <i class="bi bi-box-arrow-right"></i> Logout
-                        </button>
-                    </form>
-                </div>
-            }
-        </div>
-    </div>
+<!-- Rooms Section -->
+@await Html.PartialAsync("_RoomsPartial")
+
+<!-- Amenities Section -->
+@await Html.PartialAsync("_AmenitiesPartial")
+
+<!-- Gallery Section -->
+@await Html.PartialAsync("_GalleryPartial")
+
+<!-- About Section -->
+@await Html.PartialAsync("_AboutPartial")
+
+<!-- Contact Section -->
+@await Html.PartialAsync("_ContactPartial")
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/rooms.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/about.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/gallery.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/amenities.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/contact.css" asp-append-version="true" />
 }
 
 @section Scripts {
     <script>
-        $(document).ready(function() {
+        $(function () {
             // Set minimum dates
-            var today = new Date().toISOString().split('T')[0];
-            $('input[type="date"]').attr('min', today);
+            const today = new Date().toISOString().split('T')[0];
+            $('#checkIn').attr('min', today);
+            $('#checkOut').attr('min', new Date(Date.now() + 86400000).toISOString().split('T')[0]);
 
-            // Update checkout minimum based on check-in
-            $('#CheckInDate').on('change', function() {
-                var checkIn = new Date($(this).val());
-                checkIn.setDate(checkIn.getDate() + 1);
-                $('#CheckOutDate').attr('min', checkIn.toISOString().split('T')[0]);
+            // Update check-out minimum when check-in changes
+            $('#checkIn').on('change', function() {
+                const checkInDate = new Date($(this).val());
+                if (checkInDate) {
+                    const minCheckOut = new Date(checkInDate);
+                    minCheckOut.setDate(minCheckOut.getDate() + 1);
+                    $('#checkOut').attr('min', minCheckOut.toISOString().split('T')[0]);
+                    
+                    // If check-out is before new minimum, clear it
+                    const checkOutDate = new Date($('#checkOut').val());
+                    if ($('#checkOut').val() && checkOutDate <= checkInDate) {
+                        $('#checkOut').val('');
+                    }
+                }
+                clearErrors();
+            });
+
+            // Validation on check-out change
+            $('#checkOut').on('change', function() {
+                validateDates();
+            });
+
+            // Validate dates function
+            function validateDates() {
+                clearErrors();
+                let isValid = true;
+                const checkIn = $('#checkIn').val();
+                const checkOut = $('#checkOut').val();
+
+                if (!checkIn) {
+                    showError('checkInError', 'Check-in date is required.');
+                    isValid = false;
+                } else {
+                    const checkInDate = new Date(checkIn);
+                    const today = new Date();
+                    today.setHours(0, 0, 0, 0);
+                    
+                    if (checkInDate < today) {
+                        showError('checkInError', 'Check-in date cannot be in the past.');
+                        isValid = false;
+                    }
+                }
+
+                if (!checkOut) {
+                    showError('checkOutError', 'Check-out date is required.');
+                    isValid = false;
+                } else if (checkIn) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    
+                    if (checkOutDate <= checkInDate) {
+                        showError('checkOutError', 'Check-out date must be after check-in date.');
+                        isValid = false;
+                    }
+                }
+
+                return isValid;
+            }
+
+            function showError(elementId, message) {
+                $('#' + elementId).text(message).show();
+            }
+
+            function clearErrors() {
+                $('.validation-error').hide().text('');
+            }
+
+            // Validate price range
+            function validatePrices() {
+                const minPrice = parseFloat($('#minPrice').val()) || 0;
+                const maxPrice = parseFloat($('#maxPrice').val()) || 0;
+                
+                if (minPrice > 0 && maxPrice > 0 && minPrice > maxPrice) {
+                    alert('Minimum price cannot be greater than maximum price.');
+                    return false;
+                }
+                return true;
+            }
+
+            // Store search parameters globally for pagination
+            window.currentSearchParams = {};
+
+            // Handle search button click
+            $('#searchButton').on('click', function(e) {
+                e.preventDefault();
+                
+                if (!validateDates()) {
+                    return;
+                }
+                
+                if (!validatePrices()) {
+                    return;
+                }
+
+                // Get form data
+                const formData = {
+                    checkIn: $('#checkIn').val(),
+                    checkOut: $('#checkOut').val(),
+                    guests: $('#guests').val() || null,
+                    minPrice: $('#minPrice').val() || null,
+                    maxPrice: $('#maxPrice').val() || null,
+                    page: 1
+                };
+
+                // Store search parameters for pagination
+                window.currentSearchParams = formData;
+
+                // Show loading state
+                $(this).prop('disabled', true).text('Searching...');
+
+                // Scroll to rooms section
+                $('html, body').animate({
+                    scrollTop: $('#rooms').offset().top - 100
+                }, 500);
+
+                // AJAX call to filter rooms
+                $.ajax({
+                    url: '@Url.Action("SearchRooms", "Home")',
+                    type: 'GET',
+                    data: formData,
+                    success: function (html) {
+                        // Replace the container content inside #rooms section
+                        const $roomsSection = $('#rooms');
+                        if ($roomsSection.length > 0) {
+                            const $parsedHtml = $(html);
+                            const $container = $roomsSection.find('.container');
+                            if ($container.length > 0) {
+                                // Replace container content
+                                $container.html($parsedHtml.find('.container').html());
+                            } else {
+                                // If no container, replace section content
+                                $roomsSection.html($parsedHtml.html());
+                            }
+                        } else {
+                            // If section doesn't exist, append it
+                            $('body').append(html);
+                        }
+                        $('#searchButton').prop('disabled', false).text('Search');
+                        attachPaginationHandlers();
+                    },
+                    error: function () {
+                        alert('An error occurred while searching. Please try again.');
+                        $('#searchButton').prop('disabled', false).text('Search');
+                    }
+                });
+            });
+
+            // Function to attach pagination handlers
+function attachPaginationHandlers() {
+  // تفويض حدث النقر على روابط pagination — مستقر حتى بعد استبدال محتوى الـ DOM
+$(document).off('click.roomsPagination', '.pagination-link');
+$(document).on('click.roomsPagination', '.pagination-link', function (e) {
+  e.preventDefault();
+
+  const $clicked = $(this);
+  const page = $clicked.data('page');
+  if (!page) return;
+
+  // حفظ موضع التمرير الحالي
+  const currentScrollY = window.scrollY || window.pageYOffset;
+
+  const searchParams = (window.currentSearchParams && Object.keys(window.currentSearchParams).length > 0)
+    ? { ...window.currentSearchParams }
+    : {
+        checkIn: $('#checkIn').val() || null,
+        checkOut: $('#checkOut').val() || null,
+        guests: $('#guests').val() || null,
+        minPrice: $('#minPrice').val() || null,
+        maxPrice: $('#maxPrice').val() || null
+      };
+
+  searchParams.page = page;
+
+  $.ajax({
+    url: '@Url.Action("SearchRooms", "Home")',
+    type: 'GET',
+    data: searchParams,
+    success: function (html) {
+      const $roomsSection = $('#rooms');
+      const $parsedHtml = $(html);
+      const $targetContainer = $roomsSection.find('.container');
+      const $sourceContainer = $parsedHtml.find('.container');
+
+      if ($targetContainer.length > 0 && $sourceContainer.length > 0) {
+        // استبدال المحتوى دون أي scroll
+        $targetContainer.html($sourceContainer.html());
+      } else {
+        $roomsSection.html($parsedHtml.html());
+      }
+
+      // إعادة تهيئة أي مكتبات إن لزم (masonry, sliders...)
+      if (typeof imagesLoaded !== 'undefined' && typeof msnry !== 'undefined') {
+        imagesLoaded($roomsSection[0], function () {
+          msnry.layout();
+          // بعد أن تُعاد التهيئة نُعيد الموضع السابق للتمرير
+          window.scrollTo(window.scrollX || 0, currentScrollY);
+        });
+      } else {
+        // إعادة الموضع فورًا (بدون animation)
+        window.scrollTo(window.scrollX || 0, currentScrollY);
+      }
+
+      // نعيد تركيز العنصر الذي ضغطه المستخدم (accessibility + بقاء المستخدم في نفس المكان)
+      $clicked.focus();
+
+      // تحديث عنوان URL بدون إعادة تحميل الصفحة (اختياري)
+      if (history && history.pushState) {
+        const url = new URL(window.location);
+        url.searchParams.set('page', page);
+        history.pushState({}, '', url);
+      }
+    },
+    error: function () {
+      alert('An error occurred while loading the page. Please try again.');
+    }
+  });
+});
+
+}
+
+// نفّذ attachPaginationHandlers مرة عند تحميل الصفحة
+$(document).ready(function () {
+  attachPaginationHandlers();
+});
+
+
+            // Attach pagination handlers on page load
+            attachPaginationHandlers();
+
+            // Handle View Details click -> open modal and load partial via AJAX
+            $(document).on('click', '.view-room-details-btn', function (e) {
+                e.preventDefault();
+
+                const roomId = $(this).data('room-id');
+                if (!roomId) return;
+
+                $.ajax({
+                    url: '@Url.Action("DetailsPartial", "Rooms")',
+                    type: 'GET',
+                    data: { id: roomId },
+                    success: function (html) {
+                        // Create modal container if not exists
+                        let $modalContainer = $('#room-details-modal-container');
+                        if ($modalContainer.length === 0) {
+                            $modalContainer = $('<div id="room-details-modal-container"></div>');
+                            $('body').append($modalContainer);
+                        }
+
+                        $modalContainer.html(html);
+
+                        const modalEl = document.getElementById('roomDetailsModal');
+                        if (modalEl) {
+                            const bsModal = new bootstrap.Modal(modalEl);
+                            bsModal.show();
+                        }
+                    },
+                    error: function () {
+                        alert('Unable to load room details at the moment. Please try again.');
+                    }
+                });
             });
         });
     </script>
 }
+
