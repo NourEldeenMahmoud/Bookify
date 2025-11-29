@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Bookify.Web.Controllers;
 
@@ -43,11 +44,10 @@ public class BookingsController : Controller
             _logger.LogInformation("Checkout GET called - RoomId: {RoomId}, CheckIn: {CheckIn}, CheckOut: {CheckOut}, Guests: {Guests}", 
                 roomId, checkIn, checkOut, numberOfGuests);
             
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("Unauthenticated user attempted checkout - redirecting to login");
-                // Store return URL for after login
                 var returnUrl = Url.Action("Checkout", "Bookings", new { roomId, checkIn, checkOut, numberOfGuests });
                 return RedirectToAction("Login", "Account", new { returnUrl });
             }
@@ -62,7 +62,6 @@ public class BookingsController : Controller
                 return RedirectToAction("Index", "Home");
             }
 
-            // Parse dates from string or use defaults
             DateTime checkInDate;
             DateTime checkOutDate;
             
@@ -86,7 +85,6 @@ public class BookingsController : Controller
             
             _logger.LogInformation("Parsed dates - CheckIn: {CheckIn}, CheckOut: {CheckOut}", checkInDate, checkOutDate);
 
-            // Get room details
             var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(roomId);
             if (room == null || room.RoomType == null)
             {
@@ -98,12 +96,10 @@ public class BookingsController : Controller
             var numberOfGuestsValue = numberOfGuests ?? room.RoomType.MaxOccupancy;
 
             // Validate dates - but allow user to change them on checkout page
-            // Only show warnings, don't redirect
             if (checkInDate >= checkOutDate)
             {
                 _logger.LogWarning("Invalid date range - CheckIn {CheckIn} must be before CheckOut {CheckOut}", checkInDate, checkOutDate);
                 TempData["Warning"] = "Please select valid dates. Check-in date must be before check-out date.";
-                // Use default dates instead of redirecting
                 checkInDate = DateTime.Today.AddDays(1);
                 checkOutDate = DateTime.Today.AddDays(2);
             }
@@ -123,16 +119,12 @@ public class BookingsController : Controller
                 numberOfGuestsValue = Math.Min(room.RoomType.MaxOccupancy, Math.Max(1, numberOfGuestsValue));
             }
 
-            // Note: Availability check will be done when user submits the form, not here
-            // This allows user to select different dates on checkout page
-
-            // Calculate pricing
             var numberOfNights = (checkOutDate - checkInDate).Days;
             var pricePerNight = room.RoomType.PricePerNight;
             var subtotal = pricePerNight * numberOfNights;
-            var taxRate = 0.14m; // 14% tax
+            var taxRate = 0.14m; 
             var taxAmount = subtotal * taxRate;
-            var discount = 0m; // Can be calculated based on promotions
+            var discount = 0m; 
             var totalAmount = subtotal + taxAmount - discount;
 
             // Get room image
@@ -152,7 +144,6 @@ public class BookingsController : Controller
                 roomImageUrl = Url.Content(roomImageUrl);
             }
 
-            // Get services based on room type
             var includedServices = new List<string>();
             var typeName = room.RoomType.Name?.ToLower() ?? string.Empty;
             
@@ -164,7 +155,7 @@ public class BookingsController : Controller
             {
                 includedServices = new List<string> { "Breakfast", "Airport Pickup", "WiFi", "Room Service" };
             }
-            else // standard / others
+            else 
             {
                 includedServices = new List<string> { "WiFi", "Breakfast", "Air Conditioning" };
             }
@@ -180,7 +171,6 @@ public class BookingsController : Controller
                 "Safe"
             };
 
-            // Create view model
             var viewModel = new CheckoutViewModel
             {
                 RoomId = roomId,
@@ -208,15 +198,13 @@ public class BookingsController : Controller
         }
         catch (ArgumentException ex)
         {
-            _logger.LogWarning(ex, "Validation error during checkout - UserId: {UserId}",
-                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            _logger.LogWarning(ex, "Validation error during checkout - UserId: {UserId}",User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             TempData["Error"] = ex.Message;
             return RedirectToAction("Index", "Home");
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error during checkout - UserId: {UserId}",
-                User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value);
+            _logger.LogError(ex, "Error during checkout - UserId: {UserId}",User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
             TempData["Error"] = "An error occurred during checkout. Please try again.";
             return RedirectToAction("Index", "Home");
         }
@@ -227,7 +215,7 @@ public class BookingsController : Controller
     {
         try
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("Unauthenticated user attempted to view confirmation");
@@ -248,7 +236,6 @@ public class BookingsController : Controller
                 return RedirectToAction("Index", "Profile");
             }
 
-            // Verify booking belongs to user
             if (booking.UserId != userId)
             {
                 _logger.LogWarning("User {UserId} attempted to access booking {BookingId} belonging to another user", userId, bookingId);
@@ -270,7 +257,7 @@ public class BookingsController : Controller
     {
         try
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("Unauthenticated user attempted to view bookings");
@@ -299,7 +286,7 @@ public class BookingsController : Controller
     {
         try
         {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("Unauthenticated user attempted to cancel booking");
@@ -321,7 +308,7 @@ public class BookingsController : Controller
                 _logger.LogInformation("Booking {BookingId} cancelled successfully by user {UserId}", id, userId);
                 TempData["Success"] = "Booking cancelled successfully.";
                 
-                // Send cancellation email (non-blocking - don't fail cancellation if email fails)
+                // send cancellation email ( don't stop cancellation if email fails)
                 try
                 {
                     var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(id);

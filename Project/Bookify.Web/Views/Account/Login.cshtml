@@ -59,7 +59,7 @@
     </style>
 }
 
-<div class="login-form-container w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden" style="min-height: 600px; max-height: 90vh;">
+<div class="login-form-container w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden" style="height: 600px; max-height: 90vh;">
     <!-- Left Side -->
     <div class="image-overlay relative text-white lg:w-5/12 w-full flex-shrink-0" style="min-height: 600px; height: 100%;">
         <div class="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-6 py-10">
@@ -107,8 +107,13 @@
                     <label for="Password" class="sr-only">Password</label>
                     <div class="relative">
                         <input asp-for="Password" type="password" id="Password" placeholder="Password" required
-                               class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
-                        <span class="lucide lucide-lock absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="lock"></span>
+                               class="w-full p-3 pr-12 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+
+                        <!-- أيقونة إظهار/إخفاء الباسورد -->
+                        <button type="button" id="togglePassword"
+                                class="absolute right-3 top-3 text-amber-600 hover:text-orange-600 transition">
+                            <i data-lucide="eye"></i>
+                        </button>
                     </div>
                     <span asp-validation-for="Password" class="text-sm text-red-600"></span>
                 </div>
@@ -150,5 +155,29 @@
         if (typeof lucide !== 'undefined' && lucide.createIcons) {
             lucide.createIcons();
         }
+    </script>
+    <script>
+        // تشغيل أيقونات Lucide
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+
+        // Toggle Password View
+        const passwordInput = document.getElementById("Password");
+        const toggleBtn = document.getElementById("togglePassword");
+
+        toggleBtn.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
+
+            // غير النوع
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // غير الأيقونة
+            this.innerHTML = isPassword
+                ? '<i data-lucide="eye-off"></i>'
+                : '<i data-lucide="eye"></i>';
+
+            lucide.createIcons(); // إعادة تشغيل الأيقونات بعد تغييرها
+        });
     </script>
 }

@@ -9,7 +9,14 @@
 @await Html.PartialAsync("_HeroPartial")
 
 <!-- Rooms Section -->
-@await Html.PartialAsync("_RoomsPartial")
+<div id="rooms-section-container">
+    <!-- سيتم تحميل المحتوى عبر AJAX -->
+    <div class="text-center py-5">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+</div>
 
 <!-- Amenities Section -->
 @await Html.PartialAsync("_AmenitiesPartial")
@@ -35,6 +42,24 @@
 @section Scripts {
     <script>
         $(function () {
+            // تحميل الغرف عند تحميل الصفحة
+            loadRoomsPartial(1, 8);
+
+            function loadRoomsPartial(page, pageSize) {
+                $.ajax({
+                    url: '@Url.Action("GetRoomsPartial", "Home")',
+                    type: 'GET',
+                    data: { page: page, pageSize: pageSize },
+                    success: function (html) {
+                        $('#rooms-section-container').html(html);
+                        attachPaginationHandlers();
+                    },
+                    error: function () {
+                        $('#rooms-section-container').html('<div class="alert alert-danger text-center py-5">Error loading rooms. Please refresh the page.</div>');
+                    }
+                });
+            }
+
             // Set minimum dates
             const today = new Date().toISOString().split('T')[0];
             $('#checkIn').attr('min', today);

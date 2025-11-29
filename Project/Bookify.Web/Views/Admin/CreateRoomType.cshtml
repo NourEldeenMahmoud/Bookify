@@ -1,4 +1,4 @@
-@model Bookify.Data.Models.RoomType
+@model Bookify.Web.ViewModels.RoomTypeViewModel
 
 @{
     ViewData["Title"] = "Create Room Type";
@@ -37,7 +37,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="PricePerNight" class="form-label">Price Per Night *</label>
-                    <input asp-for="PricePerNight" class="form-control" type="number" step="0.01" min="0" required />
+                    <input asp-for="PricePerNight" class="form-control" type="number" step="0.01" min="0.01" required />
                     <span asp-validation-for="PricePerNight" class="text-danger"></span>
                 </div>
             </div>
@@ -53,8 +53,9 @@
             </div>
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="form-label">Image</label>
-                    <input type="file" name="imageFile" class="form-control" accept="image/*" />
+                    <label asp-for="ImageFile" class="form-label">Image</label>
+                    <input asp-for="ImageFile" class="form-control" accept="image/*" />
+                    <span asp-validation-for="ImageFile" class="text-danger"></span>
                     <small class="form-text text-muted">Max file size: 5MB. Allowed types: JPG, PNG, GIF</small>
                 </div>
             </div>

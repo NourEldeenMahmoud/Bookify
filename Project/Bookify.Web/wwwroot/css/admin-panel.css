@@ -1269,4 +1269,69 @@ table.dataTable tbody td:nth-child(3) {
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     transform: translateY(-1px);
 }
+/*  Modern DataTable Buttons  */    
+.dt-buttons .btn {    
+    background: #fff !important;    
+    color: #5a5a5a !important;    
+    border: 1px solid #dcdcdc !important;    
+    padding: 4px 8px !important;    
+    font-size: 14px !important;    
+    font-weight: 500 !important;    
+    border-radius: 8px !important;    
+/*    display: flex !important;    */
+    align-items: center !important;    
+    gap: 6px !important;    
+    transition: 0.2s ease !important;    
+    margin-top: 10px; 
+}    
 
+    /* Hover Effect */    
+.dt-buttons .btn:hover {    
+        background: #f2f2f2 !important;    
+        border-color: #c7c7c7 !important;    
+    }    
+
+    /* Icons inside buttons */    
+.dt-buttons .btn i {    
+        font-size: 15px !important;    
+        color: #ff8e2b !important;      
+    }    
+
+/* Specific colors per button */    
+.buttons-pdf {    
+    border-color: #ff6b6b !important;    
+}    
+
+.buttons-pdf:hover {    
+background: #ffe9e9 !important;    
+}    
+
+.buttons-excel {    
+    border-color: #4caf50 !important;    
+}    
+
+.buttons-excel:hover {    
+background: #e9f6e9 !important;    
+}    
+
+.buttons-csv {    
+border-color: #0275d8 !important;    
+}    
+
+.buttons-csv:hover {    
+background: #e8f1fc !important;    
+}    
+
+.buttons-print {    
+border-color: #6c757d !important;    
+}    
+
+.buttons-print:hover {    
+background: #efefef !important;    
+}
+.dt-buttons .btn:focus,
+.dt-buttons .btn:active,
+.dt-buttons .btn:focus-visible {
+    box-shadow: none !important;
+    outline: none !important;
+}

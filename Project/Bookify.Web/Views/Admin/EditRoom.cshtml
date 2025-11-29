@@ -1,4 +1,4 @@
-@model Bookify.Data.Models.Room
+@model Bookify.Web.ViewModels.RoomViewModel
 
 @{
     ViewData["Title"] = "Edit Room";
@@ -80,9 +80,9 @@
         </div>
         
         <div id="imageGallery" class="row">
-            @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+            @if (ViewBag.GalleryImages != null && ViewBag.GalleryImages.Any())
             {
-                @foreach (var image in Model.GalleryImages)
+                @foreach (var image in ViewBag.GalleryImages)
                 {
                     var imagePath = image.ImageUrl;
                     if (!string.IsNullOrEmpty(imagePath))
