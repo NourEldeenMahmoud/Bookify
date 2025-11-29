@@ -1,0 +1,233 @@
+@model Bookify.Data.Models.ApplicationUser
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "User Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var userRole = ViewBag.UserRole as string ?? "Customer";
+    var allRoles = ViewBag.AllRoles as List<string> ?? new List<string>();
+    var isLockedOut = ViewBag.IsLockedOut as bool? ?? false;
+    var lockoutEnd = ViewBag.LockoutEnd as DateTimeOffset?;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">User Details</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">@($"{Model.FirstName} {Model.LastName}".Trim())</h2>
+            <a href="@Url.Action("Users", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+    <!-- User Information -->
+    <div class="mb-4">
+        <h4>User Information</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>User ID</th>
+                        <td>@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <th>First Name</th>
+                        <td>@(Model.FirstName ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Last Name</th>
+                        <td>@(Model.LastName ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Email</th>
+                        <td>@Model.Email</td>
+                    </tr>
+                    <tr>
+                        <th>Phone Number</th>
+                        <td>@(Model.PhoneNumber ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Date of Birth</th>
+                        <td>@(Model.DateOfBirth?.ToString("yyyy-MM-dd") ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Created Date</th>
+                        <td>@Model.CreatedAt.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Address</th>
+                        <td>@(Model.Address ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>City</th>
+                        <td>@(Model.City ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Postal Code</th>
+                        <td>@(Model.PostalCode ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Country</th>
+                        <td>@(Model.Country ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Role</th>
+                        <td>
+                            <span class="badge badge-@(userRole.ToLower() == "admin" ? "admin" : "customer")">@userRole</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            @if (isLockedOut)
+                            {
+                                <span class="badge badge-locked">Locked Out</span>
+                                @if (lockoutEnd.HasValue)
+                                {
+                                    <br /><small class="text-muted">Until: @lockoutEnd.Value.ToString("yyyy-MM-dd HH:mm")</small>
+                                }
+                            }
+                            else
+                            {
+                                <span class="badge badge-active">Active</span>
+                            }
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Role Management -->
+    <div class="mb-4">
+        <h4>Change User Role</h4>
+        <form asp-action="UpdateUserRole" asp-controller="Admin" method="post" class="row">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="userId" value="@Model.Id" />
+            <div class="col-md-4">
+                <select name="newRole" class="form-control" required>
+                    @foreach (var role in allRoles)
+                    {
+                        @if (role == userRole)
+                        {
+                            <option value="@role" selected>@role</option>
+                        }
+                        else
+                        {
+                            <option value="@role">@role</option>
+                        }
+                    }
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-admin btn-admin-warning confirm-action" data-message="Are you sure you want to change this user's role?">
+                    <i class="fas fa-user-tag"></i> Change Role
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Lock/Unlock User -->
+    <div class="mb-4">
+        <h4>User Status Management</h4>
+        @if (isLockedOut)
+        {
+            <form asp-action="UnlockUser" asp-controller="Admin" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="userId" value="@Model.Id" />
+                <button type="submit" class="btn btn-admin btn-admin-success confirm-action" data-message="Are you sure you want to unlock this user?">
+                    <i class="fas fa-unlock"></i> Unlock User
+                </button>
+            </form>
+        }
+        else
+        {
+            <form asp-action="LockUser" asp-controller="Admin" method="post">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="userId" value="@Model.Id" />
+                <button type="submit" class="btn btn-admin btn-admin-danger confirm-action" data-message="Are you sure you want to lock this user?">
+                    <i class="fas fa-lock"></i> Lock User
+                </button>
+            </form>
+        }
+    </div>
+
+    <!-- User Bookings -->
+    <div class="mb-4">
+        <h4>User Bookings (@Model.Bookings.Count())</h4>
+        @if (Model.Bookings != null && Model.Bookings.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Room Number</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Guests</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in Model.Bookings.OrderByDescending(b => b.CreatedAt))
+                    {
+                        <tr>
+                            <td>@booking.Id</td>
+                            <td>@(booking.Room?.RoomNumber ?? "N/A")</td>
+                            <td>@booking.CheckInDate.ToString("yyyy-MM-dd")</td>
+                            <td>@booking.CheckOutDate.ToString("yyyy-MM-dd")</td>
+                            <td>@booking.NumberOfGuests</td>
+                            <td>
+                                <span class="badge badge-@booking.Status.ToString().ToLower()">@booking.Status</span>
+                            </td>
+                            <td>$@booking.TotalAmount.ToString("N2")</td>
+                            <td>
+                                <a href="@Url.Action("BookingDetails", "Admin", new { id = booking.Id })" class="btn btn-sm btn-action btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No bookings found for this user.</p>
+        }
+    </div>
+
+    <!-- Delete User -->
+    <div class="mb-4">
+        <h4>Danger Zone</h4>
+        <form asp-action="DeleteUser" asp-controller="Admin" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="userId" value="@Model.Id" />
+            <button type="submit" class="btn btn-admin btn-admin-danger confirm-delete" data-message="Are you sure you want to delete this user? This action cannot be undone.">
+                <i class="fas fa-trash"></i> Delete User
+            </button>
+        </form>
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}
+

@@ -60,8 +60,28 @@
     <li class="nav-item">
       <a href="#contact" class="nav-link"><i class="fa-solid fa-phone"></i><span>Contact</span></a>
     </li>
+
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- Logout Nav Item with same hover effect -->
+        <li class="nav-item mt-auto">
+            <a href="javascript:void(0);" class="nav-link"
+               onclick="document.getElementById('sidebar-logout-form')?.submit();">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                <span>Logout</span>
+            </a>
+        </li>
+    }
   </ul>
-  
+
+  @if (User.Identity?.IsAuthenticated == true)
+  {
+      <!-- Hidden logout form (POST with antiforgery) -->
+      <form id="sidebar-logout-form" asp-controller="Account" asp-action="Logout" method="post" class="d-none">
+          @Html.AntiForgeryToken()
+      </form>
+  }
+
   <div class="sidebar-divider-bottom"></div>
 </div>
 

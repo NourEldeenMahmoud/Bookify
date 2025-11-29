@@ -34,6 +34,7 @@
 
 @section Styles {
     <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Profile Page Overrides - Must override all conflicting styles */
@@ -100,55 +101,10 @@
             max-width: 100% !important;
         }
         
-        /* Exception for modal - don't apply w-full rule */
-        #cancelBookingModal .w-full,
-        #cancelBookingModal > div {
-            width: auto !important;
-            max-width: 640px !important;
-        }
-
         body.profile-page-body .space-y-6 > * + * {
             margin-top: 1.5rem !important;
         }
-        
-        /* Cancel Booking Modal Styles - High specificity to override everything */
-        #cancelBookingModal {
-            animation: fadeIn 0.2s ease-out;
-        }
-
-        #cancelBookingModal > div.bg-white.rounded-lg.shadow-2xl,
-        #cancelBookingModal > div[style*="max-width"] {
-            animation: slideUp 0.3s ease-out;
-            max-width: 640px !important; /* للضعف بالضبط (320 × 2) */
-            width: auto !important;
-            min-width: 320px !important; /* حد أدنى */
-        }
-        
-        /* Force override for modal content div */
-        div#cancelBookingModal > div.bg-white {
-            max-width: 640px !important;
-            width: auto !important;
-        }
-
-        @@keyframes fadeIn {
-            from {
-                opacity: 0;
-            }
-            to {
-                opacity: 1;
-            }
-        }
-
-        @@keyframes slideUp {
-            from {
-                transform: translateY(20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
+   
     </style>
 }
 
@@ -195,10 +151,18 @@
     }
 
     <!-- Profile Header Card -->
-    <div class="bg-white rounded-2xl shadow-2xl overflow-hidden">
-        <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-orange-600 text-white p-8">
-            <div class="flex flex-col md:flex-row items-center md:items-start space-y-4 md:space-y-0 md:space-x-6">
-                <div class="w-32 h-32 bg-white/20 rounded-full flex items-center justify-center text-5xl font-bold backdrop-blur-sm border-4 border-white/30">
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+        <!-- Header -->
+        <div class="p-5 text-white"
+             style="background:linear-gradient(to left, #f59e0b , #451a03);">
+
+            <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+
+                <!-- Avatar -->
+                <div class="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-25 border border-light fw-bold"
+                     style="width: 120px; height: 120px; font-size: 48px;">
+
                     @if (!string.IsNullOrEmpty(Model.FirstName))
                     {
                         @Model.FirstName[0]
@@ -208,96 +172,57 @@
                         @Model.Email[0]
                     }
                 </div>
-                <div class="flex-1 text-center md:text-left">
-                    <h1 class="text-4xl font-extrabold mb-2">
+
+                <!-- User Info -->
+                <div class="text-center text-md-start">
+
+                    <h1 class="fw-bold fs-1 mb-2">
                         @(Model.FirstName ?? "User") @(Model.LastName ?? "")
                     </h1>
-                    <p class="text-white/90 text-lg mb-2">
-                        <i class="lucide lucide-mail inline-block mr-2" data-lucide="mail"></i>
+
+                    <p class="mb-2 fs-5 opacity-75">
+                        <i class="bi bi-envelope-fill me-2"></i>
                         @Model.Email
                     </p>
-                    <div class="flex flex-wrap gap-4 text-white/80 text-sm">
+
+                    <div class="d-flex flex-wrap gap-3 small opacity-75">
+
                         @if (Model.CreatedAt != default)
                         {
                             <span>
-                                <i class="lucide lucide-calendar inline-block mr-1" data-lucide="calendar"></i>
+                                <i class="bi bi-calendar-event-fill me-1"></i>
                                 Member since @Model.CreatedAt.ToString("MMMM yyyy")
                             </span>
                         }
+
                         @if (age.HasValue)
                         {
                             <span>
-                                <i class="lucide lucide-birthday-cake inline-block mr-1" data-lucide="birthday-cake"></i>
+                                <i class="bi bi-cake2-fill me-1"></i>
                                 @age years old
                             </span>
                         }
+
                         @if (!string.IsNullOrEmpty(Model.City) || !string.IsNullOrEmpty(Model.Country))
                         {
                             <span>
-                                <i class="lucide lucide-map-pin inline-block mr-1" data-lucide="map-pin"></i>
+                                <i class="bi bi-geo-alt-fill me-1"></i>
                                 @(Model.City ?? "")@(Model.City != null && Model.Country != null ? ", " : "")@(Model.Country ?? "")
                             </span>
                         }
+
                     </div>
+
                 </div>
+
             </div>
+
         </div>
     </div>
+
 
     <!-- Statistics Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <!-- Total Bookings -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Total Bookings</p>
-                    <p class="text-3xl font-bold text-royal-dark">@totalBookings</p>
-                </div>
-                <div class="bg-blue-100 p-4 rounded-full">
-                    <i class="lucide lucide-calendar text-blue-600 text-2xl" data-lucide="calendar"></i>
-                </div>
-            </div>
-        </div>
 
-        <!-- Upcoming Bookings -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-amber-500 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Upcoming</p>
-                    <p class="text-3xl font-bold text-royal-dark">@upcomingCount</p>
-                </div>
-                <div class="bg-amber-100 p-4 rounded-full">
-                    <i class="lucide lucide-calendar-clock text-amber-600 text-2xl" data-lucide="calendar-clock"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Completed Bookings -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-green-500 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Completed</p>
-                    <p class="text-3xl font-bold text-royal-dark">@completedCount</p>
-                </div>
-                <div class="bg-green-100 p-4 rounded-full">
-                    <i class="lucide lucide-check-circle text-green-600 text-2xl" data-lucide="check-circle"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- Total Spent -->
-        <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-shadow">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-600 text-sm font-medium mb-1">Total Spent</p>
-                    <p class="text-3xl font-bold text-royal-dark">@totalSpent.ToString("F0") EGP</p>
-                </div>
-                <div class="bg-purple-100 p-4 rounded-full">
-                    <i class="lucide lucide-dollar-sign text-purple-600 text-2xl" data-lucide="dollar-sign"></i>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Main Content Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -422,11 +347,7 @@
                     </div>
 
                     <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
-                        <a asp-controller="Home" asp-action="Index" 
-                           class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-all font-medium">
-                            <i class="lucide lucide-x inline-block mr-2" data-lucide="x"></i>
-                            Cancel
-                        </a>
+                      
                         <button type="submit"
                                 class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02] font-medium">
                             <i class="lucide lucide-save inline-block mr-2" data-lucide="save"></i>
@@ -524,90 +445,37 @@
                 }
 
                 <!-- Past Bookings -->
-                @if (pastBookings.Any())
-                {
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-xl font-semibold text-royal-dark">Past Bookings</h3>
-                            <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-xs font-semibold">
-                                @pastBookings.Count() @(pastBookings.Count() == 1 ? "booking" : "bookings")
-                            </span>
-                        </div>
-                        <div class="space-y-4">
-                            @foreach (var booking in pastBookings)
-                            {
-                                <div class="bg-gray-50 border-l-4 border-gray-400 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
-                                    <div class="flex flex-col md:flex-row justify-between items-start gap-4">
-                                        <div class="flex-1">
-                                            <div class="flex items-center space-x-4 mb-3">
-                                                <h4 class="text-lg font-bold text-gray-700">
-                                                    @(booking.Room?.RoomType?.Name ?? "Room")
-                                                </h4>
-                                                <span class="px-3 py-1 bg-gray-500 text-white rounded-full text-xs font-semibold">
-                                                    @booking.Status
-                                                </span>
-                                            </div>
-                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-gray-600">
-                                                <div class="flex items-center">
-                                                    <i class="lucide lucide-calendar text-gray-500 mr-2" data-lucide="calendar"></i>
-                                                    <span><strong>Check-in:</strong> @booking.CheckInDate.ToString("MMM dd, yyyy")</span>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <i class="lucide lucide-calendar-x text-gray-500 mr-2" data-lucide="calendar-x"></i>
-                                                    <span><strong>Check-out:</strong> @booking.CheckOutDate.ToString("MMM dd, yyyy")</span>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <i class="lucide lucide-users text-gray-500 mr-2" data-lucide="users"></i>
-                                                    <span><strong>Guests:</strong> @booking.NumberOfGuests</span>
-                                                </div>
-                                                <div class="flex items-center">
-                                                    <i class="lucide lucide-dollar-sign text-gray-500 mr-2" data-lucide="dollar-sign"></i>
-                                                    <span><strong>Total:</strong> $@booking.TotalAmount.ToString("F2")</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-                else
-                {
-                    <div class="text-center py-12 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border-2 border-dashed border-gray-200">
-                        <i class="lucide lucide-calendar-x text-5xl text-gray-400 mb-3" data-lucide="calendar-x"></i>
-                        <p class="text-gray-600 font-medium">No past bookings</p>
-                    </div>
-                }
+           
             </div>
         </div>
 
         <!-- Right Column: Quick Actions & Info -->
         <div class="space-y-6">
-            <!-- Quick Actions Card -->
-            <div class="bg-white rounded-2xl shadow-xl p-6">
-                <h3 class="text-xl font-bold text-royal-dark mb-4 flex items-center">
-                    <i class="lucide lucide-zap mr-2" data-lucide="zap"></i>
-                    Quick Actions
-                </h3>
-                <div class="space-y-3">
-                    <a asp-controller="Home" asp-action="Index" 
-                       class="flex items-center p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors group">
-                        <i class="lucide lucide-search text-amber-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="search"></i>
-                        <span class="text-royal-dark font-medium">Search Rooms</span>
-                    </a>
-                    <a asp-controller="Account" asp-action="ChangePassword" 
-                       class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
-                        <i class="lucide lucide-key text-blue-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="key"></i>
-                        <span class="text-royal-dark font-medium">Change Password</span>
-                    </a>
-                    <a asp-controller="Account" asp-action="Logout" 
-                       class="flex items-center p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group">
-                        <i class="lucide lucide-log-out text-red-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="log-out"></i>
-                        <span class="text-royal-dark font-medium">Logout</span>
-                    </a>
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Total Bookings</p>
+                        <p class="text-3xl font-bold text-royal-dark">@totalBookings</p>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <i class="lucide lucide-calendar text-blue-600 text-2xl" data-lucide="calendar"></i>
+                    </div>
                 </div>
             </div>
+            <!-- Total Spent -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Total Spent</p>
+                        <p class="text-3xl font-bold text-royal-dark">@totalSpent.ToString("F0") EGP</p>
+                    </div>
+                    <div class="bg-purple-100 p-4 rounded-full">
+                        <i class="lucide lucide-dollar-sign text-purple-600 text-2xl" data-lucide="dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Actions Card -->
+
 
             <!-- Account Info Card -->
             <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-6 border border-amber-200">
@@ -638,75 +506,65 @@
                     }
                 </div>
             </div>
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-bold text-royal-dark mb-4 flex items-center">
+                    <i class="lucide lucide-zap mr-2" data-lucide="zap"></i>
+                    Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="flex items-center p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors group">
+                        <i class="lucide lucide-search text-amber-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="search"></i>
+                        <span class="text-royal-dark font-medium">Search Rooms</span>
+                    </a>
+                    <a asp-controller="Account" asp-action="ChangePassword"
+                       class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                        <i class="lucide lucide-key text-blue-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="key"></i>
+                        <span class="text-royal-dark font-medium">Change Password</span>
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="w-full">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="w-full flex items-center p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group text-left">
+                            <i class="lucide lucide-log-out text-red-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="log-out"></i>
+                            <span class="text-royal-dark font-medium">Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+                <!-- Total Bookings -->
+
+            </div>
         </div>
     </div>
 </div>
 
 <!-- Cancel Booking Confirmation Modal -->
-<div id="cancelBookingModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" style="display: none;">
-    <div class="bg-white rounded-lg shadow-2xl mx-4 transform transition-all" style="max-width: 640px !important; width: auto !important;">
-        <!-- Modal Header -->
-        <div class="bg-gradient-to-r from-red-500 to-red-600 px-3 py-2.5 rounded-t-lg">
-            <div class="flex items-center justify-between">
-                <div class="flex items-center space-x-1.5">
-                    <div class="bg-white bg-opacity-20 rounded-full p-1">
-                        <i class="lucide lucide-alert-triangle text-white text-base" data-lucide="alert-triangle"></i>
-                    </div>
-                    <h3 class="text-base font-bold text-white">Cancel Booking</h3>
+<div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-confirm-modal">
+            <div class="modal-header admin-confirm-modal-header">
+                <div class="admin-confirm-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
                 </div>
-                <button type="button" id="closeCancelModal" class="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-0.5 transition-colors">
-                    <i class="lucide lucide-x text-base" data-lucide="x"></i>
+                <h5 class="modal-title" id="cancelBookingModalLabel">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body admin-confirm-modal-body">
+                <p class="mb-3">Are you sure you want to cancel this booking?</p>
+            </div>
+            <div class="modal-footer admin-confirm-modal-footer">
+                <button type="button" class="btn btn-admin-cancel" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Keep Booking
                 </button>
+                <form id="confirmCancelForm" method="post" asp-controller="Bookings" asp-action="Cancel" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="modalBookingId" value="" />
+                    <button type="submit" class="btn btn-admin-confirm">
+                        <i class="fas fa-check me-2"></i>Cancel Booking
+                    </button>
+                </form>
             </div>
-        </div>
-
-        <!-- Modal Body -->
-        <div class="px-3 py-3">
-            <p class="text-gray-700 mb-2.5 text-xs">Are you sure you want to cancel this booking?</p>
-            
-            <!-- Booking Details -->
-            <div class="bg-gray-50 rounded-lg p-2.5 mb-2.5 border border-gray-200">
-                <div class="space-y-1 text-xs">
-                    <div class="flex justify-between">
-                        <span class="text-gray-600 font-medium">Room:</span>
-                        <span class="text-gray-900 font-semibold text-right" id="modalBookingRoom">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600 font-medium">Check-in:</span>
-                        <span class="text-gray-900 font-semibold" id="modalBookingCheckIn">-</span>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-gray-600 font-medium">Check-out:</span>
-                        <span class="text-gray-900 font-semibold" id="modalBookingCheckOut">-</span>
-                    </div>
-                    <div class="flex justify-between pt-1 border-t border-gray-200">
-                        <span class="text-gray-600 font-medium">Total:</span>
-                        <span class="text-red-600 font-bold" id="modalBookingTotal">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-amber-50 border-l-4 border-amber-400 p-2 rounded mb-2.5">
-                <p class="text-xs text-amber-800 leading-tight">
-                    <i class="lucide lucide-info inline-block mr-1" data-lucide="info"></i>
-                    <strong>Note:</strong> Refund will be processed per cancellation policy.
-                </p>
-            </div>
-        </div>
-
-        <!-- Modal Footer -->
-        <div class="px-3 py-2.5 bg-gray-50 rounded-b-lg flex justify-end space-x-2">
-            <button type="button" id="cancelModalBtn" class="px-3 py-1.5 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded text-xs font-medium transition-colors">
-                Keep
-            </button>
-            <form id="confirmCancelForm" method="post" asp-controller="Bookings" asp-action="Cancel" class="inline">
-                @Html.AntiForgeryToken()
-                <input type="hidden" name="id" id="modalBookingId" value="" />
-                <button type="submit" class="px-3 py-1.5 bg-red-500 hover:bg-red-600 text-white rounded text-xs font-medium transition-colors flex items-center">
-                    <i class="lucide lucide-x-circle mr-1 text-xs" data-lucide="x-circle"></i>
-                    Cancel
-                </button>
-            </form>
         </div>
     </div>
 </div>
@@ -718,69 +576,27 @@
             lucide.createIcons();
         }
 
-        // Cancel Booking Modal
-        (function() {
-            const modal = document.getElementById('cancelBookingModal');
-            const closeBtn = document.getElementById('closeCancelModal');
-            const cancelBtn = document.getElementById('cancelModalBtn');
-            const confirmForm = document.getElementById('confirmCancelForm');
+        // Cancel Booking Modal with Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
             const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
-
-            function showModal(bookingId, room, checkIn, checkOut, total) {
-                document.getElementById('modalBookingId').value = bookingId;
-                document.getElementById('modalBookingRoom').textContent = room;
-                document.getElementById('modalBookingCheckIn').textContent = checkIn;
-                document.getElementById('modalBookingCheckOut').textContent = checkOut;
-                document.getElementById('modalBookingTotal').textContent = total + ' EGP';
-                
-                modal.style.display = 'flex';
-                modal.classList.remove('hidden');
-                document.body.style.overflow = 'hidden';
-                
-                // Re-initialize lucide icons
-                if (typeof lucide !== 'undefined' && lucide.createIcons) {
-                    lucide.createIcons();
-                }
-            }
-
-            function hideModal() {
-                modal.style.display = 'none';
-                modal.classList.add('hidden');
-                document.body.style.overflow = '';
-            }
-
-            // Open modal when cancel button is clicked
-            cancelButtons.forEach(btn => {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const bookingId = this.getAttribute('data-booking-id');
-                    const room = this.getAttribute('data-booking-room');
-                    const checkIn = this.getAttribute('data-booking-checkin');
-                    const checkOut = this.getAttribute('data-booking-checkout');
-                    const total = this.getAttribute('data-booking-total');
-                    
-                    showModal(bookingId, room, checkIn, checkOut, total);
+            const modalElement = document.getElementById('cancelBookingModal');
+            
+            if (modalElement && typeof bootstrap !== 'undefined') {
+                cancelButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const bookingId = this.getAttribute('data-booking-id');
+                        
+                        // Set booking ID
+                        document.getElementById('modalBookingId').value = bookingId;
+                        
+                        // Show Bootstrap modal
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    });
                 });
-            });
-
-            // Close modal handlers
-            closeBtn.addEventListener('click', hideModal);
-            cancelBtn.addEventListener('click', hideModal);
-
-            // Close modal when clicking outside
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    hideModal();
-                }
-            });
-
-            // Close modal on Escape key
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    hideModal();
-                }
-            });
-        })();
+            }
+        });
     </script>
     <partial name="_ValidationScriptsPartial" />
 }

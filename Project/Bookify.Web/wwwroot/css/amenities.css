@@ -6,15 +6,18 @@
   background: none;
 }
 
-.section-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: black;
-  text-transform: capitalize;
-  border-bottom: 3px solid #f5981b;
-  display: inline-block;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
+.section-title {/*changed the font*/
+    font-family: "Cormorant", serif;
+    font-optical-sizing: auto;
+    font-style: italic;
+    font-size: 2.8rem;
+    font-weight: 700;
+    color: black;
+    text-transform: capitalize;
+    border-bottom: 3px solid #f5981b;
+    display: inline-block;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
 }
 
 .section-subtitle {

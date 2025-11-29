@@ -83,7 +83,7 @@ namespace Bookify.Services.Services
                                     
                                             <!-- Header with small logo -->
                                             <tr>
-                                              <td style='background:#4a2d1f; padding:18px 22px; text-align:center;'>
+                                              <td style='background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); padding:18px 22px; text-align:center;'>
                                                 <div style='font-size:18px; font-weight:700; color:#fff; margin-top:4px;'>RoyalHaven</div>
                                                 <div style='font-size:12px; color:rgba(255,255,255,0.9); margin-top:4px;'>Where luxury meets comfort</div>
                                               </td>
@@ -211,7 +211,7 @@ namespace Bookify.Services.Services
                                     
                                             <!-- Header -->
                                             <tr>
-                                              <td style='background:#4a2d1f; padding:22px 28px; text-align:center;'>
+                                              <td style='background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); padding:22px 28px; text-align:center;'>
                                                 <div style='font-size:22px; font-weight:700; color:#fff;'>RoyalHaven</div>
                                                 <div style='font-size:13px; color:rgba(255,255,255,0.85); margin-top:4px;'>
                                                   Where luxury meets comfort
@@ -340,7 +340,7 @@ namespace Bookify.Services.Services
                                     
                                             <!-- Header -->
                                             <tr>
-                                              <td style='background:#4a2d1f; padding:22px 28px; text-align:center;'>
+                                              <td style='background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); padding:22px 28px; text-align:center;'>
                                                 <div style='font-size:22px; font-weight:700; color:#fff;'>RoyalHaven</div>
                                                 <div style='font-size:13px; color:rgba(255,255,255,0.85); margin-top:4px;'>
                                                   Your Journey to Luxury Continues
@@ -365,7 +365,7 @@ namespace Bookify.Services.Services
                                                 <!-- Button -->
                                                 <div style='margin:24px 0; text-align:center;'>
                                                   <a href='{resetLink}'
-                                                  style='display:inline-block; padding:12px 28px; background-color:#c9591d; 
+                                                  style='display:inline-block; padding:12px 28px; background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); 
                                                   color:#ffffff; text-decoration:none; border-radius:8px; font-size:15px; font-weight:600;'>
                                                     Reset Password
                                                   </a>
@@ -507,7 +507,7 @@ namespace Bookify.Services.Services
                                     
                                             <!-- Header with small logo -->
                                             <tr>
-                                              <td style='background:#4a2d1f; padding:18px 22px; text-align:center;'>
+                                              <td style='background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); padding:18px 22px; text-align:center;'>
                                                 <div style='font-size:18px; font-weight:700; color:#fff; margin-top:4px;'>RoyalHaven</div>
                                                 <div style='font-size:12px; color:rgba(255,255,255,0.9); margin-top:4px;'>Where luxury meets comfort</div>
                                               </td>

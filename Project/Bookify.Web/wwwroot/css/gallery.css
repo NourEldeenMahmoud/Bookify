@@ -8,15 +8,18 @@ body {
   margin-left: 200px; 
 }
 
-.gallery-title {
-  font-size: 2.8rem;
-  font-weight: 700;
-  color: #3b2c2c;
-  text-transform: capitalize;
-  border-bottom: 3px solid #f5981b;
-  display: inline-block;
-  padding-bottom: 8px;
-  margin-bottom: 15px;
+.gallery-title {  /*changed the font family here*/
+    font-family: "Cormorant", serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 2.8rem;
+    color: #3b2c2c;
+    text-transform: capitalize;
+    border-bottom: 3px solid #f5981b;
+    display: inline-block;
+    padding-bottom: 8px;
+    margin-bottom: 15px;
 }
 
 .gallery-desc {

@@ -17,18 +17,20 @@ body {
   background: #f7f4ef;
 }
 
-.section-title {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #3b2c2c;
-  text-transform: capitalize;
-  border-bottom: 4px solid #FF8C42;
-  display: inline-block;
-  padding-bottom: 10px;
-  margin-bottom: 20px;
-  letter-spacing: 0;
-  position: relative;
-  font-family: 'Playfair Display', serif;
+.section-title {/*changed the font here*/
+    font-family: "Cormorant", serif;
+    font-optical-sizing: auto;
+    font-style: italic;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #3b2c2c;
+    text-transform: capitalize;
+    border-bottom: 4px solid #f97a39 !important;
+    display: inline-block;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
+    letter-spacing: 0;
+    position: relative;
 }
 
 .section-title::after {

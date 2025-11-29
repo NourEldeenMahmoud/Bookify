@@ -302,6 +302,51 @@ $(document).ready(function () {
                 });
             });
         });
+                // Handle Reset Filters
+        $(document).on('click', '#resetFilters', function (e) {
+            e.preventDefault();
+
+            // Clear all inputs
+            $('#checkIn').val('');
+            $('#checkOut').val('');
+            $('#guests').val('');
+            $('#minPrice').val('');
+            $('#maxPrice').val('');
+
+            // Clear stored search params
+            window.currentSearchParams = {};
+
+            // Load all rooms again
+            $.ajax({
+                url: '@Url.Action("GetRoomsPartial", "Home")',
+                type: 'GET',
+                data: { page: 1, pageSize: 8 },
+                success: function (html) {
+                    const $roomsSection = $('#rooms');
+                    const $parsedHtml = $(html);
+
+                    const $targetContainer = $roomsSection.find('.container');
+                    const $sourceContainer = $parsedHtml.find('.container');
+
+                    if ($targetContainer.length > 0 && $sourceContainer.length > 0) {
+                        $targetContainer.html($sourceContainer.html());
+                    } else {
+                        $roomsSection.html($parsedHtml.html());
+                    }
+
+                    // Scroll to rooms
+                    $('html, body').animate({
+                        scrollTop: $('#rooms').offset().top - 100
+                    }, 500);
+
+                    attachPaginationHandlers();
+                },
+                error: function () {
+                    alert('Error resetting filters.');
+                }
+            });
+        });
+
     </script>
 }
 

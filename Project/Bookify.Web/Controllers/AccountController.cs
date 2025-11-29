@@ -221,8 +221,8 @@ public class AccountController : Controller
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User {Email} account locked out", model.Email);
-                    TempData["Error"] = "Your account has been locked out. Please try again later.";
-                    return View("Lockout");
+                    TempData["Error"] = "Your account has been locked out. Please contact support.";
+                    return RedirectToAction("AccessDenied");
                 }
 
                 if (result.IsNotAllowed)
@@ -283,17 +283,18 @@ public class AccountController : Controller
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             await _signInManager.SignOutAsync();
             _logger.LogInformation("User {UserId} logged out", userId);
-            TempData["Success"] = "You have been logged out successfully.";
-            return RedirectToAction("Index", "Home");
+            TempData["Success"] = "You have been logged out successfully. Please log in again to continue.";
+            return RedirectToAction("Login", "Account");
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error during logout");
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
     }
 
     [HttpGet]
+    [AllowAnonymous]
     public IActionResult AccessDenied()
     {
         try

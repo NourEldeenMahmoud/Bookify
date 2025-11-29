@@ -1,0 +1,208 @@
+@model Bookify.Data.Models.Room
+
+@{
+    ViewData["Title"] = "Edit Room";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Edit Room</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Room Information</h2>
+            <a href="@Url.Action("Rooms", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+    <form asp-action="EditRoom" asp-controller="Admin" method="post">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="RoomNumber" class="form-label">Room Number *</label>
+                    <input asp-for="RoomNumber" class="form-control" required maxlength="10" />
+                    <span asp-validation-for="RoomNumber" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="RoomTypeId" class="form-label">Room Type *</label>
+                    <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypes" class="form-control" required>
+                        <option value="">-- Select Room Type --</option>
+                    </select>
+                    <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-check">
+                        <input asp-for="IsAvailable" class="form-check-input" type="checkbox" />
+                        <label asp-for="IsAvailable" class="form-check-label">
+                            Available
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Notes" class="form-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" maxlength="500"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-save"></i> Update Room
+            </button>
+            <a href="@Url.Action("Rooms", "Admin")" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+
+    <!-- Image Management Section -->
+    <div class="mt-4">
+        <div class="admin-card-header">
+            <h3 class="admin-card-title">Room Images</h3>
+        </div>
+        
+        <div id="imageGallery" class="row">
+            @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+            {
+                @foreach (var image in Model.GalleryImages)
+                {
+                    var imagePath = image.ImageUrl;
+                    if (!string.IsNullOrEmpty(imagePath))
+                    {
+                        if (imagePath.Contains("wwwroot\\images") || imagePath.Contains("wwwroot/images"))
+                        {
+                            var fileName = System.IO.Path.GetFileName(imagePath);
+                            imagePath = $"~/images/{fileName}";
+                        }
+                        else if (!imagePath.StartsWith("~/") && !imagePath.StartsWith("/") && !imagePath.StartsWith("http"))
+                        {
+                            imagePath = $"~/images/{System.IO.Path.GetFileName(imagePath)}";
+                        }
+                    }
+                    <div class="col-md-3 mb-3" data-image-id="@image.Id">
+                        <div class="card">
+                            <img src="@Url.Content(imagePath)" class="card-img-top" alt="@image.AltText" style="height: 200px; object-fit: cover;">
+                            <div class="card-body">
+                                <p class="card-text small">@(image.AltText ?? "No description")</p>
+                                <button type="button" class="btn btn-sm btn-danger delete-image" data-image-id="@image.Id">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No images uploaded yet.</p>
+            }
+        </div>
+
+        <div class="mt-3">
+            <h5>Upload New Image</h5>
+            <form id="uploadImageForm" enctype="multipart/form-data">
+                <input type="hidden" name="roomId" value="@Model.Id" />
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="file" name="imageFile" class="form-control" accept="image/*" required />
+                    </div>
+                    <div class="col-md-4">
+                        <input type="text" name="altText" class="form-control" placeholder="Image description (optional)" />
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-admin btn-admin-primary">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Upload image
+            $('#uploadImageForm').on('submit', function(e) {
+                e.preventDefault();
+                var formData = new FormData(this);
+                var token = $('input[name="__RequestVerificationToken"]').val();
+                formData.append('__RequestVerificationToken', token);
+
+                $.ajax({
+                    url: '@Url.Action("UploadRoomImage", "Admin")',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    success: function(response) {
+                        if (response.success) {
+                            location.reload();
+                        } else {
+                            alert(response.message || 'Error uploading image');
+                        }
+                    },
+                    error: function() {
+                        alert('Error uploading image');
+                    }
+                });
+            });
+
+            // Delete image
+            $('.delete-image').on('click', function() {
+                if (!confirm('Are you sure you want to delete this image?')) {
+                    return;
+                }
+
+                var imageId = $(this).data('image-id');
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
+                $.ajax({
+                    url: '@Url.Action("DeleteRoomImage", "Admin")',
+                    type: 'POST',
+                    data: {
+                        id: imageId,
+                        __RequestVerificationToken: token
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            $('[data-image-id="' + imageId + '"]').remove();
+                            if ($('#imageGallery .col-md-3').length === 0) {
+                                $('#imageGallery').html('<p class="text-muted">No images uploaded yet.</p>');
+                            }
+                        } else {
+                            alert(response.message || 'Error deleting image');
+                        }
+                    },
+                    error: function() {
+                        alert('Error deleting image');
+                    }
+                });
+            });
+        });
+    </script>
+}
+
