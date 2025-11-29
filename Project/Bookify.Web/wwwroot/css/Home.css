@@ -1,3 +1,4 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap'); /*the font url from google fonts*/
 /* Body */
 html, body {
   margin: 0;
@@ -338,14 +339,14 @@ body.profile-page-body .main-content {
 }
 
 .hero-title {
-  font-family: 'Playfair Display', serif;
-  font-size: 48px;
-  font-weight: 700;
-  margin-bottom: 16px;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  letter-spacing: 0;
-  text-align: center;
-  width: 100%;
+    font-family: 'Playfair Display', serif;
+    font-size: 48px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    letter-spacing: 0;
+    text-align: center;
+    width: 100%;
 }
 
 .hero-subtitle {
@@ -393,6 +394,19 @@ body.profile-page-body .main-content {
   flex: 0 0 auto;
   min-width: 180px;
 }
+.price-field .form-control::placeholder {
+    color: #92400e !important;  
+    font-style: normal;
+    opacity: 1 !important;
+}
+
+
+/*.search-field.price-field {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-width: 150px;
+}*/
 
 .validation-error {
   display: block;
@@ -430,11 +444,12 @@ body.profile-page-body .main-content {
   font-weight: 400;
 }
 
+
 .search-field .form-control:focus {
-  outline: none;
-  border-color: #FF8C42;
-  box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2);
-  transform: translateY(-1px);
+    outline: none;
+    border-color: #FF8C42;
+    box-shadow: 0 0 0 2px rgba(255, 140, 66, 0.2);
+    transform: translateY(-1px);
 }
 
 .search-field .form-control::placeholder {
@@ -568,10 +583,13 @@ body.profile-page-body .main-content {
   text-align: center;
 }
 
-.section-title {
-  font-family: 'Georgia', serif;
-  font-size: 32px;
-  margin-bottom: 15px;
+.section-title {  /*changed the font family here */
+    font-family: "Cormorant", serif;
+    font-optical-sizing: auto;
+    font-weight: bold;
+    font-style: italic;
+    font-size: 32px;
+    margin-bottom: 15px;
 }
 
 .admin-subtitle {
@@ -1005,4 +1023,6 @@ footer {
   opacity: 1;
   transform: translateX(0);
 }
+
+
 

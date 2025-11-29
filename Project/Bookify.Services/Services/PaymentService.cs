@@ -587,6 +587,18 @@ public class PaymentService : IPaymentService
             await _unitOfWork.Bookings.AddAsync(booking);
             await _unitOfWork.SaveChangesAsync(); // Save to get booking ID
 
+            // Update room availability to false when booking is created (regardless of check-in date)
+            // This keeps behavior consistent with ReservationService and ensures the room
+            // disappears from available lists and shows as unavailable in the admin grid
+            if (room.IsAvailable)
+            {
+                room.IsAvailable = false;
+                _unitOfWork.Rooms.Update(room);
+                _logger.Information(
+                    "Updated room {RoomId} availability to false due to confirmed booking (CheckIn: {CheckIn}, CheckOut: {CheckOut})",
+                    roomId, checkIn, checkOut);
+            }
+
             // Create payment record
             var payment = new BookingPayment
             {

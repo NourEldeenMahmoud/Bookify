@@ -1,0 +1,119 @@
+@model IEnumerable<Bookify.Data.Models.Room>
+
+@{
+    ViewData["Title"] = "Rooms";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Rooms Management</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    @Html.AntiForgeryToken()
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Rooms</h2>
+            <a href="@Url.Action("CreateRoom", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-plus me-2"></i> Create New Room
+            </a>
+        </div>
+
+    <table class="table table-striped data-table" data-export="true">
+        <thead>
+            <tr>
+                <th>Room Number</th>
+                <th>Room Type</th>
+                <th>Availability</th>
+                <th>Current Booking</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var room in Model)
+            {
+                // Any active or upcoming non-cancelled booking should mark the room as booked/unavailable
+                var currentBooking = room.Bookings?
+                    .Where(b => 
+                        b.CheckOutDate >= DateTime.Today && 
+                        (b.Status == Bookify.Data.Data.Enums.BookingStatus.Pending || 
+                         b.Status == Bookify.Data.Data.Enums.BookingStatus.Paid))
+                    .OrderBy(b => b.CheckInDate)
+                    .FirstOrDefault();
+
+                var isAvailable = room.IsAvailable && currentBooking == null;
+
+                <tr>
+                    <td>@room.RoomNumber</td>
+                    <td>@room.RoomType?.Name</td>
+                    <td>
+                        @if (isAvailable)
+                        {
+                            <span class="badge badge-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Unavailable</span>
+                        }
+                    </td>
+                    <td>
+                        @if (currentBooking != null)
+                        {
+                            <span class="text-info">
+                                Booked from @currentBooking.CheckInDate.ToString("MM/dd/yyyy")
+                                to @currentBooking.CheckOutDate.ToString("MM/dd/yyyy")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No active or upcoming booking</span>
+                        }
+                    </td>
+                    <td>@(room.Notes?.Length > 30 ? room.Notes.Substring(0, 30) + "..." : room.Notes ?? "N/A")</td>
+                    <td>
+                        <div class="action-buttons">
+                            <a href="@Url.Action("RoomDetails", "Admin", new { id = room.Id })" class="btn btn-action btn-view" title="View Details">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="@Url.Action("EditRoom", "Admin", new { id = room.Id })" class="btn btn-action btn-edit" title="Edit">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="@Url.Action("DeleteRoom", "Admin", new { id = room.Id })" 
+                               class="btn btn-action btn-delete confirm-delete" 
+                               data-message="Are you sure you want to delete this room?" 
+                               title="Delete"
+                               data-method="post">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.53/vfs_fonts.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}
+

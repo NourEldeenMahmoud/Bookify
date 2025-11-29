@@ -23,19 +23,21 @@ body {
   margin-bottom: 40px;
 }
 
-.contact-header h1 {
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #3b2c2c;
-  text-transform: capitalize;
-  border-bottom: 4px solid #FF8C42;
-  display: inline-block;
-  padding-bottom: 12px;
-  margin-bottom: 20px;
-  letter-spacing: -0.5px;
-  position: relative;
-  font-family: 'Inter', sans-serif;
-}
+    .contact-header h1 {/*changed the font*/
+        font-family: "Cormorant", serif;
+        font-optical-sizing: auto;
+        font-style: italic;
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #3b2c2c;
+        text-transform: capitalize;
+        border-bottom: 4px solid #FF8C42;
+        display: inline-block;
+        padding-bottom: 12px;
+        margin-bottom: 20px;
+        letter-spacing: -0.5px;
+        position: relative;
+    }
 
 .contact-header h1::after {
   content: '';
@@ -68,12 +70,13 @@ body {
 
 /*  Info Cards */
 .contact-info {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
-  max-width: 500px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 20px;
+    flex: 1;
+    max-width: 100%;
 }
+
 
 .info-card {
   background: #ffffff;

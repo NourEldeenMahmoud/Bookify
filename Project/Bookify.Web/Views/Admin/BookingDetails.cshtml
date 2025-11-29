@@ -1,0 +1,250 @@
+@model Bookify.Data.Models.Booking
+@using Bookify.Data.Data.Enums
+
+@{
+    ViewData["Title"] = "Booking Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Booking Details</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Booking #@Model.Id</h2>
+            <a href="@Url.Action("Bookings", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+    <!-- Customer Information -->
+    <div class="mb-4">
+        <h4>Customer Information</h4>
+        @if (Model.User != null)
+        {
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-bordered">
+                        <tr>
+                            <th>Name</th>
+                            <td>@($"{Model.User.FirstName} {Model.User.LastName}".Trim())</td>
+                        </tr>
+                        <tr>
+                            <th>Email</th>
+                            <td>@Model.User.Email</td>
+                        </tr>
+                        <tr>
+                            <th>Phone</th>
+                            <td>@(Model.User.PhoneNumber ?? "N/A")</td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <a href="@Url.Action("UserDetails", "Admin", new { id = Model.UserId })" class="btn btn-admin btn-admin-primary">
+                        <i class="fas fa-user"></i> View Customer Details
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">Customer information not available</p>
+        }
+    </div>
+
+    <!-- Booking Information -->
+    <div class="mb-4">
+        <h4>Booking Information</h4>
+        <div class="row">
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Booking ID</th>
+                        <td>@Model.Id</td>
+                    </tr>
+                    <tr>
+                        <th>Room Number</th>
+                        <td>@(Model.Room?.RoomNumber ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Room Type</th>
+                        <td>@(Model.Room?.RoomType?.Name ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <th>Check-in Date</th>
+                        <td>@Model.CheckInDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Check-out Date</th>
+                        <td>@Model.CheckOutDate.ToString("yyyy-MM-dd")</td>
+                    </tr>
+                    <tr>
+                        <th>Number of Guests</th>
+                        <td>@Model.NumberOfGuests</td>
+                    </tr>
+                    <tr>
+                        <th>Special Requests</th>
+                        <td>@(Model.SpecialRequests ?? "None")</td>
+                    </tr>
+                    <tr>
+                        <th>Total Amount</th>
+                        <td><strong>$@Model.TotalAmount.ToString("N2")</strong></td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Status</th>
+                        <td>
+                            <span class="badge badge-@Model.Status.ToString().ToLower()">@Model.Status</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Created Date</th>
+                        <td>@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm")</td>
+                    </tr>
+                    <tr>
+                        <th>Last Updated</th>
+                        <td>@(Model.UpdatedAt?.ToString("yyyy-MM-dd HH:mm") ?? "N/A")</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Information -->
+    <div class="mb-4">
+        <h4>Payment Information</h4>
+        @if (Model.Payments != null && Model.Payments.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Transaction Date</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th>Transaction ID</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var payment in Model.Payments.OrderByDescending(p => p.TransactionDate))
+                    {
+                        <tr>
+                            <td>@payment.TransactionDate.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>$@payment.Amount.ToString("N2")</td>
+                            <td>
+                                <span class="badge badge-@payment.PaymentStatus.ToString().ToLower()">@payment.PaymentStatus</span>
+                            </td>
+                            <td>@(payment.PaymentIntentId ?? payment.StripeSessionId ?? "N/A")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No payment information available</p>
+        }
+    </div>
+
+    <!-- Status Update -->
+    <div class="mb-4">
+        <h4>Update Booking Status</h4>
+        <form asp-action="UpdateBookingStatus" method="post" class="row">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="id" value="@Model.Id" />
+            <div class="col-md-4">
+                <select name="status" class="form-control" required>
+                    @if (Model.Status == BookingStatus.Pending)
+                    {
+                        <option value="@BookingStatus.Pending" selected>Pending</option>
+                    }
+                    else
+                    {
+                        <option value="@BookingStatus.Pending">Pending</option>
+                    }
+                    @if (Model.Status == BookingStatus.Paid)
+                    {
+                        <option value="@BookingStatus.Paid" selected>Paid</option>
+                    }
+                    else
+                    {
+                        <option value="@BookingStatus.Paid">Paid</option>
+                    }
+                    @if (Model.Status == BookingStatus.Completed)
+                    {
+                        <option value="@BookingStatus.Completed" selected>Completed</option>
+                    }
+                    else
+                    {
+                        <option value="@BookingStatus.Completed">Completed</option>
+                    }
+                    @if (Model.Status == BookingStatus.Cancelled)
+                    {
+                        <option value="@BookingStatus.Cancelled" selected>Cancelled</option>
+                    }
+                    else
+                    {
+                        <option value="@BookingStatus.Cancelled">Cancelled</option>
+                    }
+                </select>
+            </div>
+            <div class="col-md-6">
+                <input type="text" name="notes" class="form-control" placeholder="Notes (optional)" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-admin btn-admin-primary">
+                    <i class="fas fa-save"></i> Update
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Status History -->
+    <div class="mb-4">
+        <h4>Status History</h4>
+        @if (Model.StatusHistory != null && Model.StatusHistory.Any())
+        {
+            <div class="timeline">
+                @foreach (var history in Model.StatusHistory.OrderByDescending(h => h.ChangedAt))
+                {
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <div class="timeline-date">@history.ChangedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                            <div class="timeline-text">
+                                <strong>@history.PreviousStatus</strong> → <strong>@history.NewStatus</strong>
+                                @if (!string.IsNullOrEmpty(history.Notes))
+                                {
+                                    <br /><small class="text-muted">@history.Notes</small>
+                                }
+                                @if (history.ChangedByUser != null)
+                                {
+                                    <br /><small class="text-muted">Changed by: @($"{history.ChangedByUser.FirstName} {history.ChangedByUser.LastName}".Trim())</small>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">No status history available</p>
+        }
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}
+

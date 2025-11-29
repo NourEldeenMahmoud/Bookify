@@ -7,6 +7,8 @@ using Bookify.Services.Services;
 using Bookify.Web.Filters;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -32,6 +34,20 @@ builder.Services.AddControllersWithViews(options =>
     options.Filters.Add(new AutoValidateAntiforgeryTokenAttribute());
     options.Filters.Add<ValidateAntiforgeryTokenForNonApiAttribute>();
 });
+
+builder.Services.Configure<FormOptions>(options =>
+{
+    options.MultipartBodyLengthLimit = 10_485_760; // 10MB
+    options.ValueLengthLimit = 10_485_760;
+    options.MultipartHeadersLengthLimit = 10_485_760;
+});
+
+// Configure Kestrel server limits for file uploads
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.Limits.MaxRequestBodySize = 10_485_760; // 10MB
+});
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 
@@ -126,6 +142,34 @@ else
         await context.Database.MigrateAsync();
     }
 }
+
+// Add request logging middleware to track all incoming requests
+// This middleware runs BEFORE ASP.NET Core's built-in logging
+app.Use(async (context, next) =>
+{
+    try
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        
+        // Log incoming request details - this should appear BEFORE "Request starting HTTP"
+        logger.LogInformation("[MIDDLEWARE] Incoming Request - Method: {Method}, Path: {Path}, ContentType: {ContentType}, ContentLength: {ContentLength}", 
+            context.Request.Method, 
+            context.Request.Path, 
+            context.Request.ContentType ?? "null",
+            context.Request.ContentLength?.ToString() ?? "null");
+        
+        await next();
+    }
+    catch (Exception ex)
+    {
+        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
+        logger.LogError(ex, "[MIDDLEWARE] Unhandled exception in request pipeline - Method: {Method}, Path: {Path}, ContentType: {ContentType}", 
+            context.Request.Method, 
+            context.Request.Path,
+            context.Request.ContentType ?? "null");
+        throw;
+    }
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

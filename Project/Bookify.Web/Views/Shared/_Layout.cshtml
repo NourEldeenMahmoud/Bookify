@@ -67,7 +67,100 @@
         new WOW().init();
     </script>
 
+    <!-- Admin Panel Scripts (loaded only on Admin pages) -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            if (typeof toastr !== 'undefined') {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+            }
+        </script>
+    }
+
     <!-- ===== إستقبال Scripts لكل صفحة ===== -->
     @RenderSection("Scripts", required: false)
+
+    <!-- TempData Messages for Admin Pages -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        @if (TempData["Success"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('@TempData["Success"]');
+                }
+            </script>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('@TempData["Error"]');
+                }
+            </script>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning('@TempData["Warning"]');
+                }
+            </script>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('@TempData["Info"]');
+                }
+            </script>
+        }
+    }
+
+    <!-- Admin Confirmation Modal -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        <div class="modal fade" id="adminConfirmModal" tabindex="-1" aria-labelledby="adminConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content admin-confirm-modal">
+                    <div class="modal-header admin-confirm-modal-header">
+                        <div class="admin-confirm-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h5 class="modal-title" id="adminConfirmModalLabel">Confirm Action</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body admin-confirm-modal-body">
+                        <p class="mb-3" id="adminConfirmMessage"></p>
+                    </div>
+                    <div class="modal-footer admin-confirm-modal-footer">
+                        <button type="button" class="btn btn-admin-cancel" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-admin-confirm" id="adminConfirmBtn">
+                            <i class="fas fa-check me-2"></i>Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </body>
 </html>

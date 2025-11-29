@@ -22,7 +22,7 @@ namespace Bookify.Data.Data.Seeding
                     Description = "Comfortable single room with one bed, perfect for solo travelers.",
                     PricePerNight = 2000.00m,
                     MaxOccupancy = 1,
-                    ImageUrl = "Bookify.Web\\wwwroot\\images\\G1.jpg"
+                    ImageUrl = "/images/G1.jpg"
 
 
                 },
@@ -33,7 +33,7 @@ namespace Bookify.Data.Data.Seeding
                     Description = "Spacious double room with two beds, ideal for couples or friends.",
                     PricePerNight = 3500.00m,
                     MaxOccupancy = 2,
-                    ImageUrl = "Bookify.Web\\wwwroot\\images\\G2.jpg"
+                    ImageUrl = "/images/G2.jpg"
                 },
                 new RoomType
                 {
@@ -42,7 +42,7 @@ namespace Bookify.Data.Data.Seeding
                     Description = "Luxurious suite with separate living area and premium amenities.",
                     PricePerNight = 10000.00m,
                     MaxOccupancy = 4,
-                    ImageUrl = "Bookify.Web\\wwwroot\\images\\G3.jpg"
+                    ImageUrl = "/images/G3.jpg"
 
                 },
                 new RoomType
@@ -52,7 +52,7 @@ namespace Bookify.Data.Data.Seeding
                     Description = "Large family room with multiple beds, perfect for families.",
                     PricePerNight = 50000.00m,
                     MaxOccupancy = 5,
-                    ImageUrl = "Bookify.Web\\wwwroot\\images\\G4.jpg"
+                    ImageUrl = "/images/G4.jpg"
 
 
                 },
@@ -63,7 +63,7 @@ namespace Bookify.Data.Data.Seeding
                     Description = "Ultra-luxurious presidential suite with all premium features.",
                     PricePerNight = 20000.00m,
                     MaxOccupancy = 6,
-                    ImageUrl = "Bookify.Web\\wwwroot\\images\\G55.jpg"
+                    ImageUrl = "/images/G5.jpg"
                 }
         };
 

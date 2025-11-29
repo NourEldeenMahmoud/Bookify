@@ -567,7 +567,7 @@ namespace Bookify.Data.Migrations
                         {
                             Id = 1,
                             Description = "Comfortable single room with one bed, perfect for solo travelers.",
-                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G1.jpg",
+                            ImageUrl = "/images/G1.jpg",
                             MaxOccupancy = 1,
                             Name = "Single Room",
                             PricePerNight = 2000.00m
@@ -576,7 +576,7 @@ namespace Bookify.Data.Migrations
                         {
                             Id = 2,
                             Description = "Spacious double room with two beds, ideal for couples or friends.",
-                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G2.jpg",
+                            ImageUrl = "/images/G2.jpg",
                             MaxOccupancy = 2,
                             Name = "Double Room",
                             PricePerNight = 3500.00m
@@ -585,7 +585,7 @@ namespace Bookify.Data.Migrations
                         {
                             Id = 3,
                             Description = "Luxurious suite with separate living area and premium amenities.",
-                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G3.jpg",
+                            ImageUrl = "/images/G3.jpg",
                             MaxOccupancy = 4,
                             Name = "Deluxe Suite",
                             PricePerNight = 10000.00m
@@ -594,7 +594,7 @@ namespace Bookify.Data.Migrations
                         {
                             Id = 4,
                             Description = "Large family room with multiple beds, perfect for families.",
-                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G4.jpg",
+                            ImageUrl = "/images/G4.jpg",
                             MaxOccupancy = 5,
                             Name = "Family Room",
                             PricePerNight = 50000.00m
@@ -603,7 +603,7 @@ namespace Bookify.Data.Migrations
                         {
                             Id = 5,
                             Description = "Ultra-luxurious presidential suite with all premium features.",
-                            ImageUrl = "Bookify.Web\\wwwroot\\images\\G55.jpg",
+                            ImageUrl = "/images/G5.jpg",
                             MaxOccupancy = 6,
                             Name = "Presidential Suite",
                             PricePerNight = 20000.00m
