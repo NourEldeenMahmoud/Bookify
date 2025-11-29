@@ -416,7 +416,6 @@ namespace Bookify.Services.Services
                     _logger.Error("Failed to send password reset email. Status: {StatusCode}, Body: {Body}",
                         response.StatusCode, responseBody);
                     
-                    // Log specific error message for debugging
                     if (response.StatusCode == System.Net.HttpStatusCode.Forbidden)
                     {
                         _logger.Error("SendGrid Forbidden error - The 'From' email address is not verified. Please verify '{FromEmail}' in SendGrid Sender Identity settings.", 

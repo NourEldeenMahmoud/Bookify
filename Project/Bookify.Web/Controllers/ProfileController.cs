@@ -4,6 +4,7 @@ using Bookify.Services.Interfaces;
 using Bookify.Web.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Claims;
 
 namespace Bookify.Web.Controllers
@@ -59,19 +60,29 @@ namespace Bookify.Web.Controllers
                 return RedirectToAction("Index","Home");
             }
         }
+
+        private async Task SetBookingsViewBag(string userId)
+        {
+            var upcomingBookings = await _userProfileService.GetUpcomingBookingsAsync(userId);
+            var pastBookings = await _userProfileService.GetPastBookingsAsync(userId);
+            ViewBag.UpcomingBookings = upcomingBookings;
+            ViewBag.PastBookings = pastBookings;
+        }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdateProfile(UpdateProfileViewModel model)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            
+            if (string.IsNullOrEmpty(userId))
+            {
+                _logger.LogWarning("Unauthenticated user attempted to update profile");
+                return RedirectToAction("Login", "Account");
+            }
+
             try
             {
-                var userId = User.FindFirst( ClaimTypes.NameIdentifier)?.Value;
-                if (string.IsNullOrEmpty(userId))
-                {
-                    _logger.LogWarning("Unauthenticated user attempted to update profile");
-                    return RedirectToAction("Login", "Account");
-                }
-
                 if (model == null)
                 {
                     _logger.LogWarning("Update profile attempt with null model - UserId: {UserId}", userId);
@@ -80,44 +91,39 @@ namespace Bookify.Web.Controllers
                 }
 
                 _logger.LogInformation("Updating profile - UserId: {UserId}", userId);
+                ApplicationUser? userProfile = null;
+                if (!ModelState.IsValid)
+                {
+                    _logger.LogWarning("Update profile attempt with invalid model state - UserId: {UserId}", userId);
+                    userProfile = await _userProfileService.GetUserProfileAsync(userId);
+                    if (userProfile != null)
+                    {
+                        await SetBookingsViewBag(userId);
+                        return View("Index", userProfile);
+                    }
+                    return RedirectToAction("Index");
+                }
 
-                var user = await _userProfileService.GetUserProfileAsync(userId);
-                if (user == null)
+                // validation
+                if (model.DateOfBirth.HasValue && model.DateOfBirth.Value > DateTime.Today)
+                {
+                    _logger.LogWarning("Invalid date of birth provided - UserId: {UserId}, DateOfBirth: {DateOfBirth}", userId, model.DateOfBirth.Value);
+                    ModelState.AddModelError("", "Date of birth cannot be in the future.");
+                    userProfile = await _userProfileService.GetUserProfileAsync(userId);
+                    if (userProfile != null)
+                    {
+                        await SetBookingsViewBag(userId);
+                        return View("Index", userProfile);
+                    }
+                    return RedirectToAction("Index");
+                }
+
+                userProfile = await _userProfileService.GetUserProfileAsync(userId);
+                if (userProfile == null)
                 {
                     _logger.LogWarning("User {UserId} not found", userId);
                     TempData["Error"] = "User profile not found.";
                     return RedirectToAction("Index", "Home");
-                }
-
-                // Update user object with model values for display
-                if (!string.IsNullOrEmpty(model.FirstName)) user.FirstName = model.FirstName;
-                if (!string.IsNullOrEmpty(model.LastName)) user.LastName = model.LastName;
-                if (model.DateOfBirth.HasValue) user.DateOfBirth = model.DateOfBirth;
-                if (!string.IsNullOrEmpty(model.Address)) user.Address = model.Address;
-                if (!string.IsNullOrEmpty(model.City)) user.City = model.City;
-                if (!string.IsNullOrEmpty(model.PostalCode)) user.PostalCode = model.PostalCode;
-                if (!string.IsNullOrEmpty(model.Country)) user.Country = model.Country;
-
-                if (!ModelState.IsValid)
-                {
-                    _logger.LogWarning("Update profile attempt with invalid model state - UserId: {UserId}", userId);
-                    var upcomingBookings = await _userProfileService.GetUpcomingBookingsAsync(userId);
-                    var pastBookings = await _userProfileService.GetPastBookingsAsync(userId);
-                    ViewBag.UpcomingBookings = upcomingBookings;
-                    ViewBag.PastBookings = pastBookings;
-                    return View("Index", user);
-                }
-
-                // Additional validation
-                if (model.DateOfBirth.HasValue && model.DateOfBirth.Value > DateTime.Today)
-                {
-                    _logger.LogWarning("Invalid date of birth provided - UserId: {UserId}, DateOfBirth: {DateOfBirth}",userId, model.DateOfBirth.Value);
-                    ModelState.AddModelError("", "Date of birth cannot be in the future.");
-                    var upcomingBookings = await _userProfileService.GetUpcomingBookingsAsync(userId);
-                    var pastBookings = await _userProfileService.GetPastBookingsAsync(userId);
-                    ViewBag.UpcomingBookings = upcomingBookings;
-                    ViewBag.PastBookings = pastBookings;
-                    return View("Index", user);
                 }
 
                 var result = await _userProfileService.UpdateUserProfileAsync(
@@ -146,25 +152,20 @@ namespace Bookify.Web.Controllers
             }
             catch (ArgumentException ex)
             {
-                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
                 _logger.LogWarning(ex, "Validation error updating profile - UserId: {UserId}", userId);
                 ModelState.AddModelError("", ex.Message);
                 
-                var user = await _userProfileService.GetUserProfileAsync(userId ?? "");
+                var user = await _userProfileService.GetUserProfileAsync(userId);
                 if (user != null)
                 {
-                    var upcomingBookings = await _userProfileService.GetUpcomingBookingsAsync(userId ?? "");
-                    var pastBookings = await _userProfileService.GetPastBookingsAsync(userId ?? "");
-                    ViewBag.UpcomingBookings = upcomingBookings;
-                    ViewBag.PastBookings = pastBookings;
+                    await SetBookingsViewBag(userId);
                     return View("Index", user);
                 }
                 return RedirectToAction("Index");
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error updating profile - UserId: {UserId}",
-                    User.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+                _logger.LogError(ex, "Error updating profile - UserId: {UserId}", userId);
                 TempData["Error"] = "An error occurred while updating your profile. Please try again.";
                 return RedirectToAction("Index");
             }

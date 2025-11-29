@@ -8,6 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http.Features;
+using System.Security.Claims;
+using System.ComponentModel.DataAnnotations;
 
 namespace Bookify.Web.Controllers;
 
@@ -33,7 +35,7 @@ public class AdminController : Controller
     {
         try
         {
-            var adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _logger.LogInformation("Admin dashboard accessed - AdminId: {AdminId}", adminId);
 
             var totalBookings = await _unitOfWork.Bookings.CountAsync();
@@ -146,46 +148,6 @@ public class AdminController : Controller
         }
     }
 
-    [HttpGet]
-    public async Task<IActionResult> GetUpcomingCheckins()
-    {
-        try
-        {
-            var today = DateTime.Today;
-            var tomorrow = today.AddDays(1);
-            var allBookings = await _unitOfWork.Bookings.GetAllAsync();
-            var bookingsList = allBookings
-                .Where(b => b.CheckInDate.Date >= today && b.CheckInDate.Date <= tomorrow &&
-                           (b.Status == BookingStatus.Pending || b.Status == BookingStatus.Paid))
-                .OrderBy(b => b.CheckInDate)
-                .ToList();
-            
-            var result = new List<object>();
-            foreach (var booking in bookingsList)
-            {
-                var user = await _userManager.FindByIdAsync(booking.UserId);
-                var room = await _unitOfWork.Rooms.GetByIdAsync(booking.RoomId);
-                
-                result.Add(new
-                {
-                    id = booking.Id,
-                    customerName = user != null ? $"{user.FirstName} {user.LastName}".Trim() : "N/A",
-                    roomNumber = room?.RoomNumber ?? "N/A",
-                    checkInDate = booking.CheckInDate.ToString("yyyy-MM-dd"),
-                    checkOutDate = booking.CheckOutDate.ToString("yyyy-MM-dd"),
-                    numberOfGuests = booking.NumberOfGuests
-                });
-            }
-
-            return Json(result);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Error loading upcoming check-ins");
-            return Json(new List<object>());
-        }
-    }
-
     #region RoomTypes CRUD
     public async Task<IActionResult> RoomTypes()
     {
@@ -196,65 +158,74 @@ public class AdminController : Controller
     [HttpGet]
     public IActionResult CreateRoomType()
     {
-        return View();
+        return View(new RoomTypeViewModel());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(10_485_760)] // 10MB limit
     [RequestFormLimits(MultipartBodyLengthLimit = 10_485_760)]
-    public async Task<IActionResult> CreateRoomType(RoomType roomType, IFormFile? imageFile)
+    public async Task<IActionResult> CreateRoomType(RoomTypeViewModel model)
     {
         _logger.LogInformation("CreateRoomType POST action called - ImageFile: {HasFile}, FileSize: {FileSize}", 
-            imageFile != null, imageFile?.Length ?? 0);
+            model.ImageFile != null, model.ImageFile?.Length ?? 0);
         
         try
         {
-            if (roomType == null)
+            if (model == null)
             {
                 _logger.LogWarning("CreateRoomType attempt with null model");
                 ModelState.AddModelError("", "Invalid room type data.");
-                return View();
+                return View(new RoomTypeViewModel());
             }
 
-            _logger.LogInformation("Creating room type - Name: {Name}", roomType.Name);
+            _logger.LogInformation("Creating room type - Name: {Name}", model.Name);
 
             if (ModelState.IsValid)
             {
-                // Additional validation
-                if (roomType.PricePerNight < 0)
-                {
-                    _logger.LogWarning("Invalid PricePerNight: {Price}", roomType.PricePerNight);
-                    ModelState.AddModelError("", "Price per night cannot be negative.");
-                    return View(roomType);
-                }
-
-                if (roomType.MaxOccupancy <= 0)
-                {
-                    _logger.LogWarning("Invalid Capacity: {Capacity}", roomType.MaxOccupancy);
-                    ModelState.AddModelError("", "Capacity must be greater than zero.");
-                    return View(roomType);
-                }
-
-                if (imageFile != null && imageFile.Length > 0)
+                // Validate image file if provided
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
                     // Validate file size (max 5MB)
-                    if (imageFile.Length > 5 * 1024 * 1024)
+                    if (model.ImageFile.Length > 5 * 1024 * 1024)
                     {
-                        _logger.LogWarning("Image file too large: {Size} bytes", imageFile.Length);
-                        ModelState.AddModelError("", "Image file size must be less than 5MB.");
-                        return View(roomType);
+                        _logger.LogWarning("Image file too large: {Size} bytes", model.ImageFile.Length);
+                        ModelState.AddModelError("ImageFile", "Image file size must be less than 5MB.");
+                        return View(model);
                     }
 
+                    // Validate file type
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        _logger.LogWarning("Invalid file type: {Extension}", fileExtension);
+                        ModelState.AddModelError("ImageFile", "Invalid file type. Allowed types: JPG, JPEG, PNG, GIF.");
+                        return View(model);
+                    }
+                }
+
+                // Create RoomType entity from ViewModel
+                var roomType = new RoomType
+                {
+                    Name = model.Name,
+                    Description = model.Description,
+                    PricePerNight = model.PricePerNight,
+                    MaxOccupancy = model.MaxOccupancy
+                };
+
+                // Handle image upload
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
+                {
                     try
                     {
-                        roomType.ImageUrl = await SaveImageAsync(imageFile, "roomtypes");
+                        roomType.ImageUrl = await SaveImageAsync(model.ImageFile, "roomtypes");
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Error saving image for room type");
-                        ModelState.AddModelError("", "An error occurred while uploading the image. Please try again.");
-                        return View(roomType);
+                        ModelState.AddModelError("ImageFile", "An error occurred while uploading the image. Please try again.");
+                        return View(model);
                     }
                 }
 
@@ -267,13 +238,13 @@ public class AdminController : Controller
             }
 
             _logger.LogWarning("CreateRoomType attempt with invalid model state");
-            return View(roomType);
+            return View(model);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Error creating room type");
             TempData["Error"] = "An error occurred while creating the room type. Please try again.";
-            return View(roomType);
+            return View(model);
         }
     }
 
@@ -282,22 +253,33 @@ public class AdminController : Controller
     {
         var roomType = await _unitOfWork.RoomTypes.GetByIdAsync(id);
         if (roomType == null) return NotFound();
-        return View(roomType);
+        
+        // Map Entity to ViewModel
+        var model = new RoomTypeViewModel
+        {
+            Id = roomType.Id,
+            Name = roomType.Name,
+            Description = roomType.Description,
+            PricePerNight = roomType.PricePerNight,
+            MaxOccupancy = roomType.MaxOccupancy,
+            ImageUrl = roomType.ImageUrl
+        };
+        
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     [RequestSizeLimit(10_485_760)] // 10MB limit
     [RequestFormLimits(MultipartBodyLengthLimit = 10_485_760)]
-    public async Task<IActionResult> EditRoomType(int id, RoomType roomType, IFormFile? imageFile)
+    public async Task<IActionResult> EditRoomType(int id, RoomTypeViewModel model)
     {
-        if (id != roomType.Id) return NotFound();
+        if (id != model.Id) return NotFound();
 
         if (ModelState.IsValid)
         {
             try
             {
-                // جلب السجل من قاعدة البيانات أولاً للحصول على RowVersion الصحيح
                 var existingRoomType = await _unitOfWork.RoomTypes.GetByIdAsync(id);
                 if (existingRoomType == null)
                 {
@@ -305,41 +287,69 @@ public class AdminController : Controller
                     return RedirectToAction(nameof(RoomTypes));
                 }
 
-                // تحديث الحقول فقط (مع الحفاظ على RowVersion)
-                existingRoomType.Name = roomType.Name;
-                existingRoomType.Description = roomType.Description;
-                existingRoomType.PricePerNight = roomType.PricePerNight;
-                existingRoomType.MaxOccupancy = roomType.MaxOccupancy;
+                existingRoomType.Name = model.Name;
+                existingRoomType.Description = model.Description;
+                existingRoomType.PricePerNight = model.PricePerNight;
+                existingRoomType.MaxOccupancy = model.MaxOccupancy;
 
-                if (imageFile != null && imageFile.Length > 0)
+                if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
+                    // validate file size (max 5MB)
+                    if (model.ImageFile.Length > 5 * 1024 * 1024)
+                    {
+                        _logger.LogWarning("Image file too large: {Size} bytes for room type {Id}", model.ImageFile.Length, id);
+                        ModelState.AddModelError("ImageFile", "Image file size must be less than 5MB.");
+                        return View(model);
+                    }
+
+                    // Validate file type
+                    var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+                    var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLowerInvariant();
+                    if (!allowedExtensions.Contains(fileExtension))
+                    {
+                        _logger.LogWarning("Invalid file type: {Extension} for room type {Id}", fileExtension, id);
+                        ModelState.AddModelError("ImageFile", "Invalid file type. Allowed types: JPG, JPEG, PNG, GIF.");
+                        return View(model);
+                    }
+
                     try
                     {
-                        existingRoomType.ImageUrl = await SaveImageAsync(imageFile, "roomtypes");
+                        existingRoomType.ImageUrl = await SaveImageAsync(model.ImageFile, "roomtypes");
                     }
                     catch (Exception ex)
                     {
                         _logger.LogError(ex, "Error saving image for room type {Id}", id);
-                        ModelState.AddModelError("", "An error occurred while uploading the image. Please try again.");
-                        return View(roomType);
+                        ModelState.AddModelError("ImageFile", "An error occurred while uploading the image. Please try again.");
+                        return View(model);
                     }
                 }
 
                 _unitOfWork.RoomTypes.Update(existingRoomType);
                 await _unitOfWork.SaveChangesAsync();
                 
+                _logger.LogInformation("Room type updated successfully - Id: {Id}, Name: {Name}", id, model.Name);
                 TempData["Success"] = "Room type updated successfully.";
                 return RedirectToAction(nameof(RoomTypes));
             }
             catch (DbUpdateConcurrencyException)
             {
+                _logger.LogWarning("Concurrency exception updating room type {Id}", id);
                 ModelState.AddModelError("", "The room type was modified by another user. Please refresh and try again.");
-                var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
-                return View(roomType);
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error updating room type {Id}", id);
+                TempData["Error"] = "An error occurred while updating the room type. Please try again.";
+                return View(model);
             }
         }
         
-        return View(roomType);
+        // Log ModelState errors for debugging
+        _logger.LogWarning("EditRoomType POST - ModelState invalid for room type {Id}. Errors: {Errors}", 
+            id, string.Join(", ", ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage)));
+        
+        return View(model);
     }
 
     [HttpGet]
@@ -411,63 +421,48 @@ public class AdminController : Controller
     {
         var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
         ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-        return View();
+        return View(new RoomViewModel());
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> CreateRoom(Room room)
+    public async Task<IActionResult> CreateRoom(RoomViewModel model)
     {
         try
         {
-            if (room == null)
+            if (model == null)
             {
                 _logger.LogWarning("CreateRoom attempt with null model");
                 ModelState.AddModelError("", "Invalid room data.");
                 var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
                 ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-                return View();
+                return View(new RoomViewModel());
             }
 
             _logger.LogInformation("Creating room - RoomNumber: {RoomNumber}, RoomTypeId: {RoomTypeId}",
-                room.RoomNumber, room.RoomTypeId);
-
-            // Remove navigation properties from ModelState errors (they're not input fields)
-            ModelState.Remove("RoomType");
-            ModelState.Remove("GalleryImages");
-            ModelState.Remove("Bookings");
+                model.RoomNumber, model.RoomTypeId);
 
             if (ModelState.IsValid)
             {
-                // Additional validation
-                if (string.IsNullOrWhiteSpace(room.RoomNumber))
-                {
-                    _logger.LogWarning("Invalid RoomNumber provided");
-                    ModelState.AddModelError("", "Room number is required.");
-                    var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
-                    ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-                    return View(room);
-                }
-
-                if (room.RoomTypeId <= 0)
-                {
-                    _logger.LogWarning("Invalid RoomTypeId provided: {RoomTypeId}", room.RoomTypeId);
-                    ModelState.AddModelError("", "Room type is required.");
-                    var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
-                    ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-                    return View(room);
-                }
-
                 // Check if room number already exists
-                var existingRoom = await _unitOfWork.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == room.RoomNumber);
+                var existingRoom = await _unitOfWork.Rooms.FirstOrDefaultAsync(r => r.RoomNumber == model.RoomNumber);
                 if (existingRoom != null)
                 {
-                    _logger.LogWarning("Room number already exists: {RoomNumber}", room.RoomNumber);
-                    ModelState.AddModelError("", "Room number already exists.");
+                    _logger.LogWarning("Room number already exists: {RoomNumber}", model.RoomNumber);
+                    ModelState.AddModelError("RoomNumber", "Room number already exists.");
                     var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
                     ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-                    return View(room);
+                    return View(model);
                 }
+
+                // Create Room entity from ViewModel
+                var room = new Room
+                {
+                    RoomNumber = model.RoomNumber,
+                    RoomTypeId = model.RoomTypeId,
+                    IsAvailable = model.IsAvailable,
+                    Notes = model.Notes ?? string.Empty
+                };
 
                 await _unitOfWork.Rooms.AddAsync(room);
                 await _unitOfWork.SaveChangesAsync();
@@ -481,7 +476,7 @@ public class AdminController : Controller
             _logger.LogWarning("CreateRoom attempt with invalid model state");
             var roomTypesList = await _unitOfWork.RoomTypes.GetAllAsync();
             ViewBag.RoomTypes = new SelectList(roomTypesList, "Id", "Name");
-            return View(room);
+            return View(model);
         }
         catch (Exception ex)
         {
@@ -489,7 +484,7 @@ public class AdminController : Controller
             TempData["Error"] = "An error occurred while creating the room. Please try again.";
             var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
             ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name");
-            return View(room);
+            return View(model ?? new RoomViewModel());
         }
     }
 
@@ -499,27 +494,31 @@ public class AdminController : Controller
         var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(id);
         if (room == null) return NotFound();
 
+        // Map Entity to ViewModel
+        var model = new RoomViewModel
+        {
+            Id = room.Id,
+            RoomNumber = room.RoomNumber,
+            RoomTypeId = room.RoomTypeId,
+            IsAvailable = room.IsAvailable,
+            Notes = room.Notes
+        };
+
         var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
-        ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name", room.RoomTypeId);
-        return View(room);
+        ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name", model.RoomTypeId);
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> EditRoom(int id, Room room)
+    public async Task<IActionResult> EditRoom(int id, RoomViewModel model)
     {
-        if (id != room.Id) return NotFound();
-
-        // Remove navigation properties from ModelState errors (they're not input fields)
-        ModelState.Remove("RoomType");
-        ModelState.Remove("GalleryImages");
-        ModelState.Remove("Bookings");
+        if (id != model.Id) return NotFound();
 
         if (ModelState.IsValid)
         {
             try
             {
-                // جلب السجل من قاعدة البيانات أولاً
                 var existingRoom = await _unitOfWork.Rooms.GetByIdAsync(id);
                 if (existingRoom == null)
                 {
@@ -527,11 +526,10 @@ public class AdminController : Controller
                     return RedirectToAction(nameof(Rooms));
                 }
 
-                // تحديث الحقول فقط
-                existingRoom.RoomNumber = room.RoomNumber;
-                existingRoom.RoomTypeId = room.RoomTypeId;
-                existingRoom.IsAvailable = room.IsAvailable;
-                existingRoom.Notes = room.Notes;
+                existingRoom.RoomNumber = model.RoomNumber;
+                existingRoom.RoomTypeId = model.RoomTypeId;
+                existingRoom.IsAvailable = model.IsAvailable;
+                existingRoom.Notes = model.Notes ?? string.Empty;
 
                 _unitOfWork.Rooms.Update(existingRoom);
                 await _unitOfWork.SaveChangesAsync();
@@ -543,14 +541,14 @@ public class AdminController : Controller
             {
                 ModelState.AddModelError("", "The room was modified by another user. Please refresh and try again.");
                 var roomTypes = await _unitOfWork.RoomTypes.GetAllAsync();
-                ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name", room.RoomTypeId);
-                return View(room);
+                ViewBag.RoomTypes = new SelectList(roomTypes, "Id", "Name", model.RoomTypeId);
+                return View(model);
             }
         }
         
         var roomTypesList = await _unitOfWork.RoomTypes.GetAllAsync();
-        ViewBag.RoomTypes = new SelectList(roomTypesList, "Id", "Name", room.RoomTypeId);
-        return View(room);
+        ViewBag.RoomTypes = new SelectList(roomTypesList, "Id", "Name", model.RoomTypeId);
+        return View(model);
     }
 
     [HttpGet]
@@ -564,7 +562,6 @@ public class AdminController : Controller
         return View(room);
     }
 
-    [HttpPost]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteRoom(int id)
@@ -745,7 +742,7 @@ public class AdminController : Controller
                 return NotFound();
             }
 
-            var adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _logger.LogInformation("Updating booking status - BookingId: {BookingId}, NewStatus: {Status}, AdminId: {AdminId}",
                 id, status, adminId);
 
@@ -805,7 +802,7 @@ public class AdminController : Controller
                 return NotFound();
             }
 
-            var adminId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            var adminId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             _logger.LogInformation("Deleting booking - BookingId: {BookingId}, AdminId: {AdminId}", id, adminId);
 
             var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(id);

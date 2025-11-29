@@ -1,4 +1,4 @@
-@model Bookify.Data.Models.RoomType
+@model Bookify.Web.ViewModels.RoomTypeViewModel
 
 @{
     ViewData["Title"] = "Edit Room Type";
@@ -38,7 +38,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="PricePerNight" class="form-label">Price Per Night *</label>
-                    <input asp-for="PricePerNight" class="form-control" type="number" step="0.01" min="0" required />
+                    <input asp-for="PricePerNight" class="form-control" type="number" step="100" required />
                     <span asp-validation-for="PricePerNight" class="text-danger"></span>
                 </div>
             </div>
@@ -80,9 +80,10 @@
         </div>
 
         <div class="form-group">
-            <label class="form-label">Update Image (Optional)</label>
-            <input type="file" name="imageFile" class="form-control" accept="image/*" />
-            <small class="form-text text-muted">Leave empty to keep current image. Max file size: 5MB</small>
+            <label asp-for="ImageFile" class="form-label">Update Image (Optional)</label>
+            <input asp-for="ImageFile" class="form-control" accept="image/*" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+            <small class="form-text text-muted">Leave empty to keep current image. Max file size: 5MB. Allowed types: JPG, PNG, GIF</small>
         </div>
 
         <div class="form-group">
@@ -105,5 +106,23 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <script src="~/js/admin.js" asp-append-version="true"></script>
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Debug form submission
+            $('form').on('submit', function(e) {
+                console.log('Form submitting...');
+                console.log('Form action:', $(this).attr('action'));
+                console.log('Form method:', $(this).attr('method'));
+                
+                // Check if form is valid
+                if (!$(this).valid()) {
+                    console.log('Form validation failed');
+                    return false;
+                }
+                
+                console.log('Form is valid, submitting...');
+            });
+        });
+    </script>
 }
 

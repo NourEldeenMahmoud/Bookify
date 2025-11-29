@@ -4,6 +4,7 @@ using Bookify.Web.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System;
 using System.Security.Claims;
 
 namespace Bookify.Web.Controllers;
@@ -84,7 +85,7 @@ public class AccountController : Controller
                     return View(model);
                 }
 
-                // Check if email already exists
+                // check if email already exists
                 var existingUser = await _userManager.FindByEmailAsync(model.Email);
                 if (existingUser != null)
                 {
@@ -107,7 +108,7 @@ public class AccountController : Controller
                 {
                     try
                     {
-                        // Add user to Customer role (if role doesn't exist, it will be created or ignored)
+                        // add user as customer  
                         var roleResult = await _userManager.AddToRoleAsync(user, "Customer");
                         if (!roleResult.Succeeded)
                         {
@@ -164,7 +165,6 @@ public class AccountController : Controller
     {
         try
         {
-
             _logger.LogDebug("Login page accessed - ReturnUrl: {ReturnUrl}", returnUrl);
             ViewData["ReturnUrl"] = returnUrl;
             return View();
@@ -221,8 +221,29 @@ public class AccountController : Controller
                 if (result.IsLockedOut)
                 {
                     _logger.LogWarning("User {Email} account locked out", model.Email);
+                    
+                    //check for lockout
+                    if (user != null)
+                    {
+                        var lockoutEndDate = await _userManager.GetLockoutEndDateAsync(user);
+                        
+                        if (lockoutEndDate.HasValue && lockoutEndDate.Value > DateTimeOffset.UtcNow.AddDays(1))
+                        {
+                            _logger.LogWarning("User {Email} account manually locked by admin - LockoutEnd: {LockoutEnd}", 
+                                model.Email, lockoutEndDate.Value);
+                            TempData["Error"] = "Your account has been locked by an administrator. Please contact support.";
+                            return RedirectToAction("AccessDenied");
+                        }
+                        else
+                        {
+                            _logger.LogWarning("User {Email} account automatically locked due to failed attempts - LockoutEnd: {LockoutEnd}", 
+                                model.Email, lockoutEndDate?.ToString() ?? "Unknown");
+                            TempData["Error"] = "Your account has been temporarily locked due to multiple failed login attempts.";
+                            return RedirectToAction("Lockout");
+                        }
+                    }                    
                     TempData["Error"] = "Your account has been locked out. Please contact support.";
-                    return RedirectToAction("AccessDenied");
+                    return RedirectToAction("Lockout");
                 }
 
                 if (result.IsNotAllowed)
@@ -234,8 +255,6 @@ public class AccountController : Controller
 
                 if (user != null)
                 {
-                    user = await _userManager.FindByEmailAsync(model.Email);
-                    
                     var lockoutOptions = _userManager.Options.Lockout;
                     int maxFailedAttempts = lockoutOptions.MaxFailedAccessAttempts;
                     int currentFailedCount = user?.AccessFailedCount ?? 0;
@@ -307,6 +326,22 @@ public class AccountController : Controller
         {
             _logger.LogError(ex, "Error in AccessDenied page");
             return View();
+        }
+    }
+
+    [HttpGet]
+    [AllowAnonymous]
+    public IActionResult Lockout()
+    {
+        try
+        {
+            _logger.LogDebug("Lockout page accessed");
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading lockout page");
+            return RedirectToAction("Login");
         }
     }
 
@@ -389,7 +424,16 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult ForgotPasswordConfirmation()
     {
-        return View();
+        try
+        {
+            _logger.LogDebug("ForgotPasswordConfirmation page accessed");
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading ForgotPasswordConfirmation page");
+            return RedirectToAction("Login");
+        }
     }
 
     [HttpGet]
@@ -470,7 +514,16 @@ public class AccountController : Controller
     [AllowAnonymous]
     public IActionResult ResetPasswordConfirmation()
     {
-        return View();
+        try
+        {
+            _logger.LogDebug("Reset Password Confirmation page accessed");
+            return View();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Error loading Reset Password Confirmation page");
+            return RedirectToAction("Login");
+        }
     }
 
     [HttpGet]

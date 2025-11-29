@@ -20,14 +20,12 @@ public class RoomsController : Controller
     }
     public IActionResult Index(DateTime? checkIn, DateTime? checkOut, int? guests, decimal? minPrice, decimal? maxPrice)
     {
-        // Redirect to Home page and scroll to rooms section
-        // This ensures consistent behavior and uses the same view as Home
-        return RedirectToAction("Index", "Home", new { 
-            checkIn = checkIn, 
-            checkOut = checkOut, 
-            guests = guests, 
-            minPrice = minPrice, 
-            maxPrice = maxPrice 
+        return RedirectToAction("Index", "Home", new {
+            checkIn,
+            checkOut, 
+            guests, 
+            minPrice, 
+            maxPrice 
         });
     }
     public async Task<IActionResult> Details(int id, DateTime? checkIn, DateTime? checkOut)
@@ -40,8 +38,7 @@ public class RoomsController : Controller
                 return NotFound();
             }
 
-            _logger.LogInformation("Viewing room details - RoomId: {RoomId}, CheckIn: {CheckIn}, CheckOut: {CheckOut}",
-                id, checkIn, checkOut);
+            _logger.LogInformation("Viewing room details - RoomId: {RoomId}, CheckIn: {CheckIn}, CheckOut: {CheckOut}",id, checkIn, checkOut);
 
             var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(id);
             if (room == null)
