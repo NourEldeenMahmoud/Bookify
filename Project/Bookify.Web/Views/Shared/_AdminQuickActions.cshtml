@@ -1,0 +1,77 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Bookify.Data.Models.ApplicationUser> UserManager
+
+@{
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString() ?? "";
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString() ?? "";
+    
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var adminUser = userId != null ? await UserManager.FindByIdAsync(userId) : null;
+    var adminEmail = adminUser?.Email ?? User.Identity?.Name ?? "";
+}
+
+<!-- Admin Quick Actions -->
+<div class="admin-quick-actions-container">
+    <div class="container-fluid px-0">
+        <div class="row g-3">
+            <!-- Quick Action Cards (4 cards) -->
+            <div class="col-6 col-md-3 col-lg">
+                <a href="@Url.Action("Dashboard", "Admin")" 
+                   class="admin-quick-action-card @(currentAction == "Dashboard" ? "active" : "")">
+                    <div class="admin-quick-action-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="admin-quick-action-label">Dashboard</div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-3 col-lg">
+                <a href="@Url.Action("RoomTypes", "Admin")" 
+                   class="admin-quick-action-card @(currentAction.Contains("RoomType") ? "active" : "")">
+                    <div class="admin-quick-action-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
+                    <div class="admin-quick-action-label">Room Types</div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-3 col-lg">
+                <a href="@Url.Action("Rooms", "Admin")" 
+                   class="admin-quick-action-card @(currentAction.Contains("Room") && !currentAction.Contains("RoomType") ? "active" : "")">
+                    <div class="admin-quick-action-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                    <div class="admin-quick-action-label">Rooms</div>
+                </a>
+            </div>
+            
+            <div class="col-6 col-md-3 col-lg">
+                <a href="@Url.Action("Bookings", "Admin")" 
+                   class="admin-quick-action-card @(currentAction.Contains("Booking") ? "active" : "")">
+                    <div class="admin-quick-action-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="admin-quick-action-label">Bookings</div>
+                </a>
+            </div>
+            
+            <!-- Admin User Card -->
+            <div class="col-12 col-md-12 col-lg">
+                <div class="admin-user-card">
+                    <div class="admin-user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="admin-user-info">
+                        <p class="admin-user-email">@adminEmail</p>
+                        <div class="admin-user-buttons">
+                            <a href="@Url.Action("Dashboard", "Admin")" class="admin-user-btn @(currentAction == "Dashboard" ? "active" : "")">Admin</a>
+                            <a href="@Url.Action("Users", "Admin")" class="admin-user-btn @(currentAction.Contains("User") ? "active" : "")">Users</a>
+                            <a href="@Url.Action("Index", "Profile")" class="admin-user-btn">Settings</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -3,48 +3,164 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Bookify.Web</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <title>@ViewData["Title"] - RoyalHaven</title>
+
+    <!-- Bootstrap & Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet" asp-append-version="true" />
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" asp-append-version="true" />
+   
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet" asp-append-version="true" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" asp-append-version="true" />
+
+    <!-- Main Styles -->
+    <link rel="stylesheet" href="~/css/Home.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Bookify.Web.styles.css" asp-append-version="true" />
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" asp-append-version="true" />
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="@Url.Content("~/images/logo.jpeg")" asp-append-version="true" />
+
+    <!-- ===== إستقبال CSS الخاص بكل صفحة ===== -->
+    @RenderSection("Styles", required: false)
 </head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Bookify.Web</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
+
+<body class="@(ViewContext.RouteData.Values["controller"]?.ToString() == "Account" ? "account-page-body" : "") @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "profile-page-body" : "")">
+    <div class="page-wrapper @(ViewContext.RouteData.Values["controller"]?.ToString() == "Account" ? "account-page" : "") @(ViewContext.RouteData.Values["controller"]?.ToString() == "Profile" ? "profile-page" : "")">
+        <!-- Sidebar -->
+        @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Account")
+        {
+            @await Html.PartialAsync("_Sidebar")
+        }
+
+        <div class="content-wrapper">
+            <!-- Main Content -->
+            <div class="main-content">
+                @RenderBody()
             </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+            <!-- Footer -->
+            @if (ViewContext.RouteData.Values["controller"]?.ToString() != "Account" && ViewContext.RouteData.Values["controller"]?.ToString() != "Profile")
+            {
+                @await Html.PartialAsync("_Footer")
+            }
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - Bookify.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
-    <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Scripts أساسية -->
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" asp-append-version="true"></script>
+    <script src="https://cdn.tailwindcss.com" asp-append-version="true"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.min.js" asp-append-version="true"></script>
+    <script src="~/js/sidebar.js" asp-append-version="true"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    @await RenderSectionAsync("Scripts", required: false)
+    <script>
+        new WOW().init();
+    </script>
+
+    <!-- Admin Panel Scripts (loaded only on Admin pages) -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+        <script>
+            if (typeof toastr !== 'undefined') {
+                toastr.options = {
+                    "closeButton": true,
+                    "debug": false,
+                    "newestOnTop": true,
+                    "progressBar": true,
+                    "positionClass": "toast-top-right",
+                    "preventDuplicates": false,
+                    "onclick": null,
+                    "showDuration": "300",
+                    "hideDuration": "1000",
+                    "timeOut": "5000",
+                    "extendedTimeOut": "1000",
+                    "showEasing": "swing",
+                    "hideEasing": "linear",
+                    "showMethod": "fadeIn",
+                    "hideMethod": "fadeOut"
+                };
+            }
+        </script>
+    }
+
+    <!-- ===== إستقبال Scripts لكل صفحة ===== -->
+    @RenderSection("Scripts", required: false)
+
+    <!-- TempData Messages for Admin Pages -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        @if (TempData["Success"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.success('@TempData["Success"]');
+                }
+            </script>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.error('@TempData["Error"]');
+                }
+            </script>
+        }
+        @if (TempData["Warning"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.warning('@TempData["Warning"]');
+                }
+            </script>
+        }
+        @if (TempData["Info"] != null)
+        {
+            <script>
+                if (typeof toastr !== 'undefined') {
+                    toastr.info('@TempData["Info"]');
+                }
+            </script>
+        }
+    }
+
+    <!-- Admin Confirmation Modal -->
+    @if (ViewContext.RouteData.Values["controller"]?.ToString() == "Admin")
+    {
+        <div class="modal fade" id="adminConfirmModal" tabindex="-1" aria-labelledby="adminConfirmModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content admin-confirm-modal">
+                    <div class="modal-header admin-confirm-modal-header">
+                        <div class="admin-confirm-icon">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </div>
+                        <h5 class="modal-title" id="adminConfirmModalLabel">Confirm Action</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body admin-confirm-modal-body">
+                        <p class="mb-3" id="adminConfirmMessage"></p>
+                    </div>
+                    <div class="modal-footer admin-confirm-modal-footer">
+                        <button type="button" class="btn btn-admin-cancel" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-admin-confirm" id="adminConfirmBtn">
+                            <i class="fas fa-check me-2"></i>Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 </body>
 </html>

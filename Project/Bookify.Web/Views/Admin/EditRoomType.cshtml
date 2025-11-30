@@ -1,0 +1,128 @@
+@model Bookify.Web.ViewModels.RoomTypeViewModel
+
+@{
+    ViewData["Title"] = "Edit Room Type";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Edit Room Type</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Room Type Information</h2>
+            <a href="@Url.Action("RoomTypes", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+    <form asp-action="EditRoomType" asp-controller="Admin" method="post" enctype="multipart/form-data">
+        @Html.AntiForgeryToken()
+        <input type="hidden" asp-for="Id" />
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="Name" class="form-label">Name *</label>
+                    <input asp-for="Name" class="form-control" required />
+                    <span asp-validation-for="Name" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="PricePerNight" class="form-label">Price Per Night *</label>
+                    <input asp-for="PricePerNight" class="form-control" type="number" step="100" required />
+                    <span asp-validation-for="PricePerNight" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="MaxOccupancy" class="form-label">Max Occupancy *</label>
+                    <input asp-for="MaxOccupancy" class="form-control" type="number" min="1" required />
+                    <span asp-validation-for="MaxOccupancy" class="text-danger"></span>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="form-label">Current Image</label>
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        var imagePath = Model.ImageUrl;
+                        if (imagePath.Contains("wwwroot\\images") || imagePath.Contains("wwwroot/images"))
+                        {
+                            var fileName = System.IO.Path.GetFileName(imagePath);
+                            imagePath = $"~/images/{fileName}";
+                        }
+                        else if (!imagePath.StartsWith("~/") && !imagePath.StartsWith("/") && !imagePath.StartsWith("http"))
+                        {
+                            imagePath = $"~/images/{System.IO.Path.GetFileName(imagePath)}";
+                        }
+                        <div>
+                            <img src="@Url.Content(imagePath)" alt="@Model.Name" class="img-thumbnail" style="max-width: 200px;" />
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No image uploaded</p>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="ImageFile" class="form-label">Update Image (Optional)</label>
+            <input asp-for="ImageFile" class="form-control" accept="image/*" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+            <small class="form-text text-muted">Leave empty to keep current image. Max file size: 5MB. Allowed types: JPG, PNG, GIF</small>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Description" class="form-label">Description</label>
+            <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-save"></i> Update Room Type
+            </button>
+            <a href="@Url.Action("RoomTypes", "Admin")" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Debug form submission
+            $('form').on('submit', function(e) {
+                console.log('Form submitting...');
+                console.log('Form action:', $(this).attr('action'));
+                console.log('Form method:', $(this).attr('method'));
+                
+                // Check if form is valid
+                if (!$(this).valid()) {
+                    console.log('Form validation failed');
+                    return false;
+                }
+                
+                console.log('Form is valid, submitting...');
+            });
+        });
+    </script>
+}
+

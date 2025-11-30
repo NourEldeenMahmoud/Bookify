@@ -1,0 +1,183 @@
+﻿@model Bookify.Web.ViewModels.LoginViewModel
+
+@{
+    ViewData["Title"] = "Login";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <!-- لو محتاج CSS خاص بالصفحة -->
+    <link rel="stylesheet" href="~/css/login.css" />
+    <!-- Tailwind CDN مؤقت؛ الأفضل عمل build وإضافته مرة في _Layout -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body.account-page-body {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 20px !important;
+            width: 100% !important;
+            background-color: #f7f7f7 !important;
+        }
+        
+        body.account-page-body .page-wrapper {
+            width: 100% !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .content-wrapper {
+            margin-left: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .main-content {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            min-height: 100vh !important;
+            padding: 20px !important;
+            margin: 0 !important;
+        }
+        
+        .login-form-container {
+            margin: 0 auto !important;
+        }
+    </style>
+}
+
+<div class="login-form-container w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden" style="height: 600px; max-height: 90vh;">
+    <!-- Left Side -->
+    <div class="image-overlay relative text-white lg:w-5/12 w-full flex-shrink-0" style="min-height: 600px; height: 100%;">
+        <div class="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-6 py-10">
+            <h1 class="text-4xl font-extrabold mb-4 border-b border-white/50 pb-2">Welcome Back!</h1>
+            <p class="text-lg font-light max-w-xs">
+                Sign in to continue your journey with <strong class="font-bold">RoyalHaven</strong>.
+            </p>
+        </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="lg:w-7/12 w-full p-8 sm:p-12 bg-royal-light flex-grow overflow-y-auto">
+        <div class="max-w-md mx-auto text-center">
+            <h2 id="login-title" class="text-3xl font-bold text-royal-dark mb-2">Login</h2>
+            <p id="login-subtitle" class="text-royal-dark mb-6 text-sm">
+                Enter your credentials to continue
+            </p>
+
+            @if (!ViewData.ModelState.IsValid)
+            {
+                <div class="mb-4 bg-red-50 border-l-4 border-red-500 p-4 rounded-lg text-left">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i class="lucide lucide-alert-circle text-red-500" data-lucide="alert-circle"></i>
+                        </div>
+                        <div class="ml-3">
+                            <div asp-validation-summary="All" class="text-sm text-red-700"></div>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <form asp-controller="Account" asp-action="Login" method="post" id="login-form">
+                <div class="mb-4">
+                    <label for="Email" class="sr-only">Email</label>
+                    <div class="relative">
+                        <input asp-for="Email" type="email" id="Email" placeholder="Email address" required
+                               class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                        <span class="lucide lucide-mail absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="mail"></span>
+                    </div>
+                    <span asp-validation-for="Email" class="text-sm text-red-600"></span>
+                </div>
+
+                <div class="mb-6">
+                    <label for="Password" class="sr-only">Password</label>
+                    <div class="relative">
+                        <input asp-for="Password" type="password" id="Password" placeholder="Password" required
+                               class="w-full p-3 pr-12 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+
+                        <!-- أيقونة إظهار/إخفاء الباسورد -->
+                        <button type="button" id="togglePassword"
+                                class="absolute right-3 top-3 text-amber-600 hover:text-orange-600 transition">
+                            <i data-lucide="eye"></i>
+                        </button>
+                    </div>
+                    <span asp-validation-for="Password" class="text-sm text-red-600"></span>
+                </div>
+
+                <div class="flex justify-between items-center mb-6 text-sm">
+                    <label class="flex items-center text-royal-dark/80">
+                        <input asp-for="RememberMe" type="checkbox"
+                               class="mr-2 rounded border-royal-brown text-royal-brown focus:ring-royal-brown" />
+                        Remember me
+                    </label>
+
+                    <div class="flex flex-col items-end">
+                        <a asp-controller="Account" asp-action="ForgotPassword" class="text-royal-brown hover:underline font-medium mb-1" style="color: #c9591d;">Forget password?</a>
+                    </div>
+                </div>
+
+                <button type="submit"
+                        class="w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02]">
+                    Sign in
+                </button>
+            </form>
+
+            <div class="text-center mt-8 mb-4 text-royal-dark/70">
+                <p class="px-2 text-amber-900/60">Don't have an account?</p>
+                <a asp-controller="Account" asp-action="Register" class="text-lg font-bold text-royal-brown hover:text-royal-dark transition-colors text-amber-700 hover:text-orange-600">Create an Account</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div id="message-box"
+     class="fixed bottom-4 left-1/2 -translate-x-1/2 bg-green-500 text-white p-3 rounded-lg shadow-xl hidden transition-opacity duration-300 z-50"></div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="~/js/login.js"></script>
+    <script>
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    </script>
+    <script>
+        // تشغيل أيقونات Lucide
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+
+        // Toggle Password View
+        const passwordInput = document.getElementById("Password");
+        const toggleBtn = document.getElementById("togglePassword");
+
+        toggleBtn.addEventListener("click", function () {
+            const isPassword = passwordInput.type === "password";
+
+            // غير النوع
+            passwordInput.type = isPassword ? "text" : "password";
+
+            // غير الأيقونة
+            this.innerHTML = isPassword
+                ? '<i data-lucide="eye-off"></i>'
+                : '<i data-lucide="eye"></i>';
+
+            lucide.createIcons(); // إعادة تشغيل الأيقونات بعد تغييرها
+        });
+    </script>
+}

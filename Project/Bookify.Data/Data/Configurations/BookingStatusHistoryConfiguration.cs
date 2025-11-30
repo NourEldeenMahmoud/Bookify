@@ -13,7 +13,7 @@ namespace Bookify.Data.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<BookingStatusHistory> builder)
         {
-            builder.ToTable("BookingStatusHistories");
+            builder.ToTable("BookingStatusHistory");
             builder.HasKey(bsh => bsh.Id);
             builder.Property(bsh => bsh.BookingId).IsRequired();
             builder.Property(bsh => bsh.PreviousStatus).IsRequired().HasConversion<string>().HasMaxLength(50);

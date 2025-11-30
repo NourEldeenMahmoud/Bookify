@@ -1,0 +1,99 @@
+@model Bookify.Web.ViewModels.RoomViewModel
+
+@{
+    ViewData["Title"] = "Create Room";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Create New Room</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Room Information</h2>
+            <a href="@Url.Action("Rooms", "Admin")" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-arrow-left me-2"></i> Back to List
+            </a>
+        </div>
+
+    <form asp-action="CreateRoom" asp-controller="Admin" method="post">
+        @Html.AntiForgeryToken()
+        
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="RoomNumber" class="form-label">Room Number *</label>
+                    <input asp-for="RoomNumber" class="form-control" required maxlength="10" />
+                    <span asp-validation-for="RoomNumber" class="text-danger"></span>
+                    <small class="form-text text-muted">Must be unique</small>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label asp-for="RoomTypeId" class="form-label">Room Type *</label>
+                    <select asp-for="RoomTypeId" asp-items="ViewBag.RoomTypes" class="form-control" required>
+                        <option value="">-- Select Room Type --</option>
+                    </select>
+                    <span asp-validation-for="RoomTypeId" class="text-danger"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <div class="form-check">
+                        <input asp-for="IsAvailable" class="form-check-input" type="checkbox" checked />
+                        <label asp-for="IsAvailable" class="form-check-label">
+                            Available
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="Notes" class="form-label">Notes</label>
+            <textarea asp-for="Notes" class="form-control" rows="3" maxlength="500"></textarea>
+            <span asp-validation-for="Notes" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <button type="submit" class="btn btn-admin btn-admin-primary">
+                <i class="fas fa-save"></i> Create Room
+            </button>
+            <a href="@Url.Action("Rooms", "Admin")" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        $(document).ready(function() {
+            // Debug: Log form action
+            var form = $('form').first();
+            if (form.length > 0) {
+                console.log('Form action:', form.attr('action'));
+                console.log('Form method:', form.attr('method'));
+            }
+            
+            // Ensure form submission works - don't prevent default
+            $('form').first().on('submit', function(e) {
+                console.log('Form submitting to:', $(this).attr('action'));
+                // Let the form submit normally - don't prevent default
+            });
+        });
+    </script>
+}
+

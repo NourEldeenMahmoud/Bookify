@@ -1,4 +1,5 @@
-﻿using Bookify.Data.Models;
+﻿using Bookify.Data.Data.Seeding;
+using Bookify.Data.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System;
@@ -36,6 +37,8 @@ namespace Bookify.Data.Data.Configurations
 
             builder.HasIndex(r => r.RoomNumber).IsUnique();
 
+            // Seed Rooms (Mock Data)
+            builder.HasData(SeedData.SeedRooms());
         }
     }
 }

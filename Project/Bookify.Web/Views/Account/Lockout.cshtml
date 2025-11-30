@@ -1,0 +1,138 @@
+@{
+    ViewData["Title"] = "Account Locked";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body.account-page-body {
+            display: flex !important;
+            flex-direction: row !important;
+            justify-content: center !important;
+            align-items: center !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            overflow: hidden !important;
+            background-color: #f7f7f7 !important;
+        }
+        
+        body.account-page-body .page-wrapper {
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .content-wrapper {
+            margin-left: 0 !important;
+            width: 100% !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            height: 100vh !important;
+            padding: 0 !important;
+        }
+        
+        body.account-page-body .main-content {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            width: 100% !important;
+            height: 100vh !important;
+            padding: 20px !important;
+            margin: 0 !important;
+        }
+        
+        .login-form-container {
+            margin: 0 auto !important;
+        }
+    </style>
+}
+
+<div class="login-form-container w-full max-w-5xl bg-white rounded-2xl shadow-2xl flex flex-col lg:flex-row overflow-hidden" style="height: 600px;">
+    <!-- Left Side -->
+    <div class="image-overlay relative text-white lg:w-5/12 w-full flex-shrink-0">
+        <div class="relative z-10 w-full h-full flex flex-col justify-center items-center text-center px-6 py-10">
+            <h1 class="text-4xl font-extrabold mb-4 border-b border-white/50 pb-2">Account Locked</h1>
+            <p class="text-lg font-light max-w-xs">
+                Your account has been temporarily locked for security reasons.
+            </p>
+        </div>
+    </div>
+
+    <!-- Right Side -->
+    <div class="lg:w-7/12 w-full p-8 sm:p-12 bg-royal-light flex-grow overflow-y-auto">
+        <div class="max-w-md mx-auto text-center">
+            <div class="mb-6">
+                <i class="lucide lucide-lock text-6xl text-red-500 mb-4" data-lucide="lock"></i>
+            </div>
+            
+            <h2 class="text-3xl font-bold text-royal-dark mb-4">Account Temporarily Locked</h2>
+            
+            <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 text-left">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="lucide lucide-alert-circle text-red-500" data-lucide="alert-circle"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-red-700">
+                            Your account has been locked due to multiple failed login attempts. 
+                            For security reasons, please wait <strong>15 minutes</strong> before trying again.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-amber-50 border-l-4 border-amber-500 p-4 mb-6 text-left">
+                <div class="flex">
+                    <div class="flex-shrink-0">
+                        <i class="lucide lucide-info text-amber-500" data-lucide="info"></i>
+                    </div>
+                    <div class="ml-3">
+                        <p class="text-sm text-amber-700">
+                            <strong>What happened?</strong><br>
+                            After 5 failed login attempts, your account is automatically locked for 15 minutes to protect your account from unauthorized access.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <a asp-controller="Account" asp-action="Login" 
+                   class="block w-full py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white text-center rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02]">
+                    <i class="lucide lucide-arrow-left inline-block mr-2" data-lucide="arrow-left"></i>
+                    Back to Login
+                </a>
+
+                <a asp-controller="Account" asp-action="ForgotPassword" 
+                   class="block w-full py-3 bg-gray-200 text-gray-700 text-center rounded-lg hover:bg-gray-300 transition-all">
+                    <i class="lucide lucide-key inline-block mr-2" data-lucide="key"></i>
+                    Forgot Password?
+                </a>
+
+                <a asp-controller="Home" asp-action="Index" 
+                   class="block text-royal-brown hover:text-royal-dark transition-colors text-sm">
+                    Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+    </script>
+}
+

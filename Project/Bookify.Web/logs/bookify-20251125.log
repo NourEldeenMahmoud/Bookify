@@ -1,0 +1,5 @@
+2025-11-25 00:01:15.778 +02:00 [INF] User profile is available. Using 'C:\Users\NourEldeen\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-11-25 00:01:15.928 +02:00 [INF] Now listening on: http://localhost:5057
+2025-11-25 00:01:15.930 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-11-25 00:01:15.930 +02:00 [INF] Hosting environment: Development
+2025-11-25 00:01:15.930 +02:00 [INF] Content root path: E:\Nour Eldeen\Study\Self Study\Projects\Bookify-Dev\Bookify.Web

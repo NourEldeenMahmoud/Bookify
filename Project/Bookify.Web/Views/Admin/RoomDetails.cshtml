@@ -1,0 +1,174 @@
+@model Bookify.Data.Models.Room
+@using Bookify.Data.Models
+@using Bookify.Data.Data.Enums
+
+@{
+    ViewData["Title"] = "Room Details";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var bookings = ViewBag.Bookings as IEnumerable<Booking> ?? new List<Booking>();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <h1 class="admin-page-title">Room Details</h1>
+    
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <div class="admin-card">
+        <div class="admin-card-header">
+            <h2 class="admin-card-title">Room @Model.RoomNumber</h2>
+            <div>
+                <a href="@Url.Action("EditRoom", "Admin", new { id = Model.Id })" class="btn btn-admin btn-admin-primary me-2">
+                    <i class="fas fa-edit me-2"></i> Edit
+                </a>
+                <a href="@Url.Action("Rooms", "Admin")" class="btn btn-admin btn-admin-primary">
+                    <i class="fas fa-arrow-left me-2"></i> Back to List
+                </a>
+            </div>
+        </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h4>Room Information</h4>
+            <table class="table table-bordered">
+                <tr>
+                    <th>Room Number</th>
+                    <td>@Model.RoomNumber</td>
+                </tr>
+                <tr>
+                    <th>Room Type</th>
+                    <td>@Model.RoomType?.Name</td>
+                </tr>
+                <tr>
+                    <th>Availability</th>
+                    <td>
+                        @if (Model.IsAvailable)
+                        {
+                            <span class="badge badge-success">Available</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-danger">Unavailable</span>
+                        }
+                    </td>
+                </tr>
+                <tr>
+                    <th>Notes</th>
+                    <td>@(Model.Notes ?? "N/A")</td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-md-6">
+            <h4>Room Type Details</h4>
+            @if (Model.RoomType != null)
+            {
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <td>@Model.RoomType.Name</td>
+                    </tr>
+                    <tr>
+                        <th>Price Per Night</th>
+                        <td>$@Model.RoomType.PricePerNight.ToString("N2")</td>
+                    </tr>
+                    <tr>
+                        <th>Max Occupancy</th>
+                        <td>@Model.RoomType.MaxOccupancy</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>@(Model.RoomType.Description ?? "N/A")</td>
+                    </tr>
+                </table>
+            }
+        </div>
+    </div>
+
+    <!-- Gallery Images -->
+    @if (Model.GalleryImages != null && Model.GalleryImages.Any())
+    {
+        <div class="mt-4">
+            <h4>Gallery Images</h4>
+            <div class="row">
+                @foreach (var image in Model.GalleryImages)
+                {
+                    var imagePath = image.ImageUrl;
+                    if (!string.IsNullOrEmpty(imagePath))
+                    {
+                        if (imagePath.Contains("wwwroot\\images") || imagePath.Contains("wwwroot/images"))
+                        {
+                            var fileName = System.IO.Path.GetFileName(imagePath);
+                            imagePath = $"~/images/{fileName}";
+                        }
+                        else if (!imagePath.StartsWith("~/") && !imagePath.StartsWith("/") && !imagePath.StartsWith("http"))
+                        {
+                            imagePath = $"~/images/{System.IO.Path.GetFileName(imagePath)}";
+                        }
+                    }
+                    <div class="col-md-3 mb-3">
+                        <img src="@Url.Content(imagePath)" alt="@image.AltText" class="img-thumbnail" style="width: 100%; height: 200px; object-fit: cover;" />
+                        <p class="small text-muted mt-2">@(image.AltText ?? "No description")</p>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <!-- Bookings History -->
+    <div class="mt-4">
+        <h4>Booking History (@bookings.Count())</h4>
+        @if (bookings.Any())
+        {
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Customer</th>
+                        <th>Check-in</th>
+                        <th>Check-out</th>
+                        <th>Guests</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var booking in bookings.OrderByDescending(b => b.CreatedAt))
+                    {
+                        <tr>
+                            <td>@booking.Id</td>
+                            <td>@(booking.User != null ? $"{booking.User.FirstName} {booking.User.LastName}".Trim() : "N/A")</td>
+                            <td>@booking.CheckInDate.ToString("yyyy-MM-dd")</td>
+                            <td>@booking.CheckOutDate.ToString("yyyy-MM-dd")</td>
+                            <td>@booking.NumberOfGuests</td>
+                            <td>
+                                <span class="badge badge-@booking.Status.ToString().ToLower()">@booking.Status</span>
+                            </td>
+                            <td>$@booking.TotalAmount.ToString("N2")</td>
+                            <td>
+                                <a href="@Url.Action("BookingDetails", "Admin", new { id = booking.Id })" class="btn btn-sm btn-action btn-view">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p class="text-muted">No bookings for this room yet.</p>
+        }
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="~/js/admin.js" asp-append-version="true"></script>
+}
+

@@ -1,0 +1,853 @@
+@model Bookify.Web.ViewModels.CheckoutViewModel
+@{
+    ViewData["Title"] = "Checkout";
+}
+
+@section Styles {
+    <style>
+        .checkout-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .booking-summary-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .room-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .price-breakdown {
+            border-top: 1px solid #e5e7eb;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .price-row.total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ea580c;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .booking-form-card {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+        }
+
+        .stripe-card-element {
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: white;
+            margin: 1rem 0;
+            min-height: 50px;
+            display: block;
+        }
+
+        .stripe-card-element:focus-within {
+            border-color: #f59e0b;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.1);
+        }
+
+        /* Stripe Elements styling */
+        .stripe-card-element .StripeElement {
+            padding: 0;
+        }
+
+        .stripe-card-element .StripeElement--focus {
+            border-color: #f59e0b;
+        }
+
+        .stripe-card-element .StripeElement--invalid {
+            border-color: #dc2626;
+        }
+
+        .btn-confirm {
+            background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.75rem 2rem;
+            border-radius: 12px;
+            width: 100%;
+            margin-top: 1rem;
+            transition: all 0.3s;
+        }
+
+        .btn-confirm:hover:not(:disabled) {
+            background: linear-gradient(135deg, #ea580c 0%, #c2410c 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.4);
+        }
+
+        .btn-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .loading-spinner {
+            display: none;
+            margin-right: 0.5rem;
+        }
+
+        .loading-spinner.active {
+            display: inline-block;
+        }
+
+        .error-message {
+            color: #dc2626;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            max-width: 400px;
+        }
+
+        .toast-container .alert {
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            padding: 1rem 1.25rem;
+            margin-bottom: 0.75rem;
+            animation: slideInRight 0.3s ease-out;
+            border: none;
+            font-weight: 500;
+        }
+
+        .toast-container .alert-success {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+
+        .toast-container .alert-danger {
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            color: white;
+        }
+
+        .toast-container .alert-warning {
+            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            color: white;
+        }
+
+        .toast-container .alert .btn-close {
+            filter: brightness(0) invert(1);
+            opacity: 0.9;
+        }
+
+        .toast-container .alert .btn-close:hover {
+            opacity: 1;
+        }
+
+        @@keyframes slideInRight {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @@media (max-width: 768px) {
+            .checkout-container {
+                margin: 1rem auto;
+                padding: 0 0.5rem;
+            }
+
+            .booking-summary-card,
+            .booking-form-card {
+                padding: 1rem;
+            }
+        }
+    </style>
+}
+
+<div class="checkout-container">
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Error Messages -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    
+    <!-- Warning Messages -->
+    @if (TempData["Warning"] != null)
+    {
+        <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-triangle me-2"></i>
+            @TempData["Warning"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Left Column: Booking Summary -->
+        <div class="col-lg-5">
+            <div class="booking-summary-card">
+                <h4 class="fw-bold mb-4">Booking Summary</h4>
+                
+                <!-- Room Image -->
+                <img src="@Model.RoomImageUrl" alt="@Model.RoomTypeName" class="room-image" />
+                
+                <!-- Room Details -->
+                <h5 class="fw-semibold mb-2">@Model.RoomTypeName</h5>
+                <p class="text-muted mb-3">Room #@Model.RoomNumber</p>
+                
+                <!-- Editable Dates -->
+                <div class="mb-3">
+                    <h6 class="fw-semibold mb-3">Booking Details</h6>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Check-in Date</label>
+                        <input type="date" 
+                               id="checkInDate" 
+                               class="form-control" 
+                               value="@Model.CheckIn.ToString("yyyy-MM-dd")" 
+                               min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Check-out Date</label>
+                        <input type="date" 
+                               id="checkOutDate" 
+                               class="form-control" 
+                               value="@Model.CheckOut.ToString("yyyy-MM-dd")" 
+                               min="@DateTime.Today.AddDays(2).ToString("yyyy-MM-dd")"
+                               required />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small">Number of Guests</label>
+                        <input type="number" 
+                               id="numberOfGuests" 
+                               class="form-control" 
+                               value="@Model.NumberOfGuests" 
+                               min="1" 
+                               max="@Model.MaxOccupancy"
+                               required />
+                        <small class="text-muted">Max @Model.MaxOccupancy guests</small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-muted">Nights:</span>
+                        <span class="fw-semibold" id="numberOfNights">@Model.NumberOfNights</span>
+                    </div>
+                </div>
+
+                <!-- Room Description -->
+                @if (!string.IsNullOrEmpty(Model.RoomDescription))
+                {
+                    <div class="mb-3">
+                        <h6 class="fw-semibold mb-2">Description</h6>
+                        <p class="text-muted small">@Model.RoomDescription</p>
+                    </div>
+                }
+
+                <!-- Included Services -->
+                @if (Model.IncludedServices != null && Model.IncludedServices.Any())
+                {
+                    <div class="mb-3">
+                        <h6 class="fw-semibold mb-2">Included Services</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var service in Model.IncludedServices)
+                            {
+                                <span class="badge bg-success rounded-pill">
+                                    <i class="fas fa-check me-1"></i>@service
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+
+                <!-- Amenities -->
+                @if (Model.Amenities != null && Model.Amenities.Any())
+                {
+                    <div class="mb-3">
+                        <h6 class="fw-semibold mb-2">Amenities</h6>
+                        <div class="d-flex flex-wrap gap-2">
+                            @foreach (var amenity in Model.Amenities)
+                            {
+                                <span class="badge bg-info rounded-pill">
+                                    <i class="fas fa-star me-1"></i>@amenity
+                                </span>
+                            }
+                        </div>
+                    </div>
+                }
+                
+                <!-- Price Breakdown -->
+                <div class="price-breakdown">
+                    <h6 class="fw-semibold mb-3">Price Breakdown</h6>
+                    <div class="price-row">
+                        <span id="pricePerNightText">@Model.PricePerNight.ToString("N0") EGP × <span id="nightsText">@Model.NumberOfNights</span> nights</span>
+                        <span id="subtotalText">@Model.Subtotal.ToString("N0") EGP</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Tax (@((Model.TaxRate * 100).ToString("F0"))%)</span>
+                        <span id="taxAmountText">@Model.TaxAmount.ToString("N0") EGP</span>
+                    </div>
+                    @if (Model.Discount > 0)
+                    {
+                        <div class="price-row">
+                            <span>Discount</span>
+                            <span class="text-success">-@Model.Discount.ToString("N0") EGP</span>
+                        </div>
+                    }
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span id="totalAmountText">@Model.TotalAmount.ToString("N0") EGP</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Booking Form & Payment -->
+        <div class="col-lg-7">
+            <div class="booking-form-card">
+                <h4 class="fw-bold mb-4">Complete Your Booking</h4>
+                
+                <form id="checkoutForm" asp-action="Checkout" method="post">
+                    <input type="hidden" asp-for="RoomId" />
+                    <input type="hidden" asp-for="CheckIn" />
+                    <input type="hidden" asp-for="CheckOut" />
+                    <input type="hidden" asp-for="NumberOfGuests" />
+                    <input type="hidden" asp-for="TotalAmount" />
+                    
+                    <!-- Special Requests -->
+                    <div class="mb-4">
+                        <label asp-for="SpecialRequests" class="form-label fw-semibold">Special Requests (Optional)</label>
+                        <textarea asp-for="SpecialRequests" class="form-control" rows="3" 
+                                  placeholder="Any special requests or notes..."></textarea>
+                        <span asp-validation-for="SpecialRequests" class="text-danger"></span>
+                    </div>
+                    
+                    <!-- Payment Section -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold mb-3">Payment Information</label>
+                        <p class="text-muted small mb-3">Enter your card details to complete the booking</p>
+                        
+                        <!-- Stripe Card Element -->
+                        <div id="cardElement" class="stripe-card-element">
+                            <!-- Stripe Elements will create form elements here -->
+                            <div id="loadingMessage" class="text-center text-muted py-3">
+                                <i class="fas fa-spinner fa-spin me-2"></i>Loading payment form...
+                            </div>
+                        </div>
+                        
+                        <!-- Display errors -->
+                        <div id="cardErrors" class="error-message" role="alert"></div>
+                        
+                        <!-- Test card info (for development) -->
+                        @if (!string.IsNullOrEmpty(Model.StripePublishableKey))
+                        {
+                            @if (Model.StripePublishableKey.Contains("test") || Model.StripePublishableKey.Contains("pk_test"))
+                            {
+                                <div class="alert alert-info mt-3 small">
+                                    <strong>Test Mode:</strong> Use test card: <code>4242 4242 4242 4242</code>, any future expiry date, any CVC
+                                </div>
+                            }
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning mt-3">
+                                <strong>Warning:</strong> Stripe payment is not configured. Please add <code>Stripe:PublishableKey</code> in appsettings.json
+                            </div>
+                        }
+                    </div>
+                    
+                    <!-- Confirm & Pay Button -->
+                    <button type="submit" id="submitButton" class="btn btn-confirm">
+                        <span class="loading-spinner" id="loadingSpinner">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </span>
+                        <span id="buttonText">Confirm & Pay @Model.TotalAmount.ToString("N0") EGP</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
+    <script>
+        // Check if Stripe publishable key is available
+        const stripePublishableKey = '@(Model.StripePublishableKey ?? "")'.trim();
+        
+        console.log('Stripe Publishable Key:', stripePublishableKey ? 'Found' : 'Missing');
+        
+        if (!stripePublishableKey || stripePublishableKey === '') {
+            console.error('Stripe Publishable Key is not configured!');
+            const loadingMessage = document.getElementById('loadingMessage');
+            if (loadingMessage) {
+                loadingMessage.innerHTML = 
+                    '<div class="alert alert-warning">Stripe payment is not configured. Please contact support.</div>';
+            } else {
+                document.getElementById('cardElement').innerHTML = 
+                    '<div class="alert alert-warning">Stripe payment is not configured. Please contact support.</div>';
+            }
+        } else {
+            // Function to initialize Stripe after it loads
+            function initStripe() {
+                // Wait for Stripe.js to load
+                if (typeof Stripe === 'undefined') {
+                    console.error('Stripe.js library not loaded! Retrying...');
+                    const loadingMessage = document.getElementById('loadingMessage');
+                    if (loadingMessage) {
+                        loadingMessage.innerHTML = 
+                            '<div class="alert alert-warning"><i class="fas fa-spinner fa-spin me-2"></i>Loading Stripe.js...</div>';
+                    }
+                    // Retry after 500ms
+                    setTimeout(initStripe, 500);
+                    return;
+                }
+                
+                // Initialize Stripe
+                const stripe = Stripe(stripePublishableKey);
+                const elements = stripe.elements();
+                
+                // Create card element
+                const cardElement = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#424770',
+                            fontFamily: '"Inter", system-ui, -apple-system, sans-serif',
+                            '::placeholder': {
+                                color: '#aab7c4',
+                            },
+                        },
+                        invalid: {
+                            color: '#9e2146',
+                            iconColor: '#9e2146',
+                        },
+                    },
+                });
+                
+                // Mount card element
+                try {
+                    // Remove loading message
+                    const loadingMessage = document.getElementById('loadingMessage');
+                    if (loadingMessage) {
+                        loadingMessage.remove();
+                    }
+                    
+                    cardElement.mount('#cardElement');
+                    console.log('Stripe card element mounted successfully');
+                    
+                    // Handle real-time validation errors
+                    cardElement.on('change', function(event) {
+                        const displayError = document.getElementById('cardErrors');
+                        if (event.error) {
+                            displayError.textContent = event.error.message;
+                            displayError.classList.add('show');
+                        } else {
+                            displayError.textContent = '';
+                            displayError.classList.remove('show');
+                        }
+                    });
+                    
+                    // Store globally for form submission
+                    window.stripe = stripe;
+                    window.cardElement = cardElement;
+                } catch (error) {
+                    console.error('Error mounting Stripe card element:', error);
+                    const loadingMessage = document.getElementById('loadingMessage');
+                    if (loadingMessage) {
+                        loadingMessage.innerHTML = 
+                            '<div class="alert alert-danger">Error loading payment form. Please refresh the page.</div>';
+                    } else {
+                        document.getElementById('cardElement').innerHTML = 
+                            '<div class="alert alert-danger">Error loading payment form. Please refresh the page.</div>';
+                    }
+                }
+            }
+            
+            // Start initialization
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', function() {
+                    setTimeout(initStripe, 100);
+                });
+            } else {
+                setTimeout(initStripe, 100);
+            }
+        }
+        
+        // Handle form submission (outside if/else - should always work)
+        const form = document.getElementById('checkoutForm');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        
+        if (form) {
+            form.addEventListener('submit', async function(event) {
+                event.preventDefault();
+                
+                // Check if Stripe is initialized
+                if (!window.stripe || !window.cardElement) {
+                    showToast('Payment system is not ready. Please refresh the page.', 'error');
+                    return;
+                }
+                
+                // Disable button and show loading
+                submitButton.disabled = true;
+                loadingSpinner.classList.add('active');
+                buttonText.textContent = 'Processing...';
+                
+                const cardErrors = document.getElementById('cardErrors');
+                cardErrors.textContent = '';
+                cardErrors.classList.remove('show');
+                
+                try {
+                    // Step 1: Create Payment Intent
+                    // Get current values from form (user may have changed dates)
+                    const checkInInput = document.getElementById('checkInDate');
+                    const checkOutInput = document.getElementById('checkOutDate');
+                    const guestsInput = document.getElementById('numberOfGuests');
+                    
+                    const currentCheckIn = checkInInput ? checkInInput.value : '@Model.CheckIn.ToString("yyyy-MM-dd")';
+                    const currentCheckOut = checkOutInput ? checkOutInput.value : '@Model.CheckOut.ToString("yyyy-MM-dd")';
+                    const currentGuests = guestsInput ? parseInt(guestsInput.value) : @Model.NumberOfGuests;
+                    
+                    // Calculate amount dynamically based on current dates
+                    const checkIn = new Date(currentCheckIn);
+                    const checkOut = new Date(currentCheckOut);
+                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+                    const pricePerNight = @Model.PricePerNight;
+                    const taxRate = @Model.TaxRate;
+                    const subtotal = pricePerNight * nights;
+                    const taxAmount = subtotal * taxRate;
+                    const calculatedTotal = subtotal + taxAmount - @Model.Discount;
+                    
+                    const requestData = {
+                        roomId: @Model.RoomId,
+                        amount: calculatedTotal,
+                        currency: 'usd',
+                        checkIn: currentCheckIn,
+                        checkOut: currentCheckOut,
+                        numberOfGuests: currentGuests
+                    };
+
+                    console.log('📤 Sending payment intent request:', requestData);
+
+                    const createIntentResponse = await fetch('/api/payments/create-payment-intent', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData)
+                    });
+
+                    console.log('📥 Response status:', createIntentResponse.status, createIntentResponse.statusText);
+                    console.log('📥 Response headers:', Object.fromEntries(createIntentResponse.headers.entries()));
+
+                    if (!createIntentResponse.ok) {
+                        let errorMessage = 'Failed to create payment intent';
+                        let errorDetails = '';
+                        try {
+                            const responseText = await createIntentResponse.text();
+                            console.log('❌ Error response text (raw):', responseText);
+                            console.log('❌ Error response text length:', responseText?.length || 0);
+                            
+                            if (responseText && responseText.trim()) {
+                                try {
+                                    const errorData = JSON.parse(responseText);
+                                    console.log('❌ Error response (parsed):', errorData);
+                                    errorMessage = errorData.error || errorMessage;
+                                    errorDetails = errorData.details || '';
+                                } catch (jsonError) {
+                                    console.error('❌ Error parsing JSON:', jsonError);
+                                    errorMessage = `Server returned invalid JSON: ${responseText.substring(0, 100)}`;
+                                }
+                            } else {
+                                errorMessage = `Server error: ${createIntentResponse.status} ${createIntentResponse.statusText}. No error details provided.`;
+                                console.warn('⚠️ Empty response body from server');
+                            }
+                        } catch (parseError) {
+                            console.error('❌ Error reading error response:', parseError);
+                            errorMessage = `Server error: ${createIntentResponse.status} ${createIntentResponse.statusText}. Could not read response.`;
+                        }
+                        
+                        if (errorDetails) {
+                            errorMessage += ` Details: ${errorDetails}`;
+                        }
+                        
+                        throw new Error(errorMessage);
+                    }
+
+                    const responseData = await createIntentResponse.json();
+                    console.log('✅ Payment intent created:', responseData);
+
+                    const { clientSecret } = responseData;
+                    if (!clientSecret) {
+                        throw new Error('Client secret not received from server');
+                    }
+                    
+                    // Step 2: Confirm payment with Stripe
+                    const { error: stripeError, paymentIntent } = await window.stripe.confirmCardPayment(clientSecret, {
+                        payment_method: {
+                            card: window.cardElement,
+                            billing_details: {
+                                // You can add user billing details here if available
+                            }
+                        }
+                    });
+                    
+                    if (stripeError) {
+                        // Show error from Stripe
+                        cardErrors.textContent = stripeError.message;
+                        cardErrors.classList.add('show');
+                        submitButton.disabled = false;
+                        loadingSpinner.classList.remove('active');
+                        // Update button text with current total
+                        const totalAmountElement = document.getElementById('totalAmountText');
+                        const currentTotal = totalAmountElement ? totalAmountElement.textContent : '@Model.TotalAmount.ToString("N0") EGP';
+                        buttonText.textContent = 'Confirm & Pay ' + currentTotal;
+                        showToast('Payment failed: ' + stripeError.message, 'error');
+                        return;
+                    }
+                    
+                    if (paymentIntent.status === 'succeeded') {
+                        // Step 3: Confirm payment on server and create booking
+                        // Get current values from form
+                        const checkInInput = document.getElementById('checkInDate');
+                        const checkOutInput = document.getElementById('checkOutDate');
+                        const guestsInput = document.getElementById('numberOfGuests');
+                        
+                        const confirmCheckIn = checkInInput ? checkInInput.value : '@Model.CheckIn.ToString("yyyy-MM-dd")';
+                        const confirmCheckOut = checkOutInput ? checkOutInput.value : '@Model.CheckOut.ToString("yyyy-MM-dd")';
+                        const confirmGuests = guestsInput ? parseInt(guestsInput.value) : @Model.NumberOfGuests;
+                        
+                        const confirmRequestData = {
+                            paymentIntentId: paymentIntent.id,
+                            roomId: @Model.RoomId,
+                            checkIn: confirmCheckIn,
+                            checkOut: confirmCheckOut,
+                            numberOfGuests: confirmGuests,
+                            specialRequests: document.querySelector('[name="SpecialRequests"]')?.value || ''
+                        };
+
+                        console.log('📤 Confirming payment:', confirmRequestData);
+
+                        const confirmResponse = await fetch('/api/payments/confirm', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(confirmRequestData)
+                        });
+
+                        console.log('📥 Confirm response status:', confirmResponse.status, confirmResponse.statusText);
+
+                        if (!confirmResponse.ok) {
+                            let errorMessage = 'Failed to confirm booking';
+                            try {
+                                const responseText = await confirmResponse.text();
+                                console.log('❌ Error response text:', responseText);
+                                
+                                if (responseText && responseText.trim()) {
+                                    const errorData = JSON.parse(responseText);
+                                    errorMessage = errorData.error || errorMessage;
+                                } else {
+                                    errorMessage = `Server error: ${confirmResponse.status} ${confirmResponse.statusText}`;
+                                }
+                            } catch (parseError) {
+                                console.error('❌ Error parsing error response:', parseError);
+                                errorMessage = `Server error: ${confirmResponse.status} ${confirmResponse.statusText}`;
+                            }
+                            
+                            throw new Error(errorMessage);
+                        }
+
+                        const confirmResponseData = await confirmResponse.json();
+                        console.log('✅ Payment confirmed:', confirmResponseData);
+
+                        const { bookingId } = confirmResponseData;
+                        if (!bookingId) {
+                            throw new Error('Booking ID not received from server');
+                        }
+                        
+                        // Success - redirect to confirmation page
+                        showToast('Payment successful! Redirecting...', 'success');
+                        setTimeout(() => {
+                            const confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { bookingId = "__BOOKING_ID__" })'.replace('__BOOKING_ID__', bookingId);
+                            window.location.href = confirmationUrl;
+                        }, 1500);
+                    } else {
+                        throw new Error('Payment was not successful');
+                    }
+                } catch (error) {
+                    console.error('Payment error:', error);
+                    cardErrors.textContent = error.message || 'An error occurred during payment. Please try again.';
+                    cardErrors.classList.add('show');
+                    showToast(error.message || 'Payment failed. Please try again.', 'error');
+                    
+                    // Re-enable button
+                    submitButton.disabled = false;
+                    loadingSpinner.classList.remove('active');
+                    buttonText.textContent = 'Confirm & Pay @Model.TotalAmount.ToString("N0") EGP';
+                }
+            });
+        }
+        
+        // Price calculation variables
+        const pricePerNight = @Model.PricePerNight;
+        const taxRate = @Model.TaxRate;
+        const discount = @Model.Discount;
+
+        // Function to calculate and update price
+        function updatePrice() {
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            const nightsElement = document.getElementById('numberOfNights');
+            const subtotalElement = document.getElementById('subtotalText');
+            const taxAmountElement = document.getElementById('taxAmountText');
+            const totalAmountElement = document.getElementById('totalAmountText');
+            const nightsTextElement = document.getElementById('nightsText');
+
+            if (!checkInInput || !checkOutInput) return;
+
+            const checkIn = new Date(checkInInput.value);
+            const checkOut = new Date(checkOutInput.value);
+
+            if (checkIn >= checkOut) {
+                return; // Invalid dates
+            }
+
+            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
+            const subtotal = pricePerNight * nights;
+            const taxAmount = subtotal * taxRate;
+            const total = subtotal + taxAmount - discount;
+
+            // Update UI
+            if (nightsElement) nightsElement.textContent = nights;
+            if (nightsTextElement) nightsTextElement.textContent = nights;
+            if (subtotalElement) subtotalElement.textContent = subtotal.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+            if (taxAmountElement) taxAmountElement.textContent = taxAmount.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+            if (totalAmountElement) totalAmountElement.textContent = total.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+        }
+
+        // Add event listeners for date changes
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkInInput = document.getElementById('checkInDate');
+            const checkOutInput = document.getElementById('checkOutDate');
+            const guestsInput = document.getElementById('numberOfGuests');
+
+            if (checkInInput) {
+                checkInInput.addEventListener('change', function() {
+                    // Set minimum check-out date to check-in + 1 day
+                    const minCheckOut = new Date(this.value);
+                    minCheckOut.setDate(minCheckOut.getDate() + 1);
+                    if (checkOutInput) {
+                        checkOutInput.min = minCheckOut.toISOString().split('T')[0];
+                        if (new Date(checkOutInput.value) <= new Date(this.value)) {
+                            checkOutInput.value = minCheckOut.toISOString().split('T')[0];
+                        }
+                    }
+                    updatePrice();
+                });
+            }
+
+            if (checkOutInput) {
+                checkOutInput.addEventListener('change', function() {
+                    // Ensure check-out is after check-in
+                    const checkIn = new Date(checkInInput?.value || '@Model.CheckIn.ToString("yyyy-MM-dd")');
+                    if (new Date(this.value) <= checkIn) {
+                        const minCheckOut = new Date(checkIn);
+                        minCheckOut.setDate(minCheckOut.getDate() + 1);
+                        this.value = minCheckOut.toISOString().split('T')[0];
+                    }
+                    updatePrice();
+                });
+            }
+
+            if (guestsInput) {
+                guestsInput.addEventListener('change', function() {
+                    const maxGuests = @Model.MaxOccupancy;
+                    if (this.value > maxGuests) {
+                        this.value = maxGuests;
+                    }
+                    if (this.value < 1) {
+                        this.value = 1;
+                    }
+                });
+            }
+        });
+
+        // Toast notification function
+        function showToast(message, type) {
+            const toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) return;
+            
+            const toast = document.createElement('div');
+            const alertType = type === 'error' ? 'danger' : type === 'warning' ? 'warning' : 'success';
+            const icon = type === 'error' ? 'exclamation-circle' : type === 'warning' ? 'exclamation-triangle' : 'check-circle';
+            
+            toast.className = `alert alert-${alertType} alert-dismissible fade show`;
+            toast.setAttribute('role', 'alert');
+            toast.style.cssText = 'animation: slideInRight 0.3s ease-out;';
+            toast.innerHTML = `
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-${icon} me-2" style="font-size: 1.1rem;"></i>
+                    <span style="flex: 1;">${message}</span>
+                    <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close" style="opacity: 0.9;"></button>
+                </div>
+            `;
+            
+            toastContainer.appendChild(toast);
+            
+            // Auto remove after 5 seconds with fade out
+            setTimeout(() => {
+                toast.style.transition = 'opacity 0.3s ease-out, transform 0.3s ease-out';
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.remove();
+                    }
+                }, 300);
+            }, 5000);
+        }
+    </script>
+    
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+

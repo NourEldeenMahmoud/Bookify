@@ -1,0 +1,602 @@
+@model Bookify.Data.Models.ApplicationUser
+@using Bookify.Data.Models
+@using Bookify.Data.Data.Enums
+@using Bookify.Web.ViewModels
+
+@{
+    ViewData["Title"] = "My Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var upcomingBookings = ViewBag.UpcomingBookings as IEnumerable<Booking> ?? Enumerable.Empty<Booking>();
+    var pastBookings = ViewBag.PastBookings as IEnumerable<Booking> ?? Enumerable.Empty<Booking>();
+    
+    // Get all bookings (upcoming + past) for accurate statistics
+    var allBookings = upcomingBookings.Concat(pastBookings).ToList();
+    
+    // Calculate statistics
+    var totalBookings = allBookings.Count();
+    // Total Spent should include all Paid and Completed bookings (regardless of date)
+    var totalSpent = allBookings
+        .Where(b => b.Status == BookingStatus.Paid || b.Status == BookingStatus.Completed)
+        .Sum(b => b.TotalAmount);
+    var upcomingCount = upcomingBookings.Count();
+    var completedCount = allBookings.Count(b => b.Status == BookingStatus.Completed);
+    
+    // Calculate age if DateOfBirth is available
+    int? age = null;
+    if (Model.DateOfBirth.HasValue)
+    {
+        var today = DateTime.Today;
+        age = today.Year - Model.DateOfBirth.Value.Year;
+        if (Model.DateOfBirth.Value.Date > today.AddYears(-age.Value))
+            age--;
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/login.css" />
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Profile Page Overrides - Must override all conflicting styles */
+        body.profile-page-body {
+            display: block !important;
+            min-height: 100vh !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100% !important;
+            height: auto !important;
+            overflow: visible !important;
+            background-color: #f8f8f8 !important;
+            position: static !important;
+        }
+
+        body.profile-page-body .profile-page {
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            display: block !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        body.profile-page-body .content-wrapper {
+            margin-left: 100px !important;
+            width: calc(100% - 100px) !important;
+            max-width: none !important;
+            display: block !important;
+            flex-direction: column !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            padding: 0 !important;
+            flex: none !important;
+        }
+
+        body.profile-page-body .main-content {
+            display: block !important;
+            width: 100% !important;
+            max-width: none !important;
+            min-height: auto !important;
+            height: auto !important;
+            padding: 40px 60px !important;
+            margin: 0 !important;
+            flex: none !important;
+            box-sizing: border-box !important;
+        }
+
+        body.profile-page-body .page-wrapper {
+            width: 100% !important;
+            min-height: 100vh !important;
+            height: auto !important;
+            display: flex !important;
+            flex-direction: row !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        /* Ensure profile content is not compressed */
+        body.profile-page-body .w-full {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        body.profile-page-body .space-y-6 > * + * {
+            margin-top: 1.5rem !important;
+        }
+   
+    </style>
+}
+
+<div class="w-full space-y-6" style="max-width: 100%;">
+    <!-- Success/Error Messages -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="bg-green-50 border-l-4 border-green-500 p-4 rounded-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="lucide lucide-check-circle text-green-500" data-lucide="check-circle"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-green-700">@TempData["Success"]</p>
+                </div>
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="lucide lucide-alert-circle text-red-500" data-lucide="alert-circle"></i>
+                </div>
+                <div class="ml-3">
+                    <p class="text-sm text-red-700">@TempData["Error"]</p>
+                </div>
+            </div>
+        </div>
+    }
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-lg">
+            <div class="flex">
+                <div class="flex-shrink-0">
+                    <i class="lucide lucide-alert-circle text-red-500" data-lucide="alert-circle"></i>
+                </div>
+                <div class="ml-3">
+                    <div asp-validation-summary="All" class="text-sm text-red-700"></div>
+                </div>
+            </div>
+        </div>
+    }
+
+    <!-- Profile Header Card -->
+    <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+        <!-- Header -->
+        <div class="p-5 text-white"
+             style="background:linear-gradient(to left, #f59e0b , #451a03);">
+
+            <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+
+                <!-- Avatar -->
+                <div class="rounded-circle d-flex align-items-center justify-content-center bg-white bg-opacity-25 border border-light fw-bold"
+                     style="width: 120px; height: 120px; font-size: 48px;">
+
+                    @if (!string.IsNullOrEmpty(Model.FirstName))
+                    {
+                        @Model.FirstName[0]
+                    }
+                    else if (!string.IsNullOrEmpty(Model.Email))
+                    {
+                        @Model.Email[0]
+                    }
+                </div>
+
+                <!-- User Info -->
+                <div class="text-center text-md-start">
+
+                    <h1 class="fw-bold fs-1 mb-2">
+                        @(Model.FirstName ?? "User") @(Model.LastName ?? "")
+                    </h1>
+
+                    <p class="mb-2 fs-5 opacity-75">
+                        <i class="bi bi-envelope-fill me-2"></i>
+                        @Model.Email
+                    </p>
+
+                    <div class="d-flex flex-wrap gap-3 small opacity-75">
+
+                        @if (Model.CreatedAt != default)
+                        {
+                            <span>
+                                <i class="bi bi-calendar-event-fill me-1"></i>
+                                Member since @Model.CreatedAt.ToString("MMMM yyyy")
+                            </span>
+                        }
+
+                        @if (age.HasValue)
+                        {
+                            <span>
+                                <i class="bi bi-cake2-fill me-1"></i>
+                                @age years old
+                            </span>
+                        }
+
+                        @if (!string.IsNullOrEmpty(Model.City) || !string.IsNullOrEmpty(Model.Country))
+                        {
+                            <span>
+                                <i class="bi bi-geo-alt-fill me-1"></i>
+                                @(Model.City ?? "")@(Model.City != null && Model.Country != null ? ", " : "")@(Model.Country ?? "")
+                            </span>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Statistics Cards -->
+
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Left Column: Profile Information -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Profile Information Card -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-royal-dark flex items-center">
+                        <i class="lucide lucide-user mr-2" data-lucide="user"></i>
+                        Profile Information
+                    </h2>
+                    <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
+                        <i class="lucide lucide-edit-2 inline-block mr-1" data-lucide="edit-2"></i>
+                        Editable
+                    </span>
+                </div>
+
+                <form asp-controller="Profile" asp-action="UpdateProfile" method="post" class="space-y-6">
+                    @Html.AntiForgeryToken()
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- First Name -->
+                        <div>
+                            <label asp-for="FirstName" class="block text-sm font-medium text-royal-dark mb-2">
+                                First Name
+                            </label>
+                            <div class="relative">
+                                <input name="FirstName" type="text" value="@Model.FirstName" placeholder="First Name"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-user absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="user"></span>
+                            </div>
+                        </div>
+
+                        <!-- Last Name -->
+                        <div>
+                            <label asp-for="LastName" class="block text-sm font-medium text-royal-dark mb-2">
+                                Last Name
+                            </label>
+                            <div class="relative">
+                                <input name="LastName" type="text" value="@Model.LastName" placeholder="Last Name"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-user absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="user"></span>
+                            </div>
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div>
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                Date of Birth
+                            </label>
+                            <div class="relative">
+                                <input name="DateOfBirth" type="date" value="@(Model.DateOfBirth?.ToString("yyyy-MM-dd"))" 
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-calendar absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="calendar"></span>
+                            </div>
+                        </div>
+
+                        <!-- Email (Read-only) -->
+                        <div>
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                Email Address
+                            </label>
+                            <div class="relative">
+                                <input type="email" value="@Model.Email" disabled
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none bg-gray-100 text-gray-600 cursor-not-allowed" />
+                                <span class="lucide lucide-mail absolute right-3 top-4 h-5 w-5 text-gray-400" data-lucide="mail"></span>
+                            </div>
+                            <p class="text-xs text-gray-500 mt-1">
+                                <i class="lucide lucide-info inline-block mr-1" data-lucide="info"></i>
+                                Email cannot be changed
+                            </p>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                Address
+                            </label>
+                            <div class="relative">
+                                <input name="Address" type="text" value="@Model.Address" placeholder="Street Address"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-map-pin absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="map-pin"></span>
+                            </div>
+                        </div>
+
+                        <!-- City -->
+                        <div>
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                City
+                            </label>
+                            <div class="relative">
+                                <input name="City" type="text" value="@Model.City" placeholder="City"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-building-2 absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="building-2"></span>
+                            </div>
+                        </div>
+
+                        <!-- Postal Code -->
+                        <div>
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                Postal Code
+                            </label>
+                            <div class="relative">
+                                <input name="PostalCode" type="text" value="@Model.PostalCode" placeholder="Postal Code"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-hash absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="hash"></span>
+                            </div>
+                        </div>
+
+                        <!-- Country -->
+                        <div>
+                            <label class="block text-sm font-medium text-royal-dark mb-2">
+                                Country
+                            </label>
+                            <div class="relative">
+                                <input name="Country" type="text" value="@Model.Country" placeholder="Country"
+                                       class="w-full p-3 border-2 border-amber-200 rounded-lg outline-none focus:ring-2 focus:ring-orange-400 focus:border-orange-400 bg-white text-amber-900" />
+                                <span class="lucide lucide-globe absolute right-3 top-4 h-5 w-5 text-amber-600" data-lucide="globe"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex justify-end space-x-4 pt-4 border-t border-gray-200">
+                      
+                        <button type="submit"
+                                class="px-6 py-3 bg-gradient-to-r from-amber-500 to-orange-600 text-white rounded-lg hover:from-amber-600 hover:to-orange-700 transition-all shadow-md hover:shadow-lg transform hover:scale-[1.02] font-medium">
+                            <i class="lucide lucide-save inline-block mr-2" data-lucide="save"></i>
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Bookings Section -->
+            <div class="bg-white rounded-2xl shadow-xl p-8">
+                <h2 class="text-2xl font-bold text-royal-dark mb-6 flex items-center">
+                    <i class="lucide lucide-calendar-check mr-2" data-lucide="calendar-check"></i>
+                    My Bookings
+                </h2>
+
+                <!-- Upcoming Bookings -->
+                @if (upcomingBookings.Any())
+                {
+                    <div class="mb-8">
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-xl font-semibold text-royal-dark">Upcoming Bookings</h3>
+                            <span class="px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-semibold">
+                                @upcomingCount @(upcomingCount == 1 ? "booking" : "bookings")
+                            </span>
+                        </div>
+                        <div class="space-y-4">
+                            @foreach (var booking in upcomingBookings)
+                            {
+                                <div class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-4 border-amber-500 rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow">
+                                    <div class="flex flex-col md:flex-row justify-between items-start gap-4">
+                                        <div class="flex-1">
+                                            <div class="flex items-center space-x-4 mb-3">
+                                                <h4 class="text-lg font-bold text-royal-dark">
+                                                    @(booking.Room?.RoomType?.Name ?? "Room")
+                                                </h4>
+                                                <span class="px-3 py-1 bg-amber-500 text-white rounded-full text-xs font-semibold">
+                                                    @booking.Status
+                                                </span>
+                                            </div>
+                                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm text-royal-dark/80 mb-4">
+                                                <div class="flex items-center">
+                                                    <i class="lucide lucide-calendar text-amber-600 mr-2" data-lucide="calendar"></i>
+                                                    <span><strong>Check-in:</strong> @booking.CheckInDate.ToString("MMM dd, yyyy")</span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <i class="lucide lucide-calendar-x text-amber-600 mr-2" data-lucide="calendar-x"></i>
+                                                    <span><strong>Check-out:</strong> @booking.CheckOutDate.ToString("MMM dd, yyyy")</span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <i class="lucide lucide-users text-amber-600 mr-2" data-lucide="users"></i>
+                                                    <span><strong>Guests:</strong> @booking.NumberOfGuests</span>
+                                                </div>
+                                                <div class="flex items-center">
+                                                    <i class="lucide lucide-dollar-sign text-amber-600 mr-2" data-lucide="dollar-sign"></i>
+                                                    <span><strong>Total:</strong> @booking.TotalAmount.ToString("N0") EGP</span>
+                                                </div>
+                                            </div>
+                                            @if (booking.Status == BookingStatus.Paid || booking.Status == BookingStatus.Completed)
+                                            {
+                                                <div class="flex gap-2">
+                                                    <button type="button" 
+                                                            class="px-4 py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center cancel-booking-btn"
+                                                            data-booking-id="@booking.Id"
+                                                            data-booking-room="@(booking.Room?.RoomType?.Name ?? "Room") @(booking.Room?.RoomNumber ?? "")"
+                                                            data-booking-checkin="@booking.CheckInDate.ToString("MMM dd, yyyy")"
+                                                            data-booking-checkout="@booking.CheckOutDate.ToString("MMM dd, yyyy")"
+                                                            data-booking-total="@booking.TotalAmount.ToString("N0")">
+                                                        <i class="lucide lucide-x-circle mr-2" data-lucide="x-circle"></i>
+                                                        Cancel Booking
+                                                    </button>
+                                                    <a asp-controller="Bookings" asp-action="Confirmation" asp-route-bookingId="@booking.Id" 
+                                                       class="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-sm font-medium transition-colors flex items-center">
+                                                        <i class="lucide lucide-eye mr-2" data-lucide="eye"></i>
+                                                        View Details
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="mb-8 text-center py-12 bg-gradient-to-br from-amber-50 to-orange-50 rounded-lg border-2 border-dashed border-amber-200">
+                        <i class="lucide lucide-calendar-x text-5xl text-amber-400 mb-3" data-lucide="calendar-x"></i>
+                        <p class="text-gray-600 font-medium">No upcoming bookings</p>
+                        <a asp-controller="Home" asp-action="Index" class="inline-block mt-4 text-amber-600 hover:text-amber-700 font-medium">
+                            Browse available rooms →
+                        </a>
+                    </div>
+                }
+
+                <!-- Past Bookings -->
+           
+            </div>
+        </div>
+
+        <!-- Right Column: Quick Actions & Info -->
+        <div class="space-y-6">
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-blue-500 hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Total Bookings</p>
+                        <p class="text-3xl font-bold text-royal-dark">@totalBookings</p>
+                    </div>
+                    <div class="bg-blue-100 p-4 rounded-full">
+                        <i class="lucide lucide-calendar text-blue-600 text-2xl" data-lucide="calendar"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Total Spent -->
+            <div class="bg-white rounded-xl shadow-lg p-6 border-l-4 border-purple-500 hover:shadow-xl transition-shadow">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600 text-sm font-medium mb-1">Total Spent</p>
+                        <p class="text-3xl font-bold text-royal-dark">@totalSpent.ToString("F0") EGP</p>
+                    </div>
+                    <div class="bg-purple-100 p-4 rounded-full">
+                        <i class="lucide lucide-dollar-sign text-purple-600 text-2xl" data-lucide="dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- Quick Actions Card -->
+
+
+            <!-- Account Info Card -->
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl shadow-xl p-6 border border-amber-200">
+                <h3 class="text-xl font-bold text-royal-dark mb-4 flex items-center">
+                    <i class="lucide lucide-info mr-2" data-lucide="info"></i>
+                    Account Information
+                </h3>
+                <div class="space-y-3 text-sm">
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600">Account Status</span>
+                        <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-semibold">
+                            <i class="lucide lucide-check inline-block mr-1" data-lucide="check"></i>
+                            Active
+                        </span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-600">Email Verified</span>
+                        <span class="px-2 py-1 @(Model.EmailConfirmed ? "bg-green-100 text-green-700" : "bg-yellow-100 text-yellow-700") rounded-full text-xs font-semibold">
+                            @(Model.EmailConfirmed ? "Verified" : "Pending")
+                        </span>
+                    </div>
+                    @if (Model.CreatedAt != default)
+                    {
+                        <div class="flex items-center justify-between">
+                            <span class="text-gray-600">Member Since</span>
+                            <span class="text-royal-dark font-medium">@Model.CreatedAt.ToString("MMM yyyy")</span>
+                        </div>
+                    }
+                </div>
+            </div>
+            <div class="bg-white rounded-2xl shadow-xl p-6">
+                <h3 class="text-xl font-bold text-royal-dark mb-4 flex items-center">
+                    <i class="lucide lucide-zap mr-2" data-lucide="zap"></i>
+                    Quick Actions
+                </h3>
+                <div class="space-y-3">
+                    <a asp-controller="Home" asp-action="Index"
+                       class="flex items-center p-3 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors group">
+                        <i class="lucide lucide-search text-amber-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="search"></i>
+                        <span class="text-royal-dark font-medium">Search Rooms</span>
+                    </a>
+                    <a asp-controller="Account" asp-action="ChangePassword"
+                       class="flex items-center p-3 bg-blue-50 hover:bg-blue-100 rounded-lg transition-colors group">
+                        <i class="lucide lucide-key text-blue-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="key"></i>
+                        <span class="text-royal-dark font-medium">Change Password</span>
+                    </a>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="w-full">
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="w-full flex items-center p-3 bg-red-50 hover:bg-red-100 rounded-lg transition-colors group text-left">
+                            <i class="lucide lucide-log-out text-red-600 mr-3 group-hover:scale-110 transition-transform" data-lucide="log-out"></i>
+                            <span class="text-royal-dark font-medium">Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+                <!-- Total Bookings -->
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Cancel Booking Confirmation Modal -->
+<div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content admin-confirm-modal">
+            <div class="modal-header admin-confirm-modal-header">
+                <div class="admin-confirm-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h5 class="modal-title" id="cancelBookingModalLabel">Cancel Booking</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body admin-confirm-modal-body">
+                <p class="mb-3">Are you sure you want to cancel this booking?</p>
+            </div>
+            <div class="modal-footer admin-confirm-modal-footer">
+                <button type="button" class="btn btn-admin-cancel" data-bs-dismiss="modal">
+                    <i class="fas fa-times me-2"></i>Keep Booking
+                </button>
+                <form id="confirmCancelForm" method="post" asp-controller="Bookings" asp-action="Cancel" class="d-inline">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" id="modalBookingId" value="" />
+                    <button type="submit" class="btn btn-admin-confirm">
+                        <i class="fas fa-check me-2"></i>Cancel Booking
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+        if (typeof lucide !== 'undefined' && lucide.createIcons) {
+            lucide.createIcons();
+        }
+
+        // Cancel Booking Modal with Bootstrap
+        document.addEventListener('DOMContentLoaded', function() {
+            const cancelButtons = document.querySelectorAll('.cancel-booking-btn');
+            const modalElement = document.getElementById('cancelBookingModal');
+            
+            if (modalElement && typeof bootstrap !== 'undefined') {
+                cancelButtons.forEach(btn => {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        const bookingId = this.getAttribute('data-booking-id');
+                        
+                        // Set booking ID
+                        document.getElementById('modalBookingId').value = bookingId;
+                        
+                        // Show Bootstrap modal
+                        const modal = new bootstrap.Modal(modalElement);
+                        modal.show();
+                    });
+                });
+            }
+        });
+    </script>
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -11,7 +11,7 @@ namespace Bookify.Data.Models
     {
         public string? FirstName { get; set; } 
         public string? LastName { get; set; } 
-        public DateTime DateOfBirth { get; set; } 
+        public DateTime? DateOfBirth { get; set; } 
         public string? Address { get; set; } 
         public string? City { get; set; } 
         public string? PostalCode { get; set; } 
@@ -20,7 +20,7 @@ namespace Bookify.Data.Models
 
         // Navigation Properties
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
-        public virtual ICollection<BookingStatusHistory> BookingStatusHistories { get; set; } = new List<BookingStatusHistory>();
+        public virtual ICollection<BookingStatusHistory> BookingStatusHistory { get; set; } = new List<BookingStatusHistory>();
 
     }
 }

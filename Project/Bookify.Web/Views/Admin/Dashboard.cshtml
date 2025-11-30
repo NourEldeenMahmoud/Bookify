@@ -1,0 +1,333 @@
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Bookify.Data.Models.ApplicationUser> UserManager
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var adminUser = userId != null ? await UserManager.FindByIdAsync(userId) : null;
+    var adminName = adminUser != null ? $"{adminUser.FirstName} {adminUser.LastName}".Trim() : User.Identity?.Name?.Split('@')[0] ?? "Admin";
+    var adminEmail = adminUser?.Email ?? User.Identity?.Name ?? "";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-panel.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
+}
+
+<div class="admin-page-container">
+    <!-- Page Title with Logout -->
+    <div class="admin-page-header">
+        <h1 class="admin-page-title">Admin Dashboard</h1>
+        <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-admin-logout">
+                <i class="fas fa-sign-out-alt me-2"></i> Logout
+            </button>
+        </form>
+    </div>
+    
+    <!-- Quick Actions -->
+    @await Html.PartialAsync("_AdminQuickActions")
+
+    <!-- Statistics Cards (KPIs) -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <p class="stat-label">Total Bookings</p>
+                        <h3 class="stat-value">@ViewBag.TotalBookings</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <p class="stat-label">Total Rooms</p>
+                        <h3 class="stat-value">@ViewBag.TotalRooms</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-bed"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <p class="stat-label">Available Rooms</p>
+                        <h3 class="stat-value">@ViewBag.AvailableRooms</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <p class="stat-label">Total Revenue</p>
+                        <h3 class="stat-value">$@ViewBag.TotalRevenue.ToString("N2")</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-6 col-md-4 col-lg">
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <div>
+                        <p class="stat-label">Occupancy Rate</p>
+                        <h3 class="stat-value">@ViewBag.OccupancyRate%</h3>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-3 mb-4">
+        <div class="col-12">
+            <div class="chart-container">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Revenue Chart (Last 6 Months)</h3>
+                </div>
+                <canvas id="revenueChart"></canvas>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="chart-container">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Occupancy Chart (Last 6 Months)</h3>
+                </div>
+                <canvas id="occupancyChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Section -->
+    <div class="row g-3">
+        <div class="col-12">
+            <div class="chart-container">
+                <div class="admin-card-header">
+                    <h3 class="admin-card-title">Recent Bookings</h3>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover" id="recentBookingsTable">
+                        <thead>
+                            <tr>
+                                <th>Customer</th>
+                                <th>Room</th>
+                                <th>Check-in</th>
+                                <th>Status</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="recentBookingsBody">
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <div class="spinner-border text-primary" role="status">
+                                        <span class="visually-hidden">Loading...</span>
+                                    </div>
+                                    <p class="mt-2 mb-0">Loading recent bookings...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script>
+        // Revenue Chart
+        const revenueCtx = document.getElementById('revenueChart');
+        if (revenueCtx) {
+            const revenueData = @Html.Raw(Json.Serialize(ViewBag.RevenueData));
+            const revenueLabels = @Html.Raw(Json.Serialize(ViewBag.RevenueLabels));
+            
+            new Chart(revenueCtx, {
+                type: 'line',
+                data: {
+                    labels: revenueLabels,
+                    datasets: [{
+                        label: 'Revenue ($)',
+                        data: revenueData,
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Occupancy Chart
+        const occupancyCtx = document.getElementById('occupancyChart');
+        if (occupancyCtx) {
+            const occupancyData = @Html.Raw(Json.Serialize(ViewBag.OccupancyData));
+            const occupancyLabels = @Html.Raw(Json.Serialize(ViewBag.OccupancyLabels));
+            
+            new Chart(occupancyCtx, {
+                type: 'bar',
+                data: {
+                    labels: occupancyLabels,
+                    datasets: [{
+                        label: 'Occupancy Rate (%)',
+                        data: occupancyData,
+                        backgroundColor: '#f59e0b',
+                        borderColor: '#ea580c',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + '%';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load Recent Bookings
+        function loadRecentBookings() {
+            const tbody = document.getElementById('recentBookingsBody');
+            
+            fetch('@Url.Action("GetRecentBookings", "Admin")')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load recent bookings');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data && data.length > 0) {
+                        tbody.innerHTML = data.map(booking => {
+                            // Format status badge
+                            const statusClass = booking.status.toLowerCase();
+                            const statusBadge = `<span class="badge badge-${statusClass}">${booking.status}</span>`;
+                            
+                            // Format amount
+                            const formattedAmount = '$' + parseFloat(booking.totalAmount).toLocaleString('en-US', {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2
+                            });
+                            
+                            return `
+                                <tr>
+                                    <td>${escapeHtml(booking.customerName)}</td>
+                                    <td>${escapeHtml(booking.roomNumber)}</td>
+                                    <td>${escapeHtml(booking.checkInDate)}</td>
+                                    <td>${statusBadge}</td>
+                                    <td><strong>${formattedAmount}</strong></td>
+                                    <td>
+                                        <a href="@Url.Action("BookingDetails", "Admin")?id=${booking.id}" 
+                                           class="btn btn-action btn-view" 
+                                           title="View Details">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            `;
+                        }).join('');
+                    } else {
+                        tbody.innerHTML = `
+                            <tr>
+                                <td colspan="6" class="text-center py-4">
+                                    <p class="mb-0 text-muted">No recent bookings found.</p>
+                                </td>
+                            </tr>
+                        `;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading recent bookings:', error);
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" class="text-center py-4">
+                                <p class="mb-0 text-danger">Error loading recent bookings. Please refresh the page.</p>
+                            </td>
+                        </tr>
+                    `;
+                });
+        }
+
+        // Helper function to escape HTML
+        function escapeHtml(text) {
+            const map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text ? text.replace(/[&<>"']/g, m => map[m]) : '';
+        }
+
+        // Load recent bookings when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadRecentBookings();
+        });
+    </script>
+}
+
