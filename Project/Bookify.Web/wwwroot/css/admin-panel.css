@@ -1335,3 +1335,77 @@ background: #efefef !important;
     box-shadow: none !important;
     outline: none !important;
 }
+/* ---------- Pagination: force visible text + orange on hover/focus ---------- */
+
+/* قاعدة أساسية للأزرار */
+.dataTables_wrapper .dataTables_paginate .paginate_button,
+.dataTables_wrapper .dataTables_paginate .paginate_button a,
+.dataTables_wrapper .dataTables_paginate .paginate_button button {
+    background: transparent !important; /* شفافة افتراضياً */
+    color: #2563eb !important; /* لون النص الأساسي (أزرق روابط) */
+    padding: 8px 10px !important;
+    min-width: 36px;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: 0 !important;
+}
+
+    /* Hover — رجّع الـ orange style */
+    .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
+    .dataTables_wrapper .dataTables_paginate .paginate_button a:hover,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button:hover {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+        color: #fff !important;
+        transform: translateY(-2px);
+    }
+
+    /* Focus / active / focus-visible — نفس تأثير hover (حتى لو بالكيبورد) */
+    .dataTables_wrapper .dataTables_paginate .paginate_button:focus,
+    .dataTables_wrapper .dataTables_paginate .paginate_button:active,
+    .dataTables_wrapper .dataTables_paginate .paginate_button:focus-visible,
+    .dataTables_wrapper .dataTables_paginate .paginate_button a:focus,
+    .dataTables_wrapper .dataTables_paginate .paginate_button a:active,
+    .dataTables_wrapper .dataTables_paginate .paginate_button a:focus-visible,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button:focus,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button:active,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button:focus-visible {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+        color: #fff !important;
+        outline: none !important;
+        transform: translateY(-2px);
+    }
+
+    /* الحالة النشطة (الصفحة المختارة) */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.current a {
+        background: transparent !important;
+        color: #fff !important;
+    }
+
+    /* Disabled — خليه شفاف وخط رمادي */
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
+    .dataTables_wrapper .dataTables_paginate .paginate_button.disabled a {
+        background: transparent !important;
+        color: #bcbcbc !important;
+        cursor: not-allowed !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    /* تأكد إن أي <a> داخل يكون مرئي ويرث اللون */
+    .dataTables_wrapper .dataTables_paginate .paginate_button a,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button {
+        color: inherit !important;
+        background: transparent !important;
+    }
+
+    /* إزالة تأثيرات متصفحات الجوال */
+    .dataTables_wrapper .dataTables_paginate .paginate_button,
+    .dataTables_wrapper .dataTables_paginate .paginate_button a,
+    .dataTables_wrapper .dataTables_paginate .paginate_button button {
+        -webkit-tap-highlight-color: transparent !important;
+    }
