@@ -98,7 +98,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 
 ### Entities
 
-![ERD](Project Presentation/ERD.png)
+![ERD](Project%20Presentation/ERD.png)
 
 #### 1. **ApplicationUser** (extends IdentityUser)
 - Inherits from ASP.NET Identity
@@ -196,11 +196,11 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Real-time availability checking
 - Pagination for large result sets
 
-![Home](Project Presentation/Home.png)
+![Home](Project%20Presentation/Home.png)
 
-![Rooms](Project Presentation/Rooms.png)
+![Rooms](Project%20Presentation/Rooms.png)
 
-![RoomDetails](Project Presentation/RoomDetails.png)
+![RoomDetails](Project%20Presentation/RoomDetails.png)
 
 #### 2. **User Authentication**
 - User registration with validation
@@ -208,29 +208,29 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Password reset functionality
 - Account lockout after failed attempts
 
-![Login](Project Presentation/Login.png)
+![Login](Project%20Presentation/Login.png)
 
-![Register](Project Presentation/Register.png)
+![Register](Project%20Presentation/Register.png)
 
 #### 3. **Booking Management**
 - View booking summary before checkout
 - Complete booking with payment
 - View booking history
 
-![Booking](Project Presentation/Booking.png)
+![Booking](Project%20Presentation/Booking.png)
 
 #### 4. **Payment Processing**
 - Secure payment via Stripe Payment Intent
 - Payment confirmation emails
 
-![PaymentConfirmation](Project Presentation/PaymentConfrimation.png)
+![PaymentConfirmation](Project%20Presentation/PaymentConfrimation.png)
 
 #### 5. **User Profile**
 - View and update personal information
 - View booking history
 - Change password
 
-![Profile](Project Presentation/Profile.png)
+![Profile](Project%20Presentation/Profile.png)
 
 ### Admin Features
 
@@ -245,21 +245,21 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Recent bookings table
 - Quick action cards
 
-![Dashboard](Project Presentation/Dashboard.png)
+![Dashboard](Project%20Presentation/Dashboard.png)
 
 #### 2. **Room Management**
 - Create, Read, Update, Delete (CRUD) for rooms
 - Manage room availability
 - Add notes to rooms
 
-![ManageRooms](Project Presentation/ManageRooms.png)
+![ManageRooms](Project%20Presentation/ManageRooms.png)
 
 #### 3. **Room Type Management**
 - CRUD operations for room types
 - Set pricing per night
 - Configure max occupancy
 
-![ManageRoomTypes](Project Presentation/ManageRoomTypes.png)
+![ManageRoomTypes](Project%20Presentation/ManageRoomTypes.png)
 
 #### 4. **Booking Management**
 - View all bookings
@@ -268,7 +268,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Process refunds
 - View booking details and payment history
 
-![ManageBooking](Project Presentation/ManageBooking.png)
+![ManageBooking](Project%20Presentation/ManageBooking.png)
 
 #### 5. **User Management**
 - View all users
@@ -276,7 +276,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - View user booking history
 - Manage user roles
 
-![UserManagement](Project Presentation/UserManagment.png)
+![UserManagement](Project%20Presentation/UserManagment.png)
 
 ---
 ## Security
@@ -417,58 +417,6 @@ Bookify-Dev/
 - **Benefits**: Reusability, testability, separation of concerns
 
 ---
-## Controllers & Actions
-
-### HomeController
-- `Index()` - Home page with room listings
-- `GetRoomsPartial()` - AJAX endpoint for room listings
-- `SearchRooms()` - Search and filter rooms
-
-### AccountController
-- `Register()` - User registration
-- `Login()` - User authentication
-- `Logout()` - User sign out
-- `ForgotPassword()` - Password reset request
-- `ResetPassword()` - Password reset confirmation
-- `Lockout()` - Account lockout page
-- `AccessDenied()` - Access denied page
-
-### RoomsController
-- `Details(int id)` - Room details page
-
-### BookingsController
-- `Index()` - User's booking history
-- `Details(int id)` - Booking details
-
-### PaymentController
-- `CreatePaymentIntent()` - Create Stripe payment intent
-- `ConfirmPayment()` - Confirm payment and create booking
-- `Refund(int bookingId)` - Process refund
-
-### ProfileController
-- `Index()` - User profile page
-- `UpdateProfile()` - Update user information
-- `ChangePassword()` - Change user password
-
-### AdminController
-- `Dashboard()` - Admin dashboard
-- `RoomTypes()` - List room types
-- `CreateRoomType()` - Create new room type
-- `EditRoomType(int id)` - Edit room type
-- `DeleteRoomType(int id)` - Delete room type
-- `Rooms()` - List rooms
-- `CreateRoom()` - Create new room
-- `EditRoom(int id)` - Edit room
-- `DeleteRoom(int id)` - Delete room
-- `Bookings()` - List all bookings
-- `BookingDetails(int id)` - Booking details
-- `UpdateBookingStatus()` - Update booking status
-- `Users()` - List all users
-- `LockUser(string id)` - Lock user account
-- `UnlockUser(string id)` - Unlock user account
-- `GetRecentBookings()` - AJAX endpoint for recent bookings
-
----
 ## Setup & Installation
 
 ### Prerequisites
@@ -568,43 +516,12 @@ Bookify-Dev/
 - Rolling interval: Daily
 
 ---
-## Future Enhancements
-
-### Potential Features
-1. **Email Confirmation**: Require email verification
-2. **Two-Factor Authentication**: Add 2FA support
-3. **Reviews & Ratings**: Customer reviews for rooms
-4. **Loyalty Program**: Points and rewards system
-5. **Multi-language Support**: i18n implementation
-6. **Mobile App**: Native mobile application
-7. **Real-time Notifications**: SignalR integration
-8. **Advanced Analytics**: Detailed reporting and analytics
-9. **Room Recommendations**: AI-based suggestions
-10. **Calendar View**: Visual booking calendar
-
-### Technical Improvements
-1. **Unit Tests**: Add comprehensive unit tests
-2. **Integration Tests**: End-to-end testing
-3. **API Versioning**: RESTful API with versioning
-4. **Caching**: Redis caching for performance
-5. **Background Jobs**: Hangfire for scheduled tasks
-6. **Microservices**: Split into microservices if needed
-
----
 ## Support & Contact
 
 For questions or issues:
 - Check the codebase documentation
 - Review the `req.txt` file for original requirements
 - Contact the development team
-
----
-## Acknowledgments
-
-- ASP.NET Core team
-- Stripe for payment processing
-- SendGrid for email services
-- All open-source contributors
 
 ---
 
