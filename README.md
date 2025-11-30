@@ -98,7 +98,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 
 ### Entities
 
-![ERD](Project Showcase/BookifyImages/ERD.png)
+![ERD](Project Presentation/ERD.png)
 
 #### 1. **ApplicationUser** (extends IdentityUser)
 - Inherits from ASP.NET Identity
@@ -196,11 +196,11 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Real-time availability checking
 - Pagination for large result sets
 
-![Home](Project Showcase/BookifyImages/Home.png)
+![Home](Project Presentation/Home.png)
 
-![Rooms](Project Showcase/BookifyImages/Rooms.png)
+![Rooms](Project Presentation/Rooms.png)
 
-![RoomDetails](Project Showcase/BookifyImages/RoomDetails.png)
+![RoomDetails](Project Presentation/RoomDetails.png)
 
 #### 2. **User Authentication**
 - User registration with validation
@@ -208,29 +208,29 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Password reset functionality
 - Account lockout after failed attempts
 
-![Login](Project Showcase/BookifyImages/Login.png)
+![Login](Project Presentation/Login.png)
 
-![Register](Project Showcase/BookifyImages/Register.png)
+![Register](Project Presentation/Register.png)
 
 #### 3. **Booking Management**
 - View booking summary before checkout
 - Complete booking with payment
 - View booking history
 
-![Booking](Project Showcase/BookifyImages/Booking.png)
+![Booking](Project Presentation/Booking.png)
 
 #### 4. **Payment Processing**
 - Secure payment via Stripe Payment Intent
 - Payment confirmation emails
 
-![PaymentConfirmation](Project Showcase/BookifyImages/PaymentConfrimation.png)
+![PaymentConfirmation](Project Presentation/PaymentConfrimation.png)
 
 #### 5. **User Profile**
 - View and update personal information
 - View booking history
 - Change password
 
-![Profile](Project Showcase/BookifyImages/Profile.png)
+![Profile](Project Presentation/Profile.png)
 
 ### Admin Features
 
@@ -245,21 +245,21 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Recent bookings table
 - Quick action cards
 
-![Dashboard](Project Showcase/BookifyImages/Dashboard.png)
+![Dashboard](Project Presentation/Dashboard.png)
 
 #### 2. **Room Management**
 - Create, Read, Update, Delete (CRUD) for rooms
 - Manage room availability
 - Add notes to rooms
 
-![ManageRooms](Project Showcase/BookifyImages/ManageRooms.png)
+![ManageRooms](Project Presentation/ManageRooms.png)
 
 #### 3. **Room Type Management**
 - CRUD operations for room types
 - Set pricing per night
 - Configure max occupancy
 
-![ManageRoomTypes](Project Showcase/BookifyImages/ManageRoomTypes.png)
+![ManageRoomTypes](Project Presentation/ManageRoomTypes.png)
 
 #### 4. **Booking Management**
 - View all bookings
@@ -268,7 +268,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Process refunds
 - View booking details and payment history
 
-![ManageBooking](Project Showcase/BookifyImages/ManageBooking.png)
+![ManageBooking](Project Presentation/ManageBooking.png)
 
 #### 5. **User Management**
 - View all users
@@ -276,7 +276,7 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - View user booking history
 - Manage user roles
 
-![UserManagement](Project Showcase/BookifyImages/UserManagment.png)
+![UserManagement](Project Presentation/UserManagment.png)
 
 ---
 ## Security
