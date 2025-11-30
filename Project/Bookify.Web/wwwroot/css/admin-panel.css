@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap'); /*the font url from google fonts*/
-/* Admin Panel Styles - Matching Site Theme */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300..700;1,300..700&display=swap'); 
+
 :root {
     --admin-primary: #5C2F0F;
     --admin-secondary: #3D1F0A;
@@ -375,7 +375,6 @@
     margin-bottom: 20px;
 }
 
-/* تحسين Pagination & Export Container */
 .dataTables_wrapper .row:last-child {
     margin-top: 20px;
     padding-top: 20px;
@@ -414,7 +413,6 @@ table.dataTable {
     opacity: 1 !important;
 }
 
-/* جعل thead كله gradient واحد */
 table.dataTable thead {
     background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
 }
@@ -967,7 +965,6 @@ table.dataTable tbody tr.odd {
     margin-top: 0;
 }
 
-/* Pagination Buttons - تحسين الشكل */
 .dataTables_wrapper .dataTables_paginate .paginate_button {
     padding: 8px 12px !important;
     margin: 0 2px !important;
@@ -1017,7 +1014,6 @@ table.dataTable tbody tr.odd {
     flex-shrink: 0;
 }
 
-/* Export Buttons بألوان مختلفة */
 .dt-buttons .dt-button {
     padding: 8px 16px !important;
     border-radius: 8px !important;
@@ -1131,7 +1127,6 @@ table.dataTable tbody td:last-child {
     padding-right: 20px;
 }
 
-/* تحسين لون النص في عمود Availability */
 table.dataTable tbody td:nth-child(3) {
     color: var(--admin-text) !important;
     font-weight: 500;
@@ -1337,12 +1332,11 @@ background: #efefef !important;
 }
 /* ---------- Pagination: force visible text + orange on hover/focus ---------- */
 
-/* قاعدة أساسية للأزرار */
 .dataTables_wrapper .dataTables_paginate .paginate_button,
 .dataTables_wrapper .dataTables_paginate .paginate_button a,
 .dataTables_wrapper .dataTables_paginate .paginate_button button {
-    background: transparent !important; /* شفافة افتراضياً */
-    color: #2563eb !important; /* لون النص الأساسي (أزرق روابط) */
+    background: transparent !important; 
+    color: #2563eb !important;
     padding: 8px 10px !important;
     min-width: 36px;
     display: flex !important;
@@ -1354,7 +1348,6 @@ background: #efefef !important;
     outline: 0 !important;
 }
 
-    /* Hover — رجّع الـ orange style */
     .dataTables_wrapper .dataTables_paginate .paginate_button:hover,
     .dataTables_wrapper .dataTables_paginate .paginate_button a:hover,
     .dataTables_wrapper .dataTables_paginate .paginate_button button:hover {
@@ -1363,7 +1356,6 @@ background: #efefef !important;
         transform: translateY(-2px);
     }
 
-    /* Focus / active / focus-visible — نفس تأثير hover (حتى لو بالكيبورد) */
     .dataTables_wrapper .dataTables_paginate .paginate_button:focus,
     .dataTables_wrapper .dataTables_paginate .paginate_button:active,
     .dataTables_wrapper .dataTables_paginate .paginate_button:focus-visible,
@@ -1379,14 +1371,12 @@ background: #efefef !important;
         transform: translateY(-2px);
     }
 
-    /* الحالة النشطة (الصفحة المختارة) */
     .dataTables_wrapper .dataTables_paginate .paginate_button.current,
     .dataTables_wrapper .dataTables_paginate .paginate_button.current a {
         background: transparent !important;
         color: #fff !important;
     }
 
-    /* Disabled — خليه شفاف وخط رمادي */
     .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
     .dataTables_wrapper .dataTables_paginate .paginate_button.disabled a {
         background: transparent !important;
@@ -1396,14 +1386,12 @@ background: #efefef !important;
         transform: none !important;
     }
 
-    /* تأكد إن أي <a> داخل يكون مرئي ويرث اللون */
     .dataTables_wrapper .dataTables_paginate .paginate_button a,
     .dataTables_wrapper .dataTables_paginate .paginate_button button {
         color: inherit !important;
         background: transparent !important;
     }
 
-    /* إزالة تأثيرات متصفحات الجوال */
     .dataTables_wrapper .dataTables_paginate .paginate_button,
     .dataTables_wrapper .dataTables_paginate .paginate_button a,
     .dataTables_wrapper .dataTables_paginate .paginate_button button {
