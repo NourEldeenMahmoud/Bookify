@@ -1,5 +1,9 @@
 ﻿using Bookify.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using SendGrid;
+using SendGrid.Helpers.Mail;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -7,11 +11,10 @@ namespace Bookify.Web.HealthChecks
 {
     public class EmailHealthCheck : IHealthCheck
     {
-        private readonly IEmailService _emailService;
-
-        public EmailHealthCheck(IEmailService emailService)
+        private readonly IConfiguration _configuration;
+        public EmailHealthCheck(IConfiguration configuration, IEmailService emailService)
         {
-            _emailService = emailService;
+            _configuration = configuration ?? throw new ArgumentNullException(nameof(configuration));
         }
 
         public async Task<HealthCheckResult> CheckHealthAsync(
@@ -20,18 +23,29 @@ namespace Bookify.Web.HealthChecks
         {
             try
             {
-               
-                if (_emailService == null)
+                var apiKey = _configuration["SendGrid:ApiKey"];
+                if (string.IsNullOrWhiteSpace(apiKey) || apiKey == "ApiKey")
                 {
-                    return HealthCheckResult.Unhealthy("Email service is not available.");
+                    return HealthCheckResult.Unhealthy("SendGrid API key is not configured.");
+                }
+                var client = new SendGridClient(apiKey);
+
+                var fromEmail = _configuration["SendGrid:FromEmail"];
+                if (string.IsNullOrWhiteSpace(fromEmail))
+                {
+                    return HealthCheckResult.Degraded("SendGrid API key is configured but FromEmail is missing.");
                 }
 
-
-                return HealthCheckResult.Healthy("Email service is available.");
+                if (!apiKey.StartsWith("SG.", StringComparison.OrdinalIgnoreCase))
+                {
+                    return HealthCheckResult.Unhealthy("SendGrid API key format is invalid. API keys should start with 'SG.'");
+                }
+                
+                return HealthCheckResult.Healthy($"SendGrid is configured correctly. FromEmail: {fromEmail}");
             }
-            catch (System.Exception ex)
+            catch (Exception ex)
             {
-                return HealthCheckResult.Unhealthy("Email service check failed.", ex);
+                return HealthCheckResult.Unhealthy("SendGrid health check failed.", ex);
             }
         }
     }

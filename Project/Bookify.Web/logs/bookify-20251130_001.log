@@ -2822,3 +2822,1145 @@ SELECT 1
 2025-11-30 04:34:14.530 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 73.8077ms
 2025-11-30 04:34:14.535 +02:00 [INF] End processing HTTP request after 91.2307ms - 200
 2025-11-30 04:34:14.560 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:21:32.474 +02:00 [INF] User profile is available. Using 'C:\Users\NourEldeen\AppData\Local\ASP.NET\DataProtection-Keys' as key repository and Windows DPAPI to encrypt keys at rest.
+2025-11-30 05:21:33.010 +02:00 [WRN] The foreign key property 'BookingPayment.BookingId1' was created in shadow state because a conflicting property with the simple name 'BookingId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-11-30 05:21:33.013 +02:00 [WRN] The foreign key property 'BookingStatusHistory.BookingId1' was created in shadow state because a conflicting property with the simple name 'BookingId' exists in the entity type, but is either not mapped, is already used for another relationship, or is incompatible with the associated primary key type. See https://aka.ms/efcore-relationships for information on mapping relationships in EF Core.
+2025-11-30 05:21:34.119 +02:00 [INF] Executed DbCommand (81ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2025-11-30 05:21:34.177 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2025-11-30 05:21:34.191 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:34.233 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:34.364 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2025-11-30 05:21:34.372 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:34.390 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1
+        FROM [Bookings] AS [b]) THEN CAST(1 AS bit)
+    ELSE CAST(0 AS bit)
+END
+2025-11-30 05:21:34.642 +02:00 [INF] Initializing UI Database
+2025-11-30 05:21:34.839 +02:00 [INF] Saving healthchecks configuration to database
+2025-11-30 05:21:34.890 +02:00 [INF] Saved 1 entities to in-memory store.
+2025-11-30 05:21:35.192 +02:00 [INF] Now listening on: https://localhost:7293
+2025-11-30 05:21:35.193 +02:00 [INF] Now listening on: http://localhost:5057
+2025-11-30 05:21:35.965 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/ - null null
+2025-11-30 05:21:36.166 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:36.174 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:36.210 +02:00 [INF] Application started. Press Ctrl+C to shut down.
+2025-11-30 05:21:36.211 +02:00 [INF] Hosting environment: Development
+2025-11-30 05:21:36.211 +02:00 [INF] Content root path: E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web
+2025-11-30 05:21:36.300 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:21:36.305 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:21:36.322 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /, ContentType: null, ContentLength: null
+2025-11-30 05:21:36.372 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:21:36.372 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.HomeController.Index (Bookify.Web)'
+2025-11-30 05:21:36.425 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Bookify.Web.Controllers.HomeController (Bookify.Web).
+2025-11-30 05:21:36.431 +02:00 [INF] Home page accessed
+2025-11-30 05:21:36.441 +02:00 [INF] Executing ViewResult, running view Index.
+2025-11-30 05:21:36.492 +02:00 [INF] Executed DbCommand (10ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:21:36.737 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:21:36.740 +02:00 [INF] Received HTTP response headers after 562.6216ms - 200
+2025-11-30 05:21:36.741 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 440.947ms
+2025-11-30 05:21:36.744 +02:00 [INF] End processing HTTP request after 582.5391ms - 200
+2025-11-30 05:21:36.883 +02:00 [INF] Executed ViewResult - view Index executed in 445.679ms.
+2025-11-30 05:21:36.887 +02:00 [INF] Executed action Bookify.Web.Controllers.HomeController.Index (Bookify.Web) in 460.3858ms
+2025-11-30 05:21:36.888 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.HomeController.Index (Bookify.Web)'
+2025-11-30 05:21:36.891 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/ - 200 null text/html; charset=utf-8 933.209ms
+2025-11-30 05:21:36.922 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/Home.css?v=T5xjlwqCSDJP2S_waFuA7G2HgB6iT7AxScxK5orO7RQ - null null
+2025-11-30 05:21:36.923 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/site.css?v=6sIKh4wfzgyAjmJIC7ShA4UTwb9BHXsGTjV8qIMLoPc - null null
+2025-11-30 05:21:36.923 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/rooms.css?v=H_BV1vnBPEpyMBjKYXHnNfH_OQK0oEjt32CCglckFc4 - null null
+2025-11-30 05:21:36.923 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/gallery.css?v=y5k0rI22_dMa6NQFvijFrGgj8g1zxSb6CY1vXYBzLqc - null null
+2025-11-30 05:21:36.923 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/about.css?v=CBgpyVyoHp3jgQUXqqYfy4v-hOdvAxiH6xwulj1eZ4o - null null
+2025-11-30 05:21:37.016 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/amenities.css?v=YT3cR-kmMfN4pdjxAPw8--N8IQ_-XCA-cEOxC9yZJ1U - null null
+2025-11-30 05:21:37.076 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/Home.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.016 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/contact.css?v=2Owng0AK8l2E17ISxF5wFJxtQYK4rWOgL8rkeg---0Q - null null
+2025-11-30 05:21:37.076 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G1.jpg?v=Oa-tVamfQ90FO0nhLE7GM7rkFrULYe_8CLoqpHSsIXc - null null
+2025-11-30 05:21:37.169 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G2.jpg?v=VCGcXL6547f3iOOUi8wBRNeBI72YpRkWJa_YZpJdCic - null null
+2025-11-30 05:21:37.169 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/site.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.171 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/rooms.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.172 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/gallery.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.181 +02:00 [INF] The file /css/site.css was not modified
+2025-11-30 05:21:37.173 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/about.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.174 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/amenities.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.176 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/contact.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.178 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G1.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.179 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G2.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.216 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/site.css?v=6sIKh4wfzgyAjmJIC7ShA4UTwb9BHXsGTjV8qIMLoPc - 304 null text/css 293.0887ms
+2025-11-30 05:21:37.222 +02:00 [INF] The file /images/G1.jpg was not modified
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/amenities.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\amenities.css'
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/Home.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\Home.css'
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/gallery.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\gallery.css'
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/rooms.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\rooms.css'
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/contact.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\contact.css'
+2025-11-30 05:21:37.223 +02:00 [INF] Sending file. Request path: '/css/about.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\about.css'
+2025-11-30 05:21:37.223 +02:00 [INF] The file /images/G2.jpg was not modified
+2025-11-30 05:21:37.226 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G1.jpg?v=Oa-tVamfQ90FO0nhLE7GM7rkFrULYe_8CLoqpHSsIXc - 304 null image/jpeg 149.549ms
+2025-11-30 05:21:37.227 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/amenities.css?v=YT3cR-kmMfN4pdjxAPw8--N8IQ_-XCA-cEOxC9yZJ1U - 200 2867 text/css 210.7635ms
+2025-11-30 05:21:37.227 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:21:37.228 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/Home.css?v=T5xjlwqCSDJP2S_waFuA7G2HgB6iT7AxScxK5orO7RQ - 200 20948 text/css 305.9229ms
+2025-11-30 05:21:37.229 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/gallery.css?v=y5k0rI22_dMa6NQFvijFrGgj8g1zxSb6CY1vXYBzLqc - 200 2764 text/css 306.147ms
+2025-11-30 05:21:37.230 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/rooms.css?v=H_BV1vnBPEpyMBjKYXHnNfH_OQK0oEjt32CCglckFc4 - 200 11337 text/css 307.093ms
+2025-11-30 05:21:37.231 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/contact.css?v=2Owng0AK8l2E17ISxF5wFJxtQYK4rWOgL8rkeg---0Q - 200 5976 text/css 214.8572ms
+2025-11-30 05:21:37.232 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/about.css?v=CBgpyVyoHp3jgQUXqqYfy4v-hOdvAxiH6xwulj1eZ4o - 200 4514 text/css 309.1061ms
+2025-11-30 05:21:37.232 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G2.jpg?v=VCGcXL6547f3iOOUi8wBRNeBI72YpRkWJa_YZpJdCic - 304 null image/jpeg 63.8623ms
+2025-11-30 05:21:37.267 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G3.jpg?v=gETf3YRNgFIeDtsJ3erppFlXjLMAwjgnaQGk5IP4slw - null null
+2025-11-30 05:21:37.269 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G4.jpg?v=fJ0vHd3pNU1ZtMg1PhIkhn-2ZSAtrzyeXU8tTZMo7hQ - null null
+2025-11-30 05:21:37.269 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G3.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.271 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G4.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.271 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G5.jpg?v=516nHlUxd7AZvMwBjla6BH18JrEXyou-jVmpohrnNSs - null null
+2025-11-30 05:21:37.272 +02:00 [INF] The file /images/G3.jpg was not modified
+2025-11-30 05:21:37.273 +02:00 [INF] The file /images/G4.jpg was not modified
+2025-11-30 05:21:37.274 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G5.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.275 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G3.jpg?v=gETf3YRNgFIeDtsJ3erppFlXjLMAwjgnaQGk5IP4slw - 304 null image/jpeg 7.7187ms
+2025-11-30 05:21:37.276 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G4.jpg?v=fJ0vHd3pNU1ZtMg1PhIkhn-2ZSAtrzyeXU8tTZMo7hQ - 304 null image/jpeg 7.0804ms
+2025-11-30 05:21:37.277 +02:00 [INF] The file /images/G5.jpg was not modified
+2025-11-30 05:21:37.281 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G5.jpg?v=516nHlUxd7AZvMwBjla6BH18JrEXyou-jVmpohrnNSs - 304 null image/jpeg 10.0709ms
+2025-11-30 05:21:37.282 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:37.282 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G6.jpg?v=Khtjeksu27hHBtN-XfUPLSfdAzdOHCCe92_LkXxZe2s - null null
+2025-11-30 05:21:37.282 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G11.jpg?v=nk2gZ3JCAzWS-DynVMAWxt979S0aK9AbAO2ztdE6VF8 - null null
+2025-11-30 05:21:37.283 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G7.jpg?v=mlY8uIfjdYino2gjote28dLMrE75xhWTy5H7B23PwCc - null null
+2025-11-30 05:21:37.285 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G9.jpg?v=wKmLT8yThEiNem-JQ471ZEayyEeX2ms3YhhABfPO7XU - null null
+2025-11-30 05:21:37.285 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G8.jpg?v=pMV5qjo0IQzf9OsoorMZgd_Y2EyxHyKxcOmBeyz7wM4 - null null
+2025-11-30 05:21:37.285 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G12.jpg?v=pxr53C_XVZVH7gf45WFIdDr4KDGEkl33WRTJr1NlVIM - null null
+2025-11-30 05:21:37.285 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G10.jpg?v=kAJBpYXo2Dew1QGSlQauVk0DT25jUoGh2PbURIE7INQ - null null
+2025-11-30 05:21:37.285 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:37.287 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G6.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.289 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G11.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.290 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 7.3244ms
+2025-11-30 05:21:37.291 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G7.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.292 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G9.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.293 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G8.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.294 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G12.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.295 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G10.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.298 +02:00 [INF] The file /images/G6.jpg was not modified
+2025-11-30 05:21:37.298 +02:00 [INF] The file /images/G11.jpg was not modified
+2025-11-30 05:21:37.301 +02:00 [INF] The file /images/G7.jpg was not modified
+2025-11-30 05:21:37.302 +02:00 [INF] The file /images/G9.jpg was not modified
+2025-11-30 05:21:37.302 +02:00 [INF] The file /images/G8.jpg was not modified
+2025-11-30 05:21:37.303 +02:00 [INF] The file /images/G12.jpg was not modified
+2025-11-30 05:21:37.305 +02:00 [INF] The file /images/G10.jpg was not modified
+2025-11-30 05:21:37.306 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G6.jpg?v=Khtjeksu27hHBtN-XfUPLSfdAzdOHCCe92_LkXxZe2s - 304 null image/jpeg 23.3717ms
+2025-11-30 05:21:37.307 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G11.jpg?v=nk2gZ3JCAzWS-DynVMAWxt979S0aK9AbAO2ztdE6VF8 - 304 null image/jpeg 23.997ms
+2025-11-30 05:21:37.307 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G7.jpg?v=mlY8uIfjdYino2gjote28dLMrE75xhWTy5H7B23PwCc - 304 null image/jpeg 24.5984ms
+2025-11-30 05:21:37.308 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G9.jpg?v=wKmLT8yThEiNem-JQ471ZEayyEeX2ms3YhhABfPO7XU - 304 null image/jpeg 23.5731ms
+2025-11-30 05:21:37.309 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G8.jpg?v=pMV5qjo0IQzf9OsoorMZgd_Y2EyxHyKxcOmBeyz7wM4 - 304 null image/jpeg 24.3349ms
+2025-11-30 05:21:37.310 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G12.jpg?v=pxr53C_XVZVH7gf45WFIdDr4KDGEkl33WRTJr1NlVIM - 304 null image/jpeg 25.1101ms
+2025-11-30 05:21:37.310 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G10.jpg?v=kAJBpYXo2Dew1QGSlQauVk0DT25jUoGh2PbURIE7INQ - 304 null image/jpeg 25.7709ms
+2025-11-30 05:21:37.402 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 117.4144ms
+2025-11-30 05:21:37.618 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Home/GetRoomsPartial?page=1&pageSize=8 - null null
+2025-11-30 05:21:37.620 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Home/GetRoomsPartial, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.628 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web)'
+2025-11-30 05:21:37.628 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/logo.jpeg - null null
+2025-11-30 05:21:37.630 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/logo.jpeg, ContentType: null, ContentLength: null
+2025-11-30 05:21:37.633 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/logo.jpeg - 404 0 null 4.9724ms
+2025-11-30 05:21:37.635 +02:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7293/images/logo.jpeg, Response status code: 404
+2025-11-30 05:21:37.641 +02:00 [INF] Route matched with {action = "GetRoomsPartial", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRoomsPartial(Int32, Int32) on controller Bookify.Web.Controllers.HomeController (Bookify.Web).
+2025-11-30 05:21:37.653 +02:00 [INF] GetRoomsPartial called - Page: 1, PageSize: 8
+2025-11-30 05:21:37.663 +02:00 [INF] Getting all rooms with room type, gallery images, and bookings
+2025-11-30 05:21:37.729 +02:00 [WRN] Compiling a query which loads related collections for more than one collection navigation, either via 'Include' or through projection, but no 'QuerySplittingBehavior' has been configured. By default, Entity Framework will use 'QuerySplittingBehavior.SingleQuery', which can potentially result in slow query performance. See https://go.microsoft.com/fwlink/?linkid=2134277 for more information. To identify the query that's triggering this warning call 'ConfigureWarnings(w => w.Throw(RelationalEventId.MultipleCollectionIncludeWarning))'.
+2025-11-30 05:21:37.755 +02:00 [INF] Executed DbCommand (7ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion], [r0].[Id], [r0].[Description], [r0].[ImageUrl], [r0].[MaxOccupancy], [r0].[Name], [r0].[PricePerNight], [r0].[RowVersion], [g].[Id], [g].[AltText], [g].[Description], [g].[ImageUrl], [g].[RoomId], [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Rooms] AS [r]
+INNER JOIN [RoomTypes] AS [r0] ON [r].[RoomTypeId] = [r0].[Id]
+LEFT JOIN [GalleryImages] AS [g] ON [r].[Id] = [g].[RoomId]
+LEFT JOIN [Bookings] AS [b] ON [r].[Id] = [b].[RoomId]
+ORDER BY [r].[Id], [r0].[Id], [g].[Id]
+2025-11-30 05:21:37.860 +02:00 [INF] Executing PartialViewResult, running view _RoomsPartial.
+2025-11-30 05:21:37.981 +02:00 [INF] Executed PartialViewResult - view _RoomsPartial executed in 121.3436ms.
+2025-11-30 05:21:37.982 +02:00 [INF] Executed action Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web) in 339.3655ms
+2025-11-30 05:21:37.982 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web)'
+2025-11-30 05:21:37.983 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Home/GetRoomsPartial?page=1&pageSize=8 - 200 null text/html; charset=utf-8 364.7896ms
+2025-11-30 05:21:39.321 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Account/Login - null null
+2025-11-30 05:21:39.325 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Account/Login, ContentType: null, ContentLength: null
+2025-11-30 05:21:39.327 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:39.329 +02:00 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Login(System.String) on controller Bookify.Web.Controllers.AccountController (Bookify.Web).
+2025-11-30 05:21:39.338 +02:00 [INF] Executing ViewResult, running view Login.
+2025-11-30 05:21:39.371 +02:00 [INF] Executed ViewResult - view Login executed in 34.0891ms.
+2025-11-30 05:21:39.373 +02:00 [INF] Executed action Bookify.Web.Controllers.AccountController.Login (Bookify.Web) in 42.7691ms
+2025-11-30 05:21:39.374 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:39.375 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Account/Login - 200 null text/html; charset=utf-8 54.1117ms
+2025-11-30 05:21:39.409 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/js/login.js - null null
+2025-11-30 05:21:39.409 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/login.css - null null
+2025-11-30 05:21:39.411 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:39.411 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /js/login.js, ContentType: null, ContentLength: null
+2025-11-30 05:21:39.413 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/login.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:39.415 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 3.8825ms
+2025-11-30 05:21:39.416 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/js/login.js - 404 0 null 7.3662ms
+2025-11-30 05:21:39.418 +02:00 [INF] Sending file. Request path: '/css/login.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\Login.css'
+2025-11-30 05:21:39.420 +02:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7293/js/login.js, Response status code: 404
+2025-11-30 05:21:39.421 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/login.css - 200 7656 text/css 11.8294ms
+2025-11-30 05:21:39.473 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:39.479 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 6.6244ms
+2025-11-30 05:21:46.030 +02:00 [INF] Request starting HTTP/2 POST https://localhost:7293/Account/Login - application/x-www-form-urlencoded 249
+2025-11-30 05:21:46.032 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: POST, Path: /Account/Login, ContentType: application/x-www-form-urlencoded, ContentLength: 249
+2025-11-30 05:21:46.035 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:46.040 +02:00 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Bookify.Web.ViewModels.LoginViewModel, System.String) on controller Bookify.Web.Controllers.AccountController (Bookify.Web).
+2025-11-30 05:21:46.058 +02:00 [INF] Login attempt for email: nor.abdelmaksoud2004@gmail.com
+2025-11-30 05:21:46.060 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:46.064 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2025-11-30 05:21:46.145 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2025-11-30 05:21:46.149 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:46.215 +02:00 [INF] Executed DbCommand (6ms) [Parameters=[@p22='?' (Size = 450), @p0='?' (DbType = Int32), @p1='?' (Size = 250), @p2='?' (Size = 50), @p3='?' (Size = 4000), @p23='?' (Size = 4000), @p4='?' (Size = 50), @p5='?' (DbType = DateTime2), @p6='?' (DbType = DateTime2), @p7='?' (Size = 256), @p8='?' (DbType = Boolean), @p9='?' (Size = 50), @p10='?' (Size = 50), @p11='?' (DbType = Boolean), @p12='?' (DbType = DateTimeOffset), @p13='?' (Size = 256), @p14='?' (Size = 256), @p15='?' (Size = 4000), @p16='?' (Size = 4000), @p17='?' (DbType = Boolean), @p18='?' (Size = 10), @p19='?' (Size = 4000), @p20='?' (DbType = Boolean), @p21='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [ApplicationUsers] SET [AccessFailedCount] = @p0, [Address] = @p1, [City] = @p2, [ConcurrencyStamp] = @p3, [Country] = @p4, [CreatedAt] = @p5, [DateOfBirth] = @p6, [Email] = @p7, [EmailConfirmed] = @p8, [FirstName] = @p9, [LastName] = @p10, [LockoutEnabled] = @p11, [LockoutEnd] = @p12, [NormalizedEmail] = @p13, [NormalizedUserName] = @p14, [PasswordHash] = @p15, [PhoneNumber] = @p16, [PhoneNumberConfirmed] = @p17, [PostalCode] = @p18, [SecurityStamp] = @p19, [TwoFactorEnabled] = @p20, [UserName] = @p21
+OUTPUT 1
+WHERE [Id] = @p22 AND [ConcurrencyStamp] = @p23;
+2025-11-30 05:21:46.226 +02:00 [WRN] Invalid login attempt for nor.abdelmaksoud2004@gmail.com. 4 attempts remaining
+2025-11-30 05:21:46.227 +02:00 [INF] Executing ViewResult, running view Login.
+2025-11-30 05:21:46.231 +02:00 [INF] Executed ViewResult - view Login executed in 4.6864ms.
+2025-11-30 05:21:46.233 +02:00 [INF] Executed action Bookify.Web.Controllers.AccountController.Login (Bookify.Web) in 191.9726ms
+2025-11-30 05:21:46.233 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:46.234 +02:00 [INF] Request finished HTTP/2 POST https://localhost:7293/Account/Login - 200 null text/html; charset=utf-8 204.3558ms
+2025-11-30 05:21:46.260 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/js/login.js - null null
+2025-11-30 05:21:46.262 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /js/login.js, ContentType: null, ContentLength: null
+2025-11-30 05:21:46.263 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:46.265 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 1.6896ms
+2025-11-30 05:21:46.265 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/js/login.js - 404 0 null 4.916ms
+2025-11-30 05:21:46.268 +02:00 [INF] Request reached the end of the middleware pipeline without being handled by application code. Request path: GET https://localhost:7293/js/login.js, Response status code: 404
+2025-11-30 05:21:46.319 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:46.326 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 6.6609ms
+2025-11-30 05:21:47.277 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:47.278 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:47.280 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:21:47.281 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:21:47.282 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:21:47.284 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:21:47.285 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:21:47.285 +02:00 [INF] Received HTTP response headers after 6.2659ms - 200
+2025-11-30 05:21:47.286 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 6.1821ms
+2025-11-30 05:21:47.286 +02:00 [INF] End processing HTTP request after 9.182ms - 200
+2025-11-30 05:21:47.297 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:21:50.894 +02:00 [INF] Request starting HTTP/2 POST https://localhost:7293/Account/Login - application/x-www-form-urlencoded 263
+2025-11-30 05:21:50.896 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: POST, Path: /Account/Login, ContentType: application/x-www-form-urlencoded, ContentLength: 263
+2025-11-30 05:21:50.897 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:50.898 +02:00 [INF] Route matched with {action = "Login", controller = "Account"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Login(Bookify.Web.ViewModels.LoginViewModel, System.String) on controller Bookify.Web.Controllers.AccountController (Bookify.Web).
+2025-11-30 05:21:50.903 +02:00 [INF] Login attempt for email: nor.abdelmaksoud2004@gmail.com
+2025-11-30 05:21:50.905 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:50.907 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2025-11-30 05:21:50.980 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedUserName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedUserName] = @__normalizedUserName_0
+2025-11-30 05:21:50.982 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedEmail_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(2) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[NormalizedEmail] = @__normalizedEmail_0
+2025-11-30 05:21:50.985 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@p22='?' (Size = 450), @p0='?' (DbType = Int32), @p1='?' (Size = 250), @p2='?' (Size = 50), @p3='?' (Size = 4000), @p23='?' (Size = 4000), @p4='?' (Size = 50), @p5='?' (DbType = DateTime2), @p6='?' (DbType = DateTime2), @p7='?' (Size = 256), @p8='?' (DbType = Boolean), @p9='?' (Size = 50), @p10='?' (Size = 50), @p11='?' (DbType = Boolean), @p12='?' (DbType = DateTimeOffset), @p13='?' (Size = 256), @p14='?' (Size = 256), @p15='?' (Size = 4000), @p16='?' (Size = 4000), @p17='?' (DbType = Boolean), @p18='?' (Size = 10), @p19='?' (Size = 4000), @p20='?' (DbType = Boolean), @p21='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SET IMPLICIT_TRANSACTIONS OFF;
+SET NOCOUNT ON;
+UPDATE [ApplicationUsers] SET [AccessFailedCount] = @p0, [Address] = @p1, [City] = @p2, [ConcurrencyStamp] = @p3, [Country] = @p4, [CreatedAt] = @p5, [DateOfBirth] = @p6, [Email] = @p7, [EmailConfirmed] = @p8, [FirstName] = @p9, [LastName] = @p10, [LockoutEnabled] = @p11, [LockoutEnd] = @p12, [NormalizedEmail] = @p13, [NormalizedUserName] = @p14, [PasswordHash] = @p15, [PhoneNumber] = @p16, [PhoneNumberConfirmed] = @p17, [PostalCode] = @p18, [SecurityStamp] = @p19, [TwoFactorEnabled] = @p20, [UserName] = @p21
+OUTPUT 1
+WHERE [Id] = @p22 AND [ConcurrencyStamp] = @p23;
+2025-11-30 05:21:51.018 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__user_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [a].[Id], [a].[ClaimType], [a].[ClaimValue], [a].[UserId]
+FROM [AspNetUserClaims] AS [a]
+WHERE [a].[UserId] = @__user_Id_0
+2025-11-30 05:21:51.033 +02:00 [INF] Executed DbCommand (2ms) [Parameters=[@__userId_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [a0].[Name]
+FROM [AspNetUserRoles] AS [a]
+INNER JOIN [AspNetRoles] AS [a0] ON [a].[RoleId] = [a0].[Id]
+WHERE [a].[UserId] = @__userId_0
+2025-11-30 05:21:51.037 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__normalizedName_0='?' (Size = 256)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[ConcurrencyStamp], [a].[Name], [a].[NormalizedName]
+FROM [AspNetRoles] AS [a]
+WHERE [a].[NormalizedName] = @__normalizedName_0
+2025-11-30 05:21:51.045 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__role_Id_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT [a].[ClaimType], [a].[ClaimValue]
+FROM [AspNetRoleClaims] AS [a]
+WHERE [a].[RoleId] = @__role_Id_0
+2025-11-30 05:21:51.051 +02:00 [INF] AuthenticationScheme: Identity.Application signed in.
+2025-11-30 05:21:51.052 +02:00 [INF] User nor.abdelmaksoud2004@gmail.com logged in successfully
+2025-11-30 05:21:51.054 +02:00 [INF] Executing RedirectResult, redirecting to /.
+2025-11-30 05:21:51.054 +02:00 [INF] Executed action Bookify.Web.Controllers.AccountController.Login (Bookify.Web) in 155.2854ms
+2025-11-30 05:21:51.055 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AccountController.Login (Bookify.Web)'
+2025-11-30 05:21:51.055 +02:00 [INF] Request finished HTTP/2 POST https://localhost:7293/Account/Login - 302 0 null 161.1706ms
+2025-11-30 05:21:51.058 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/ - null null
+2025-11-30 05:21:51.060 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.064 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.HomeController.Index (Bookify.Web)'
+2025-11-30 05:21:51.065 +02:00 [INF] Route matched with {action = "Index", controller = "Home"}. Executing controller action with signature Microsoft.AspNetCore.Mvc.IActionResult Index() on controller Bookify.Web.Controllers.HomeController (Bookify.Web).
+2025-11-30 05:21:51.066 +02:00 [INF] Home page accessed
+2025-11-30 05:21:51.067 +02:00 [INF] Executing ViewResult, running view Index.
+2025-11-30 05:21:51.083 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:51.088 +02:00 [INF] Executed ViewResult - view Index executed in 21.1064ms.
+2025-11-30 05:21:51.089 +02:00 [INF] Executed action Bookify.Web.Controllers.HomeController.Index (Bookify.Web) in 23.435ms
+2025-11-30 05:21:51.090 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.HomeController.Index (Bookify.Web)'
+2025-11-30 05:21:51.091 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/ - 200 null text/html; charset=utf-8 32.4389ms
+2025-11-30 05:21:51.117 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/Home.css?v=T5xjlwqCSDJP2S_waFuA7G2HgB6iT7AxScxK5orO7RQ - null null
+2025-11-30 05:21:51.119 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/Home.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.119 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/rooms.css?v=H_BV1vnBPEpyMBjKYXHnNfH_OQK0oEjt32CCglckFc4 - null null
+2025-11-30 05:21:51.120 +02:00 [INF] The file /css/Home.css was not modified
+2025-11-30 05:21:51.120 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/about.css?v=CBgpyVyoHp3jgQUXqqYfy4v-hOdvAxiH6xwulj1eZ4o - null null
+2025-11-30 05:21:51.120 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/gallery.css?v=y5k0rI22_dMa6NQFvijFrGgj8g1zxSb6CY1vXYBzLqc - null null
+2025-11-30 05:21:51.120 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/amenities.css?v=YT3cR-kmMfN4pdjxAPw8--N8IQ_-XCA-cEOxC9yZJ1U - null null
+2025-11-30 05:21:51.120 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/contact.css?v=2Owng0AK8l2E17ISxF5wFJxtQYK4rWOgL8rkeg---0Q - null null
+2025-11-30 05:21:51.121 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/rooms.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.122 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/Home.css?v=T5xjlwqCSDJP2S_waFuA7G2HgB6iT7AxScxK5orO7RQ - 304 null text/css 5.0512ms
+2025-11-30 05:21:51.124 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/about.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.125 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/gallery.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.127 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/amenities.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.128 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/contact.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.129 +02:00 [INF] The file /css/rooms.css was not modified
+2025-11-30 05:21:51.131 +02:00 [INF] The file /css/about.css was not modified
+2025-11-30 05:21:51.132 +02:00 [INF] The file /css/gallery.css was not modified
+2025-11-30 05:21:51.133 +02:00 [INF] The file /css/amenities.css was not modified
+2025-11-30 05:21:51.134 +02:00 [INF] The file /css/contact.css was not modified
+2025-11-30 05:21:51.135 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/rooms.css?v=H_BV1vnBPEpyMBjKYXHnNfH_OQK0oEjt32CCglckFc4 - 304 null text/css 15.498ms
+2025-11-30 05:21:51.136 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/about.css?v=CBgpyVyoHp3jgQUXqqYfy4v-hOdvAxiH6xwulj1eZ4o - 304 null text/css 15.788ms
+2025-11-30 05:21:51.136 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/gallery.css?v=y5k0rI22_dMa6NQFvijFrGgj8g1zxSb6CY1vXYBzLqc - 304 null text/css 16.3581ms
+2025-11-30 05:21:51.137 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/amenities.css?v=YT3cR-kmMfN4pdjxAPw8--N8IQ_-XCA-cEOxC9yZJ1U - 304 null text/css 16.933ms
+2025-11-30 05:21:51.137 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/contact.css?v=2Owng0AK8l2E17ISxF5wFJxtQYK4rWOgL8rkeg---0Q - 304 null text/css 17.4594ms
+2025-11-30 05:21:51.182 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:51.184 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 1.7254ms
+2025-11-30 05:21:51.206 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:51.212 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 6.0445ms
+2025-11-30 05:21:51.458 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Home/GetRoomsPartial?page=1&pageSize=8 - null null
+2025-11-30 05:21:51.460 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Home/GetRoomsPartial, ContentType: null, ContentLength: null
+2025-11-30 05:21:51.462 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web)'
+2025-11-30 05:21:51.463 +02:00 [INF] Route matched with {action = "GetRoomsPartial", controller = "Home"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRoomsPartial(Int32, Int32) on controller Bookify.Web.Controllers.HomeController (Bookify.Web).
+2025-11-30 05:21:51.465 +02:00 [INF] GetRoomsPartial called - Page: 1, PageSize: 8
+2025-11-30 05:21:51.466 +02:00 [INF] Getting all rooms with room type, gallery images, and bookings
+2025-11-30 05:21:51.468 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion], [r0].[Id], [r0].[Description], [r0].[ImageUrl], [r0].[MaxOccupancy], [r0].[Name], [r0].[PricePerNight], [r0].[RowVersion], [g].[Id], [g].[AltText], [g].[Description], [g].[ImageUrl], [g].[RoomId], [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Rooms] AS [r]
+INNER JOIN [RoomTypes] AS [r0] ON [r].[RoomTypeId] = [r0].[Id]
+LEFT JOIN [GalleryImages] AS [g] ON [r].[Id] = [g].[RoomId]
+LEFT JOIN [Bookings] AS [b] ON [r].[Id] = [b].[RoomId]
+ORDER BY [r].[Id], [r0].[Id], [g].[Id]
+2025-11-30 05:21:51.474 +02:00 [INF] Executing PartialViewResult, running view _RoomsPartial.
+2025-11-30 05:21:51.475 +02:00 [INF] Executed PartialViewResult - view _RoomsPartial executed in 1.3796ms.
+2025-11-30 05:21:51.476 +02:00 [INF] Executed action Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web) in 11.8753ms
+2025-11-30 05:21:51.477 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.HomeController.GetRoomsPartial (Bookify.Web)'
+2025-11-30 05:21:51.478 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Home/GetRoomsPartial?page=1&pageSize=8 - 200 null text/html; charset=utf-8 19.5361ms
+2025-11-30 05:21:52.898 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Admin/Dashboard - null null
+2025-11-30 05:21:52.901 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Admin/Dashboard, ContentType: null, ContentLength: null
+2025-11-30 05:21:52.908 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web)'
+2025-11-30 05:21:52.911 +02:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller Bookify.Web.Controllers.AdminController (Bookify.Web).
+2025-11-30 05:21:52.915 +02:00 [INF] Admin dashboard accessed - AdminId: d4b6f813-35eb-4a48-8b87-30162b1c3617
+2025-11-30 05:21:52.931 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+2025-11-30 05:21:52.941 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+WHERE [b].[Status] = N'Pending'
+2025-11-30 05:21:52.944 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+WHERE [b].[Status] = N'Paid'
+2025-11-30 05:21:52.948 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Rooms] AS [r]
+2025-11-30 05:21:52.952 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Rooms] AS [r]
+WHERE [r].[IsAvailable] = CAST(1 AS bit)
+2025-11-30 05:21:52.955 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.962 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.984 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.985 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.987 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.988 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.989 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.990 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.991 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.992 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.993 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.993 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.994 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:52.995 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:52.998 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.005 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.009 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.010 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.011 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.012 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.013 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.014 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.014 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.015 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.017 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.017 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.021 +02:00 [INF] Executing ViewResult, running view Dashboard.
+2025-11-30 05:21:53.026 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:53.063 +02:00 [INF] Executed ViewResult - view Dashboard executed in 41.5469ms.
+2025-11-30 05:21:53.064 +02:00 [INF] Executed action Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web) in 151.7966ms
+2025-11-30 05:21:53.064 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web)'
+2025-11-30 05:21:53.065 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Admin/Dashboard - 200 null text/html; charset=utf-8 166.6892ms
+2025-11-30 05:21:53.083 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/css/admin-panel.css?v=ZDqsDm66M_nqdIs4wCTqkcNfSuhkwu-U16lzBvqEA2o - null null
+2025-11-30 05:21:53.084 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /css/admin-panel.css, ContentType: null, ContentLength: null
+2025-11-30 05:21:53.084 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:53.087 +02:00 [INF] Sending file. Request path: '/css/admin-panel.css'. Physical path: 'E:\Nour Eldeen\Study\Self Study\Projects\Bookify\Project\Bookify.Web\wwwroot\css\admin-panel.css'
+2025-11-30 05:21:53.088 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 3.2299ms
+2025-11-30 05:21:53.088 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/css/admin-panel.css?v=ZDqsDm66M_nqdIs4wCTqkcNfSuhkwu-U16lzBvqEA2o - 200 32114 text/css 5.7389ms
+2025-11-30 05:21:53.103 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:53.108 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 4.7309ms
+2025-11-30 05:21:53.339 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Admin/GetRecentBookings - null null
+2025-11-30 05:21:53.340 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Admin/GetRecentBookings, ContentType: null, ContentLength: null
+2025-11-30 05:21:53.346 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web)'
+2025-11-30 05:21:53.349 +02:00 [INF] Route matched with {action = "GetRecentBookings", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRecentBookings() on controller Bookify.Web.Controllers.AdminController (Bookify.Web).
+2025-11-30 05:21:53.353 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:53.354 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:53.358 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:53.361 +02:00 [INF] Getting Room by ID: 10
+2025-11-30 05:21:53.367 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:53.369 +02:00 [INF] Getting Room by ID: 19
+2025-11-30 05:21:53.371 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:53.372 +02:00 [INF] Getting Room by ID: 2
+2025-11-30 05:21:53.373 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:53.376 +02:00 [INF] Executing JsonResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-11-30 05:21:53.381 +02:00 [INF] Executed action Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web) in 30.7743ms
+2025-11-30 05:21:53.382 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web)'
+2025-11-30 05:21:53.383 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Admin/GetRecentBookings - 200 null application/json; charset=utf-8 44.7782ms
+2025-11-30 05:21:54.195 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Admin/RoomTypes - null null
+2025-11-30 05:21:54.197 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Admin/RoomTypes, ContentType: null, ContentLength: null
+2025-11-30 05:21:54.199 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AdminController.RoomTypes (Bookify.Web)'
+2025-11-30 05:21:54.202 +02:00 [INF] Route matched with {action = "RoomTypes", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] RoomTypes() on controller Bookify.Web.Controllers.AdminController (Bookify.Web).
+2025-11-30 05:21:54.205 +02:00 [INF] Getting all RoomType entities
+2025-11-30 05:21:54.210 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [r].[Id], [r].[Description], [r].[ImageUrl], [r].[MaxOccupancy], [r].[Name], [r].[PricePerNight], [r].[RowVersion]
+FROM [RoomTypes] AS [r]
+2025-11-30 05:21:54.212 +02:00 [INF] Executing ViewResult, running view RoomTypes.
+2025-11-30 05:21:54.217 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:54.224 +02:00 [INF] Executed ViewResult - view RoomTypes executed in 11.8272ms.
+2025-11-30 05:21:54.225 +02:00 [INF] Executed action Bookify.Web.Controllers.AdminController.RoomTypes (Bookify.Web) in 21.1403ms
+2025-11-30 05:21:54.225 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AdminController.RoomTypes (Bookify.Web)'
+2025-11-30 05:21:54.226 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Admin/RoomTypes - 200 null text/html; charset=utf-8 31.3834ms
+2025-11-30 05:21:54.315 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:54.316 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 1.6225ms
+2025-11-30 05:21:54.327 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:54.327 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/images/G5.jpg - null null
+2025-11-30 05:21:54.329 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /images/G5.jpg, ContentType: null, ContentLength: null
+2025-11-30 05:21:54.330 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 3.1209ms
+2025-11-30 05:21:54.330 +02:00 [INF] The file /images/G5.jpg was not modified
+2025-11-30 05:21:54.332 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/images/G5.jpg - 304 null image/jpeg 5.6605ms
+2025-11-30 05:21:55.448 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Admin/Dashboard - null null
+2025-11-30 05:21:55.450 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Admin/Dashboard, ContentType: null, ContentLength: null
+2025-11-30 05:21:55.452 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web)'
+2025-11-30 05:21:55.452 +02:00 [INF] Route matched with {action = "Dashboard", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] Dashboard() on controller Bookify.Web.Controllers.AdminController (Bookify.Web).
+2025-11-30 05:21:55.453 +02:00 [INF] Admin dashboard accessed - AdminId: d4b6f813-35eb-4a48-8b87-30162b1c3617
+2025-11-30 05:21:55.456 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.458 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+WHERE [b].[Status] = N'Pending'
+2025-11-30 05:21:55.459 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Bookings] AS [b]
+WHERE [b].[Status] = N'Paid'
+2025-11-30 05:21:55.460 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Rooms] AS [r]
+2025-11-30 05:21:55.462 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT COUNT(*)
+FROM [Rooms] AS [r]
+WHERE [r].[IsAvailable] = CAST(1 AS bit)
+2025-11-30 05:21:55.463 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.463 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.464 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.465 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.467 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.468 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.469 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.469 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.471 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.472 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.473 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.474 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.475 +02:00 [INF] Getting all BookingPayment entities
+2025-11-30 05:21:55.475 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[Amount], [b].[BookingId], [b].[BookingId1], [b].[Currency], [b].[PaymentIntentId], [b].[PaymentStatus], [b].[StripeSessionId], [b].[TransactionDate]
+FROM [BookingPayments] AS [b]
+2025-11-30 05:21:55.477 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.477 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.478 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.479 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.480 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.481 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.482 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.482 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.484 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.484 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.485 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.486 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.487 +02:00 [INF] Executing ViewResult, running view Dashboard.
+2025-11-30 05:21:55.489 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:55.492 +02:00 [INF] Executed ViewResult - view Dashboard executed in 4.3464ms.
+2025-11-30 05:21:55.492 +02:00 [INF] Executed action Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web) in 39.0088ms
+2025-11-30 05:21:55.493 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AdminController.Dashboard (Bookify.Web)'
+2025-11-30 05:21:55.494 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Admin/Dashboard - 200 null text/html; charset=utf-8 46.0215ms
+2025-11-30 05:21:55.633 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:21:55.634 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:21:55.639 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 4.3802ms
+2025-11-30 05:21:55.641 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 7.2339ms
+2025-11-30 05:21:55.914 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/Admin/GetRecentBookings - null null
+2025-11-30 05:21:55.915 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /Admin/GetRecentBookings, ContentType: null, ContentLength: null
+2025-11-30 05:21:55.917 +02:00 [INF] Executing endpoint 'Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web)'
+2025-11-30 05:21:55.917 +02:00 [INF] Route matched with {action = "GetRecentBookings", controller = "Admin"}. Executing controller action with signature System.Threading.Tasks.Task`1[Microsoft.AspNetCore.Mvc.IActionResult] GetRecentBookings() on controller Bookify.Web.Controllers.AdminController (Bookify.Web).
+2025-11-30 05:21:55.919 +02:00 [INF] Getting all Booking entities
+2025-11-30 05:21:55.920 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT [b].[Id], [b].[CheckInDate], [b].[CheckOutDate], [b].[CreatedAt], [b].[NumberOfGuests], [b].[RoomId], [b].[RowVersion], [b].[SpecialRequests], [b].[Status], [b].[TotalAmount], [b].[UpdatedAt], [b].[UserId]
+FROM [Bookings] AS [b]
+2025-11-30 05:21:55.923 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (Size = 450)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [a].[Id], [a].[AccessFailedCount], [a].[Address], [a].[City], [a].[ConcurrencyStamp], [a].[Country], [a].[CreatedAt], [a].[DateOfBirth], [a].[Email], [a].[EmailConfirmed], [a].[FirstName], [a].[LastName], [a].[LockoutEnabled], [a].[LockoutEnd], [a].[NormalizedEmail], [a].[NormalizedUserName], [a].[PasswordHash], [a].[PhoneNumber], [a].[PhoneNumberConfirmed], [a].[PostalCode], [a].[SecurityStamp], [a].[TwoFactorEnabled], [a].[UserName]
+FROM [ApplicationUsers] AS [a]
+WHERE [a].[Id] = @__p_0
+2025-11-30 05:21:55.925 +02:00 [INF] Getting Room by ID: 10
+2025-11-30 05:21:55.927 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:55.929 +02:00 [INF] Getting Room by ID: 19
+2025-11-30 05:21:55.931 +02:00 [INF] Executed DbCommand (1ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:55.933 +02:00 [INF] Getting Room by ID: 2
+2025-11-30 05:21:55.934 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[@__p_0='?' (DbType = Int32)], CommandType='"Text"', CommandTimeout='30']
+SELECT TOP(1) [r].[Id], [r].[IsAvailable], [r].[Notes], [r].[RoomNumber], [r].[RoomTypeId], [r].[RowVersion]
+FROM [Rooms] AS [r]
+WHERE [r].[Id] = @__p_0
+2025-11-30 05:21:55.936 +02:00 [INF] Executing JsonResult, writing value of type 'System.Collections.Generic.List`1[[System.Object, System.Private.CoreLib, Version=9.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]'.
+2025-11-30 05:21:55.937 +02:00 [INF] Executed action Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web) in 19.0085ms
+2025-11-30 05:21:55.938 +02:00 [INF] Executed endpoint 'Bookify.Web.Controllers.AdminController.GetRecentBookings (Bookify.Web)'
+2025-11-30 05:21:55.939 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/Admin/GetRecentBookings - 200 null application/json; charset=utf-8 24.4464ms
+2025-11-30 05:21:57.312 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:57.313 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:21:57.314 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:21:57.315 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:21:57.316 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:21:57.324 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:21:57.326 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:21:57.326 +02:00 [INF] Received HTTP response headers after 12.3596ms - 200
+2025-11-30 05:21:57.327 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 12.6026ms
+2025-11-30 05:21:57.327 +02:00 [INF] End processing HTTP request after 14.8408ms - 200
+2025-11-30 05:21:57.330 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:22:07.335 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:07.336 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:07.337 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:07.338 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:07.339 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:07.341 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:07.342 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:07.342 +02:00 [INF] Received HTTP response headers after 4.8624ms - 200
+2025-11-30 05:22:07.342 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.9501ms
+2025-11-30 05:22:07.343 +02:00 [INF] End processing HTTP request after 7.3512ms - 200
+2025-11-30 05:22:07.345 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:22:17.355 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:17.357 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:17.362 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:17.364 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:17.365 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:17.367 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:17.369 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:17.369 +02:00 [INF] Received HTTP response headers after 7.9278ms - 200
+2025-11-30 05:22:17.370 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 8.7075ms
+2025-11-30 05:22:17.372 +02:00 [INF] End processing HTTP request after 16.2991ms - 200
+2025-11-30 05:22:17.376 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:22:19.679 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health - null null
+2025-11-30 05:22:19.681 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:19.682 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:19.684 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:19.685 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:19.686 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health - 200 null application/json 6.5505ms
+2025-11-30 05:22:27.392 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:27.393 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:27.393 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:27.394 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:27.395 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:27.397 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:27.399 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:27.399 +02:00 [INF] Received HTTP response headers after 5.5804ms - 200
+2025-11-30 05:22:27.399 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.765ms
+2025-11-30 05:22:27.400 +02:00 [INF] End processing HTTP request after 8.0413ms - 200
+2025-11-30 05:22:27.402 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:22:37.404 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:37.405 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:37.406 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:37.407 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:37.408 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:37.409 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:37.411 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:37.411 +02:00 [INF] Received HTTP response headers after 4.6841ms - 200
+2025-11-30 05:22:37.411 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.7627ms
+2025-11-30 05:22:37.411 +02:00 [INF] End processing HTTP request after 6.987ms - 200
+2025-11-30 05:22:37.414 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:22:47.417 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:47.418 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:47.419 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:47.420 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:47.421 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:47.422 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:47.424 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:47.424 +02:00 [INF] Received HTTP response headers after 5.1642ms - 200
+2025-11-30 05:22:47.424 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.4475ms
+2025-11-30 05:22:47.425 +02:00 [INF] End processing HTTP request after 7.4902ms - 200
+2025-11-30 05:22:47.427 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:22:57.433 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:57.434 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:22:57.435 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:22:57.437 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:22:57.438 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:22:57.439 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:22:57.440 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:22:57.440 +02:00 [INF] Received HTTP response headers after 5.2752ms - 200
+2025-11-30 05:22:57.441 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.4937ms
+2025-11-30 05:22:57.441 +02:00 [INF] End processing HTTP request after 8.2894ms - 200
+2025-11-30 05:22:57.444 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:04.910 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui - null null
+2025-11-30 05:23:04.912 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui, ContentType: null, ContentLength: null
+2025-11-30 05:23:04.913 +02:00 [INF] Executing endpoint 'HTTP: GET /health-ui'
+2025-11-30 05:23:04.916 +02:00 [INF] Executed endpoint 'HTTP: GET /health-ui'
+2025-11-30 05:23:04.916 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui - 200 null text/html 6.3105ms
+2025-11-30 05:23:04.994 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/ui/resources/healthchecksui-min.css - null null
+2025-11-30 05:23:04.996 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /ui/resources/healthchecksui-min.css, ContentType: null, ContentLength: null
+2025-11-30 05:23:04.996 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/ui/resources/healthchecks-bundle.js - null null
+2025-11-30 05:23:05.000 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - null null
+2025-11-30 05:23:04.996 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/ui/resources/vendors-dll.js - null null
+2025-11-30 05:23:05.010 +02:00 [INF] Executing endpoint 'HTTP: GET /ui/resources/healthchecksui-min.css'
+2025-11-30 05:23:05.010 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /ui/resources/healthchecks-bundle.js, ContentType: null, ContentLength: null
+2025-11-30 05:23:05.012 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_framework/aspnetcore-browser-refresh.js - 200 16507 application/javascript; charset=utf-8 15.0459ms
+2025-11-30 05:23:05.019 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /ui/resources/vendors-dll.js, ContentType: null, ContentLength: null
+2025-11-30 05:23:05.002 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/_vs/browserLink - null null
+2025-11-30 05:23:05.027 +02:00 [INF] Executing endpoint 'HTTP: GET /ui/resources/healthchecks-bundle.js'
+2025-11-30 05:23:05.030 +02:00 [INF] Executing endpoint 'HTTP: GET /ui/resources/vendors-dll.js'
+2025-11-30 05:23:05.028 +02:00 [INF] Executed endpoint 'HTTP: GET /ui/resources/healthchecksui-min.css'
+2025-11-30 05:23:05.035 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/ui/resources/healthchecksui-min.css - 200 null text/css 40.7928ms
+2025-11-30 05:23:05.041 +02:00 [INF] Executed endpoint 'HTTP: GET /ui/resources/healthchecks-bundle.js'
+2025-11-30 05:23:05.042 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/ui/resources/healthchecks-bundle.js - 200 null text/javascript 45.8456ms
+2025-11-30 05:23:05.042 +02:00 [INF] Executed endpoint 'HTTP: GET /ui/resources/vendors-dll.js'
+2025-11-30 05:23:05.043 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/_vs/browserLink - 200 null text/javascript; charset=UTF-8 40.8471ms
+2025-11-30 05:23:05.044 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/ui/resources/vendors-dll.js - 200 null text/javascript 48.1935ms
+2025-11-30 05:23:05.090 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api/ui-settings - null null
+2025-11-30 05:23:05.092 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api/ui-settings, ContentType: null, ContentLength: null
+2025-11-30 05:23:05.093 +02:00 [INF] Executing endpoint '/health-ui-api/ui-settings'
+2025-11-30 05:23:05.099 +02:00 [INF] Executed endpoint '/health-ui-api/ui-settings'
+2025-11-30 05:23:05.100 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api/ui-settings - 200 null application/json; charset=utf-8 9.8075ms
+2025-11-30 05:23:05.123 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:05.125 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:05.126 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:05.168 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:05.169 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 45.6734ms
+2025-11-30 05:23:07.458 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:07.460 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:07.460 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:07.462 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:07.463 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:07.464 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:07.465 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:07.465 +02:00 [INF] Received HTTP response headers after 4.9713ms - 200
+2025-11-30 05:23:07.466 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.5187ms
+2025-11-30 05:23:07.466 +02:00 [INF] End processing HTTP request after 8.2092ms - 200
+2025-11-30 05:23:07.469 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:12.753 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:23:12.755 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:23:12.757 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:12.762 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:12.763 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 9.4033ms
+2025-11-30 05:23:13.605 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:13.606 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:13.608 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:13.609 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:13.610 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 5.1022ms
+2025-11-30 05:23:17.475 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:17.476 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:17.476 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:17.478 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:17.478 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:17.480 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:17.481 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:17.481 +02:00 [INF] Received HTTP response headers after 4.6236ms - 200
+2025-11-30 05:23:17.481 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.7582ms
+2025-11-30 05:23:17.482 +02:00 [INF] End processing HTTP request after 6.835ms - 200
+2025-11-30 05:23:17.484 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:23.615 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:23.616 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:23.618 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:23.619 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:23.619 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.4216ms
+2025-11-30 05:23:27.503 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:27.505 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:27.506 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:27.507 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:27.508 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:27.509 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:27.510 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:27.510 +02:00 [INF] Received HTTP response headers after 5.1901ms - 200
+2025-11-30 05:23:27.511 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.7072ms
+2025-11-30 05:23:27.512 +02:00 [INF] End processing HTTP request after 8.2722ms - 200
+2025-11-30 05:23:27.514 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:33.637 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:33.639 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:33.640 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:33.641 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:33.642 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.469ms
+2025-11-30 05:23:37.514 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:37.516 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:37.519 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:37.520 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:37.521 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:37.522 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:37.524 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:37.524 +02:00 [INF] Received HTTP response headers after 7.4069ms - 200
+2025-11-30 05:23:37.524 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.7012ms
+2025-11-30 05:23:37.525 +02:00 [INF] End processing HTTP request after 10.9381ms - 200
+2025-11-30 05:23:37.528 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:43.651 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:43.652 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:43.653 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:43.654 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:43.655 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 3.7751ms
+2025-11-30 05:23:47.528 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:47.529 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:47.530 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:47.531 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:47.532 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:47.533 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:47.534 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:47.534 +02:00 [INF] Received HTTP response headers after 4.4277ms - 200
+2025-11-30 05:23:47.535 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.326ms
+2025-11-30 05:23:47.537 +02:00 [INF] End processing HTTP request after 8.3892ms - 200
+2025-11-30 05:23:47.539 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:53.660 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:53.661 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:53.662 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:53.663 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:53.664 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.1421ms
+2025-11-30 05:23:57.380 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:23:57.382 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:23:57.384 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:57.385 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:57.385 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 4.8661ms
+2025-11-30 05:23:57.545 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:57.546 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:23:57.547 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:23:57.548 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:23:57.549 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:23:57.550 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:23:57.551 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:23:57.551 +02:00 [INF] Received HTTP response headers after 4.5803ms - 200
+2025-11-30 05:23:57.552 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.6893ms
+2025-11-30 05:23:57.553 +02:00 [INF] End processing HTTP request after 7.6683ms - 200
+2025-11-30 05:23:57.555 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:23:57.917 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:57.918 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:57.920 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:57.921 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:57.921 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.5924ms
+2025-11-30 05:23:58.188 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:23:58.190 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:23:58.191 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:58.192 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:58.192 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 3.9704ms
+2025-11-30 05:23:58.485 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:58.486 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:58.488 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:58.489 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:58.489 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.2987ms
+2025-11-30 05:23:58.828 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:23:58.829 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:23:58.831 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:58.831 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:23:58.832 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 4.044ms
+2025-11-30 05:23:59.213 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:23:59.214 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:23:59.216 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:59.217 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:23:59.217 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 4.4034ms
+2025-11-30 05:24:02.074 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:24:02.076 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:24:02.077 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:24:02.077 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:24:02.078 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 3.8886ms
+2025-11-30 05:24:03.181 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/health-ui-api - null null
+2025-11-30 05:24:03.182 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health-ui-api, ContentType: null, ContentLength: null
+2025-11-30 05:24:03.184 +02:00 [INF] Executing endpoint 'HealthChecks UI Api'
+2025-11-30 05:24:03.185 +02:00 [INF] Executed endpoint 'HealthChecks UI Api'
+2025-11-30 05:24:03.186 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/health-ui-api - 200 null application/json; charset=utf-8 5.0153ms
+2025-11-30 05:24:03.796 +02:00 [INF] Request starting HTTP/2 GET https://localhost:7293/healthchecks-webhooks - null null
+2025-11-30 05:24:03.797 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /healthchecks-webhooks, ContentType: null, ContentLength: null
+2025-11-30 05:24:03.799 +02:00 [INF] Executing endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:24:03.800 +02:00 [INF] Executed endpoint 'HealthChecks UI Webhooks'
+2025-11-30 05:24:03.800 +02:00 [INF] Request finished HTTP/2 GET https://localhost:7293/healthchecks-webhooks - 200 null application/json; charset=utf-8 4.2101ms
+2025-11-30 05:24:07.564 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:07.566 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:07.566 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:07.567 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:07.568 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:07.570 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:07.571 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:07.571 +02:00 [INF] Received HTTP response headers after 5.1956ms - 200
+2025-11-30 05:24:07.572 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.2953ms
+2025-11-30 05:24:07.573 +02:00 [INF] End processing HTTP request after 8.278ms - 200
+2025-11-30 05:24:07.575 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:24:17.578 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:17.579 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:17.580 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:17.581 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:17.581 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:17.583 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:17.584 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:17.584 +02:00 [INF] Received HTTP response headers after 4.6152ms - 200
+2025-11-30 05:24:17.584 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.6349ms
+2025-11-30 05:24:17.585 +02:00 [INF] End processing HTTP request after 6.6837ms - 200
+2025-11-30 05:24:17.587 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:24:27.597 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:27.598 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:27.599 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:27.600 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:27.601 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:27.602 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:27.604 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:27.604 +02:00 [INF] Received HTTP response headers after 5.0065ms - 200
+2025-11-30 05:24:27.604 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.076ms
+2025-11-30 05:24:27.605 +02:00 [INF] End processing HTTP request after 8.0056ms - 200
+2025-11-30 05:24:27.607 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:24:37.610 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:37.612 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:37.613 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:37.614 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:37.614 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:37.616 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:37.617 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:37.617 +02:00 [INF] Received HTTP response headers after 4.6097ms - 200
+2025-11-30 05:24:37.617 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.7848ms
+2025-11-30 05:24:37.618 +02:00 [INF] End processing HTTP request after 7.6346ms - 200
+2025-11-30 05:24:37.620 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:24:47.631 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:47.632 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:47.633 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:47.634 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:47.635 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:47.636 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:47.637 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:47.638 +02:00 [INF] Received HTTP response headers after 4.5709ms - 200
+2025-11-30 05:24:47.638 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.8224ms
+2025-11-30 05:24:47.639 +02:00 [INF] End processing HTTP request after 8.1011ms - 200
+2025-11-30 05:24:47.641 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:24:57.648 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:57.649 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:24:57.650 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:24:57.651 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:24:57.652 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:24:57.653 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:24:57.654 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:24:57.654 +02:00 [INF] Received HTTP response headers after 4.7419ms - 200
+2025-11-30 05:24:57.655 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.0545ms
+2025-11-30 05:24:57.656 +02:00 [INF] End processing HTTP request after 7.2842ms - 200
+2025-11-30 05:24:57.658 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:25:07.669 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:07.670 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:07.672 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:07.673 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:07.674 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:07.675 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:07.676 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:07.676 +02:00 [INF] Received HTTP response headers after 4.7533ms - 200
+2025-11-30 05:25:07.677 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.8051ms
+2025-11-30 05:25:07.677 +02:00 [INF] End processing HTTP request after 8.4756ms - 200
+2025-11-30 05:25:07.680 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:25:17.684 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:17.685 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:17.686 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:17.687 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:17.688 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:17.689 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:17.690 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:17.690 +02:00 [INF] Received HTTP response headers after 4.5643ms - 200
+2025-11-30 05:25:17.691 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.818ms
+2025-11-30 05:25:17.692 +02:00 [INF] End processing HTTP request after 7.7834ms - 200
+2025-11-30 05:25:17.694 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:25:27.697 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:27.698 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:27.699 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:27.700 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:27.701 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:27.702 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:27.703 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:27.703 +02:00 [INF] Received HTTP response headers after 4.8256ms - 200
+2025-11-30 05:25:27.704 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.9701ms
+2025-11-30 05:25:27.705 +02:00 [INF] End processing HTTP request after 7.8391ms - 200
+2025-11-30 05:25:27.707 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:25:37.715 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:37.716 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:37.719 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:37.720 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:37.721 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:37.722 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:37.723 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:37.723 +02:00 [INF] Received HTTP response headers after 6.4717ms - 200
+2025-11-30 05:25:37.724 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.6726ms
+2025-11-30 05:25:37.725 +02:00 [INF] End processing HTTP request after 9.2292ms - 200
+2025-11-30 05:25:37.727 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:25:47.728 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:47.729 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:47.730 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:47.731 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:47.732 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:47.733 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:47.734 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:47.734 +02:00 [INF] Received HTTP response headers after 4.7125ms - 200
+2025-11-30 05:25:47.735 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.0644ms
+2025-11-30 05:25:47.735 +02:00 [INF] End processing HTTP request after 7.5683ms - 200
+2025-11-30 05:25:47.738 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:25:57.745 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:57.746 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:25:57.747 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:25:57.748 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:25:57.749 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:25:57.751 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:25:57.752 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:25:57.752 +02:00 [INF] Received HTTP response headers after 5.0933ms - 200
+2025-11-30 05:25:57.752 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.2387ms
+2025-11-30 05:25:57.753 +02:00 [INF] End processing HTTP request after 7.4598ms - 200
+2025-11-30 05:25:57.755 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:26:07.765 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:07.766 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:07.767 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:07.768 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:07.769 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:07.770 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:07.771 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:07.771 +02:00 [INF] Received HTTP response headers after 4.2437ms - 200
+2025-11-30 05:26:07.771 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.4175ms
+2025-11-30 05:26:07.772 +02:00 [INF] End processing HTTP request after 7.1108ms - 200
+2025-11-30 05:26:07.774 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:26:17.787 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:17.788 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:17.789 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:17.790 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:17.791 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:17.792 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:17.794 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:17.794 +02:00 [INF] Received HTTP response headers after 5.0843ms - 200
+2025-11-30 05:26:17.795 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.409ms
+2025-11-30 05:26:17.795 +02:00 [INF] End processing HTTP request after 8.0911ms - 200
+2025-11-30 05:26:17.798 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:26:27.810 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:27.811 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:27.812 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:27.813 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:27.814 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:27.815 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:27.817 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:27.817 +02:00 [INF] Received HTTP response headers after 5.2082ms - 200
+2025-11-30 05:26:27.817 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.4588ms
+2025-11-30 05:26:27.818 +02:00 [INF] End processing HTTP request after 7.7921ms - 200
+2025-11-30 05:26:27.820 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:26:37.825 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:37.826 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:37.827 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:37.828 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:37.829 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:37.830 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:37.831 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:37.832 +02:00 [INF] Received HTTP response headers after 4.9988ms - 200
+2025-11-30 05:26:37.832 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.2256ms
+2025-11-30 05:26:37.833 +02:00 [INF] End processing HTTP request after 7.4956ms - 200
+2025-11-30 05:26:37.835 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:26:47.851 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:47.852 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:47.853 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:47.854 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:47.855 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:47.856 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:47.858 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:47.858 +02:00 [INF] Received HTTP response headers after 4.8681ms - 200
+2025-11-30 05:26:47.858 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.9621ms
+2025-11-30 05:26:47.858 +02:00 [INF] End processing HTTP request after 7.5909ms - 200
+2025-11-30 05:26:47.861 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:26:57.874 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:57.875 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:26:57.877 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:26:57.878 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:26:57.878 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:26:57.880 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:26:57.881 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:26:57.881 +02:00 [INF] Received HTTP response headers after 4.3138ms - 200
+2025-11-30 05:26:57.881 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.4629ms
+2025-11-30 05:26:57.882 +02:00 [INF] End processing HTTP request after 7.4104ms - 200
+2025-11-30 05:26:57.884 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:27:07.898 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:07.900 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:07.901 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:27:07.902 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:27:07.903 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:27:07.904 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:27:07.905 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:27:07.905 +02:00 [INF] Received HTTP response headers after 5.2426ms - 200
+2025-11-30 05:27:07.906 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.2054ms
+2025-11-30 05:27:07.906 +02:00 [INF] End processing HTTP request after 8.0015ms - 200
+2025-11-30 05:27:07.908 +02:00 [INF] Saved 3 entities to in-memory store.
+2025-11-30 05:27:17.910 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:17.912 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:17.913 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:27:17.914 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:27:17.915 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:27:17.916 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:27:17.917 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:27:17.917 +02:00 [INF] Received HTTP response headers after 4.7463ms - 200
+2025-11-30 05:27:17.918 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 4.9582ms
+2025-11-30 05:27:17.919 +02:00 [INF] End processing HTTP request after 8.5774ms - 200
+2025-11-30 05:27:17.921 +02:00 [INF] Saved 4 entities to in-memory store.
+2025-11-30 05:27:27.936 +02:00 [INF] Start processing HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:27.938 +02:00 [INF] Sending HTTP request GET https://localhost:7293/health
+2025-11-30 05:27:27.939 +02:00 [INF] Request starting HTTP/1.1 GET https://localhost:7293/health - null null
+2025-11-30 05:27:27.940 +02:00 [INF] [MIDDLEWARE] Incoming Request - Method: GET, Path: /health, ContentType: null, ContentLength: null
+2025-11-30 05:27:27.941 +02:00 [INF] Executing endpoint 'Health checks'
+2025-11-30 05:27:27.942 +02:00 [INF] Executed DbCommand (0ms) [Parameters=[], CommandType='"Text"', CommandTimeout='30']
+SELECT 1
+2025-11-30 05:27:27.943 +02:00 [INF] Executed endpoint 'Health checks'
+2025-11-30 05:27:27.943 +02:00 [INF] Received HTTP response headers after 4.8936ms - 200
+2025-11-30 05:27:27.944 +02:00 [INF] Request finished HTTP/1.1 GET https://localhost:7293/health - 200 null application/json 5.231ms
+2025-11-30 05:27:27.945 +02:00 [INF] End processing HTTP request after 8.7827ms - 200
+2025-11-30 05:27:27.948 +02:00 [INF] Saved 4 entities to in-memory store.
