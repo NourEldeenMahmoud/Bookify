@@ -11,6 +11,13 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using Bookify.Web.HealthChecks;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using System.Text.Json;
+using HealthChecks.UI.Client;
+
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -64,6 +71,14 @@ builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IUserProfileService, UserProfileService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
 
+// Health Checks (Database + Email+Payment)
+builder.Services.AddHealthChecks()
+    .AddCheck<DatabaseHealthCheck>("Database", tags: new[] { "db" },
+failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded)// Database check
+    .AddCheck<EmailHealthCheck>("Email Service", tags: new[] { "email" },
+    failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy)// Email check
+    .AddCheck<PaymentHealthCheck>("Payment Service", tags: new[] { "payment" },
+    failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy);//Payment Check
 
 // Configure Identity
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
@@ -101,7 +116,20 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Add HealthChecks UI services
+builder.Services.AddHealthChecksUI(setup =>
+{
+    setup.SetEvaluationTimeInSeconds(10); 
+    setup.MaximumHistoryEntriesPerEndpoint(60);
+    setup.AddHealthCheckEndpoint("Bookify API", "/health"); 
+})
+.AddInMemoryStorage();
+
+
+
 var app = builder.Build();
+
+
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
@@ -185,6 +213,21 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}")
     .WithStaticAssets();
 
+// Health Check endpoint
+app.MapHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
+
+//MAP UI
+app.MapHealthChecksUI(options =>
+{
+    options.UIPath = "/health-ui";       
+    options.ApiPath = "/health-ui-api";  
+});
+
+
 
 
 app.Run();
+
