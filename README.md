@@ -13,178 +13,7 @@
 - Maintain data integrity through transactions
 
 ---
-## Architecture
 
-The application follows **N-Tier Architecture** with clear separation of concerns:
-
-### Layers
-
-1. **Presentation Layer (Bookify.Web)**
-   - ASP.NET Core MVC Controllers
-   - Razor Views
-   - ViewModels
-   - Client-side assets (CSS, JavaScript)
-   - Filters and Middleware
-
-2. **Business Logic Layer (Bookify.Services)**
-   - Service interfaces and implementations
-   - Business rules and validations
-   - External service integrations (Stripe, SendGrid)
-
-3. **Data Access Layer (Bookify.Data)**
-   - Entity Framework Core DbContext
-   - Repository Pattern implementation
-   - Unit of Work Pattern
-   - Entity configurations
-   - Database migrations
-
-### Architecture Diagram
-```
-┌─────────────────────────────────────┐
-│   Presentation Layer (Bookify.Web)  │
-│   - Controllers                     │
-│   - Views                           │
-│   - ViewModels                      │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Business Logic (Bookify.Services) │
-│   - ReservationService              │
-│   - PaymentService                  │
-│   - RoomAvailabilityService         │
-│   - EmailService                    │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Data Access (Bookify.Data)        │
-│   - Repositories                    │
-│   - Unit of Work                    │
-│   - DbContext                       │
-└──────────────┬──────────────────────┘
-               │
-┌──────────────▼──────────────────────┐
-│   Database (SQL Server)             │
-└─────────────────────────────────────┘
-```
-
----
-## Technology Stack
-
-### Backend
-- **.NET 9.0** - Latest .NET framework
-- **ASP.NET Core MVC** - Web framework
-- **Entity Framework Core 9.0.11** - ORM
-- **ASP.NET Core Identity** - Authentication & Authorization
-- **SQL Server** - Database
-
-### Frontend
-- **Bootstrap 5.3.0** - CSS framework
-- **jQuery 3.7.1** - JavaScript library
-- **DataTables 1.13.7** - Table plugin
-- **Toastr.js** - Notification library
-- **Font Awesome** - Icons
-
-### External Services
-- **Stripe** - Payment gateway
-- **SendGrid** - Email service
-
-### Development Tools
-- **Serilog** - Structured logging
-- **Health Checks UI** - Application monitoring
-- **Entity Framework Migrations** - Database versioning
-
----
-## Database Schema
-
-### Entities
-
-![ERD](Project%20Presentation/ERD.png)
-
-#### 1. **ApplicationUser** (extends IdentityUser)
-- Inherits from ASP.NET Identity
-- Additional properties: FirstName, LastName, DateOfBirth, Address, City, PostalCode, Country
-
-#### 2. **RoomType**
-- `Id` (int, PK)
-- `Name` (string) - e.g., "Single", "Double", "Suite"
-- `Description` (string, nullable)
-- `PricePerNight` (decimal)
-- `MaxOccupancy` (int)
-- `ImageUrl` (string, nullable)
-- `RowVersion` (byte[], for concurrency)
-
-#### 3. **Room**
-- `Id` (int, PK)
-- `RoomNumber` (string) - Unique room identifier
-- `RoomTypeId` (int, FK → RoomType)
-- `IsAvailable` (bool)
-- `Notes` (string)
-- `RowVersion` (byte[], for concurrency)
-
-#### 4. **Booking**
-- `Id` (int, PK)
-- `UserId` (string, FK → ApplicationUser)
-- `RoomId` (int, FK → Room)
-- `CheckInDate` (DateTime)
-- `CheckOutDate` (DateTime)
-- `NumberOfGuests` (int)
-- `TotalAmount` (decimal)
-- `Status` (BookingStatus enum)
-- `SpecialRequests` (string, nullable)
-- `CreatedAt` (DateTime)
-- `UpdatedAt` (DateTime, nullable)
-- `RowVersion` (byte[], for concurrency)
-
-#### 5. **BookingPayment**
-- `Id` (int, PK)
-- `BookingId` (int, FK → Booking)
-- `Amount` (decimal)
-- `PaymentStatus` (PaymentStatus enum)
-- `PaymentIntentId` (string) - Stripe Payment Intent ID
-- `TransactionId` (string, nullable)
-- `PaymentDate` (DateTime)
-- `RefundAmount` (decimal, nullable)
-- `RefundDate` (DateTime, nullable)
-
-#### 6. **BookingStatusHistory**
-- `Id` (int, PK)
-- `BookingId` (int, FK → Booking)
-- `PreviousStatus` (BookingStatus, nullable)
-- `NewStatus` (BookingStatus)
-- `ChangedBy` (string) - User ID
-- `ChangedAt` (DateTime)
-- `Notes` (string, nullable)
-
-#### 7. **GalleryImage**
-- `Id` (int, PK)
-- `RoomId` (int, FK → Room)
-- `ImageUrl` (string)
-- `AltText` (string, nullable)
-- `DisplayOrder` (int)
-
-### Enums
-
-#### BookingStatus
-- `Pending` (0)
-- `Paid` (1)
-- `Cancelled` (2)
-- `Completed` (3)
-
-#### PaymentStatus
-- `Pending` (0)
-- `Completed` (1)
-- `Failed` (2)
-- `Refunded` (3)
-
-### Relationships
-- RoomType → Rooms (One-to-Many)
-- Room → Bookings (One-to-Many)
-- Room → GalleryImages (One-to-Many)
-- ApplicationUser → Bookings (One-to-Many)
-- Booking → BookingPayments (One-to-Many)
-- Booking → BookingStatusHistory (One-to-Many)
-
----
 ## Features
 
 ### Customer Features
@@ -277,6 +106,85 @@ The application follows **N-Tier Architecture** with clear separation of concern
 - Manage user roles
 
 ![UserManagement](Project%20Presentation/UserManagment.png)
+
+---
+## Architecture
+
+The application follows **N-Tier Architecture** with clear separation of concerns:
+
+### Layers
+
+1. **Presentation Layer (Bookify.Web)**
+   - ASP.NET Core MVC Controllers
+   - Razor Views
+   - ViewModels
+   - Client-side assets (CSS, JavaScript)
+   - Filters and Middleware
+
+2. **Business Logic Layer (Bookify.Services)**
+   - Service interfaces and implementations
+   - Business rules and validations
+   - External service integrations (Stripe, SendGrid)
+
+3. **Data Access Layer (Bookify.Data)**
+   - Entity Framework Core DbContext
+   - Repository Pattern implementation
+   - Unit of Work Pattern
+   - Entity configurations
+   - Database migrations
+
+### Architecture Diagram
+```
+┌─────────────────────────────────────┐
+│   Presentation Layer (Bookify.Web)  │
+│   - Controllers                     │
+│   - Views                           │
+│   - ViewModels                      │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│   Business Logic (Bookify.Services) │
+│   - ReservationService              │
+│   - PaymentService                  │
+│   - RoomAvailabilityService         │
+│   - EmailService                    │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│   Data Access (Bookify.Data)        │
+│   - Repositories                    │
+│   - Unit of Work                    │
+│   - DbContext                       │
+└──────────────┬──────────────────────┘
+               │
+┌──────────────▼──────────────────────┐
+│   Database (SQL Server)             │
+└─────────────────────────────────────┘
+```
+## Technology Stack
+
+### Backend
+- **.NET 9.0** - Latest .NET framework
+- **ASP.NET Core MVC** - Web framework
+- **Entity Framework Core 9.0.11** - ORM
+- **ASP.NET Core Identity** - Authentication & Authorization
+- **SQL Server** - Database
+
+### Frontend
+- **Bootstrap 5.3.0** - CSS framework
+- **jQuery 3.7.1** - JavaScript library
+- **DataTables 1.13.7** - Table plugin
+- **Toastr.js** - Notification library
+- **Font Awesome** - Icons
+
+### External Services
+- **Stripe** - Payment gateway
+- **SendGrid** - Email service
+
+### Development Tools
+- **Serilog** - Structured logging
+- **Health Checks UI** - Application monitoring
+- **Entity Framework Migrations** - Database versioning
 
 ---
 ## Security
@@ -381,6 +289,9 @@ Bookify-Dev/
     └── Program.cs                   # Application entry point
 
 ```
+## Database Schema
+
+![ERD](Project%20Presentation/ERD.png)
 
 ---
 ##  Design Patterns
