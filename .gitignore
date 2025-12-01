@@ -1,1 +1,7 @@
 "Project/Bookify.Web/logs/" 
+.vs/
+bin/
+obj/
+*.user
+*.suo
+*.DS_Store
