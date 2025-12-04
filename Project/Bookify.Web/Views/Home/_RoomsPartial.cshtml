@@ -23,6 +23,29 @@
     }
 }
 
+<style>
+    .view-cart-btn {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+        color: #fff !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4) !important;
+    }
+    
+    .view-cart-btn:hover {
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+    }
+    
+    .view-cart-btn:active,
+    .view-cart-btn:focus,
+    .view-cart-btn:visited {
+        background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%) !important;
+        color: #fff !important;
+        border: none !important;
+    }
+</style>
+
 <!-- Rooms Section -->
 <section id="rooms" class="rooms-section py-5">
   <div class="container">
@@ -34,6 +57,18 @@
         Discover elegantly designed accommodations that blend comfort with sophistication
       </p>
     </div>
+    }
+    
+    @if (User.Identity?.IsAuthenticated == true)
+    {
+        <!-- Cart Link -->
+        <div class="d-flex justify-content-end mb-4">
+            <a href="@Url.Action("Index", "Cart")" class="btn position-relative view-cart-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                <i class="fas fa-cart-shopping me-2"></i>
+                <span>View Cart</span>
+                <span class="badge bg-danger rounded-pill position-absolute top-0 start-100 translate-middle cart-badge" id="cartBadge" style="display: none; font-size: 0.6rem; padding: 0.2rem 0.4rem;">0</span>
+            </a>
+        </div>
     }
 
     <!-- Rooms Container -->
@@ -76,7 +111,7 @@
                             roomImagePath = GetFallbackImage(room.RoomType?.ImageUrl);
                         }
                     }
-                    <img src="@roomImagePath" alt="@room.RoomType?.Name" class="w-100" style="object-fit: cover; height: 250px;" asp-append-version="true">
+                    <img src="@roomImagePath" alt="@room.RoomType?.Name" class="w-100" style="object-fit: cover; height: 250px;" loading="lazy" decoding="async" asp-append-version="true">
                     <div class="price-badge">
                         @($"{room.RoomType?.PricePerNight.ToString("N0")} EGP per night")
                     </div>
@@ -99,11 +134,29 @@
                       <span class="amenity-tag">TV</span>
                       <span class="amenity-tag">AC</span>
                     </div>
-                    <button type="button"
-                            class="book-now-btn view-room-details-btn"
-                            data-room-id="@room.Id">
-                      View Details
-                    </button>
+                    <div class="d-flex gap-2">
+                      <button type="button"
+                              class="book-now-btn view-room-details-btn flex-grow-1"
+                              data-room-id="@room.Id">
+                        View Details
+                      </button>
+                      @if (User.Identity?.IsAuthenticated == true)
+                      {
+                          <button type="button"
+                                  class="btn add-to-cart-quick-btn"
+                                  data-room-id="@room.Id"
+                                  data-room-number="@room.RoomNumber"
+                                  data-room-type-name="@(room.RoomType?.Name ?? "")"
+                                  data-price-per-night="@(room.RoomType?.PricePerNight ?? 0)"
+                                  data-max-occupancy="@(room.RoomType?.MaxOccupancy ?? 1)"
+                                  data-image-url="@(room.GalleryImages?.FirstOrDefault()?.ImageUrl ?? room.RoomType?.ImageUrl ?? "~/images/G1.jpg")"
+                                  data-description="@(room.RoomType?.Description ?? "")"
+                                  title="Add to Cart"
+                                  style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; border: none; width: 40px; height: 40px; border-radius: 8px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);">
+                            <i class="fas fa-cart-plus"></i>
+                          </button>
+                      }
+                    </div>
                   </div>
                 </div>
               </div>

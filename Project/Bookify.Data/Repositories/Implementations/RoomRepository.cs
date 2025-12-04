@@ -55,7 +55,8 @@ namespace Bookify.Data.Repositories.Implementations
             .Include(r => r.RoomType)
             .Include(r => r.GalleryImages)
             .Where(r => r.IsAvailable &&!r.Bookings
-            .Any(b => b.Status != BookingStatus.Cancelled &&
+            .Any(b => b.Status != BookingStatus.Cancelled && 
+                       b.Status != BookingStatus.Completed &&
                        ((b.CheckInDate <= CheckIn && b.CheckOutDate > CheckIn) ||
                         (b.CheckInDate < CheckOut && b.CheckOutDate >= CheckOut) ||
                         (b.CheckInDate >= CheckIn && b.CheckOutDate <= CheckOut))))
@@ -164,6 +165,7 @@ namespace Bookify.Data.Repositories.Implementations
 
                 var hasOverlappingBookings = room.Bookings.Any(b =>
                     b.Status != BookingStatus.Cancelled &&
+                    b.Status != BookingStatus.Completed &&
                     ((b.CheckInDate <= checkIn && b.CheckOutDate > checkIn) ||
                      (b.CheckInDate < checkOut && b.CheckOutDate >= checkOut) ||
                      (b.CheckInDate >= checkIn && b.CheckOutDate <= checkOut)));

@@ -169,15 +169,13 @@
         toggleBtn.addEventListener("click", function () {
             const isPassword = passwordInput.type === "password";
 
-            // غير النوع
             passwordInput.type = isPassword ? "text" : "password";
 
-            // غير الأيقونة
             this.innerHTML = isPassword
                 ? '<i data-lucide="eye-off"></i>'
                 : '<i data-lucide="eye"></i>';
 
-            lucide.createIcons(); // إعادة تشغيل الأيقونات بعد تغييرها
+            lucide.createIcons(); 
         });
     </script>
 }

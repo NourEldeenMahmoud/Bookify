@@ -1,0 +1,484 @@
+@model Bookify.Web.ViewModels.CartViewModel
+@{
+    ViewData["Title"] = "Shopping Cart";
+}
+
+@section Styles {
+    <style>
+        .cart-container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .cart-item-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-item-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        .price-summary {
+            background: #f9fafb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            font-size: 0.95rem;
+        }
+
+        .price-row.total {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #ea580c;
+            border-top: 2px solid #e5e7eb;
+            padding-top: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 4rem 2rem;
+        }
+
+        .empty-cart-icon {
+            font-size: 4rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .update-item-btn:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+        }
+
+        .update-item-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn[style*="linear-gradient(135deg, #f59e0b"]:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+        }
+
+        .btn[style*="linear-gradient(135deg, #f59e0b"]:active {
+            transform: translateY(0);
+        }
+
+        .add-to-cart-quick-btn:hover {
+            background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.5) !important;
+        }
+
+        .add-to-cart-quick-btn:active {
+            transform: translateY(0);
+        }
+    </style>
+}
+
+<div class="cart-container">
+    <h2 class="mb-4">Shopping Cart</h2>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle me-2"></i>
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle me-2"></i>
+            @TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (Model == null || !Model.Items.Any())
+    {
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h3>Your cart is empty</h3>
+            <p class="text-muted">Add rooms to your cart to get started.</p>
+            <a href="@Url.Action("Index", "Home")" class="btn mt-3" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; border: none;">
+                <i class="fas fa-arrow-left me-2"></i>Browse Rooms
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            <div class="col-lg-8">
+                @foreach (var item in Model.Items)
+                {
+                    var imageUrl = item.ImageUrl;
+                    if (!string.IsNullOrEmpty(imageUrl))
+                    {
+                        if (imageUrl.StartsWith("~/"))
+                        {
+                            imageUrl = Url.Content(imageUrl);
+                        }
+                        else if (!imageUrl.StartsWith("http") && !imageUrl.StartsWith("/"))
+                        {
+                            imageUrl = Url.Content($"~/images/{imageUrl}");
+                        }
+                    }
+                    else
+                    {
+                        imageUrl = Url.Content("~/images/G1.jpg");
+                    }
+
+                    <div class="cart-item-card" data-room-id="@item.RoomId">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <img src="@imageUrl" alt="@item.RoomTypeName" class="cart-item-image" />
+                            </div>
+                            <div class="col-md-9">
+                                <div class="d-flex justify-content-between align-items-start mb-3">
+                                    <div>
+                                        <h5 class="mb-1">@item.RoomTypeName</h5>
+                                        <p class="text-muted small mb-0">Room #@item.RoomNumber</p>
+                                        @if (!string.IsNullOrEmpty(item.Description))
+                                        {
+                                            <p class="text-muted small mt-1">@item.Description</p>
+                                        }
+                                    </div>
+                                    <button type="button" class="btn btn-sm btn-outline-danger remove-item-btn" 
+                                            data-room-id="@item.RoomId" title="Remove from cart">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+
+                                <form class="cart-item-form" data-room-id="@item.RoomId">
+                                    <div class="row">
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Check-In Date</label>
+                                                <input type="date" 
+                                                       class="form-control check-in-input" 
+                                                       value="@item.CheckIn.ToString("yyyy-MM-dd")" 
+                                                       min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
+                                                       required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Check-Out Date</label>
+                                                <input type="date" 
+                                                       class="form-control check-out-input" 
+                                                       value="@item.CheckOut.ToString("yyyy-MM-dd")" 
+                                                       min="@DateTime.Today.AddDays(2).ToString("yyyy-MM-dd")"
+                                                       required />
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <div class="form-group">
+                                                <label class="form-label">Number of Guests</label>
+                                                <input type="number" 
+                                                       class="form-control guests-input" 
+                                                       value="@item.NumberOfGuests" 
+                                                       min="1" 
+                                                       max="@item.MaxOccupancy"
+                                                       required />
+                                                <small class="text-muted">Max: @item.MaxOccupancy</small>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-3">
+                                        <div>
+                                            <strong style="color: #ea580c;">
+                                                <span class="item-nights">@item.NumberOfNights</span> night(s) × <span class="item-price-per-night" data-price="@item.PricePerNight">@item.PricePerNight.ToString("N0")</span> EGP = 
+                                                <span class="item-subtotal" data-room-id="@item.RoomId">@item.Subtotal.ToString("N0")</span> EGP
+                                            </strong>
+                                            <small class="text-muted d-block mt-1" style="font-size: 0.75rem;">
+                                                <i class="fas fa-info-circle"></i> Changes are saved automatically
+                                            </small>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <div class="col-lg-4">
+                <div class="price-summary">
+                    <h5 class="mb-4">Order Summary</h5>
+                    
+                    <div class="price-row">
+                        <span>Subtotal</span>
+                        <span id="subtotal">@Model.Subtotal.ToString("N0") EGP</span>
+                    </div>
+                    <div class="price-row">
+                        <span>Tax (@((Model.TaxRate * 100).ToString("F0"))%)</span>
+                        <span id="tax-amount">@Model.TaxAmount.ToString("N0") EGP</span>
+                    </div>
+                    <div class="price-row total">
+                        <span>Total</span>
+                        <span id="total-amount">@Model.TotalAmount.ToString("N0") EGP</span>
+                    </div>
+
+                    <form asp-action="ProceedToCheckout" method="post" class="mt-4">
+                        <button type="submit" class="btn w-100 btn-lg" style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                            <i class="fas fa-credit-card me-2"></i>Proceed to Checkout
+                        </button>
+                    </form>
+
+                    <a href="@Url.Action("Index", "Home")" class="btn w-100 mt-2" style="background: transparent; color: #5C2F0F; border: 2px solid #5C2F0F;">
+                        <i class="fas fa-arrow-left me-2"></i>Continue Shopping
+                    </a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Tax rate constant
+        const TAX_RATE = 0.14; // 14%
+
+        // Function to calculate nights between two dates
+        function calculateNights(checkIn, checkOut) {
+            const checkInDate = new Date(checkIn);
+            const checkOutDate = new Date(checkOut);
+            const diffTime = Math.abs(checkOutDate - checkInDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays > 0 ? diffDays : 1;
+        }
+
+        // Function to update item price in UI
+        function updateItemPrice(cartItemCard) {
+            const checkInInput = cartItemCard.querySelector('.check-in-input');
+            const checkOutInput = cartItemCard.querySelector('.check-out-input');
+            const pricePerNightElement = cartItemCard.querySelector('.item-price-per-night');
+            const nightsElement = cartItemCard.querySelector('.item-nights');
+            const subtotalElement = cartItemCard.querySelector('.item-subtotal');
+            
+            if (!checkInInput || !checkOutInput || !pricePerNightElement || !nightsElement || !subtotalElement) {
+                return;
+            }
+
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
+            
+            if (!checkIn || !checkOut) {
+                return;
+            }
+
+            // Validate dates
+            const checkInDate = new Date(checkIn);
+            const checkOutDate = new Date(checkOut);
+            
+            if (checkOutDate <= checkInDate) {
+                // Invalid date range - don't update price
+                return;
+            }
+
+            const pricePerNight = parseFloat(pricePerNightElement.dataset.price);
+            const nights = calculateNights(checkIn, checkOut);
+            const subtotal = pricePerNight * nights;
+
+            // Update UI
+            nightsElement.textContent = nights;
+            subtotalElement.textContent = subtotal.toLocaleString('en-US', { maximumFractionDigits: 0 });
+
+            // Update totals
+            updateCartTotals();
+        }
+
+        // Function to update cart totals
+        function updateCartTotals() {
+            let subtotal = 0;
+            
+            // Calculate subtotal from all items
+            document.querySelectorAll('.item-subtotal').forEach(element => {
+                const subtotalText = element.textContent.replace(/,/g, '').trim();
+                const itemSubtotal = parseFloat(subtotalText);
+                if (!isNaN(itemSubtotal)) {
+                    subtotal += itemSubtotal;
+                }
+            });
+
+            const taxAmount = subtotal * TAX_RATE;
+            const totalAmount = subtotal + taxAmount;
+
+            // Update totals in UI
+            const subtotalElement = document.getElementById('subtotal');
+            const taxAmountElement = document.getElementById('tax-amount');
+            const totalAmountElement = document.getElementById('total-amount');
+
+            if (subtotalElement) {
+                subtotalElement.textContent = subtotal.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+            }
+            if (taxAmountElement) {
+                taxAmountElement.textContent = taxAmount.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+            }
+            if (totalAmountElement) {
+                totalAmountElement.textContent = totalAmount.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
+            }
+        }
+
+        // Auto-save function with debounce
+        let saveTimeouts = {};
+
+        function autoSaveCartItem(cartItemCard) {
+            const roomId = parseInt(cartItemCard.dataset.roomId);
+            const form = cartItemCard.querySelector('.cart-item-form');
+            const checkInInput = form.querySelector('.check-in-input');
+            const checkOutInput = form.querySelector('.check-out-input');
+            const guestsInput = form.querySelector('.guests-input');
+            
+            const checkIn = checkInInput.value;
+            const checkOut = checkOutInput.value;
+            const numberOfGuests = parseInt(guestsInput.value);
+
+            if (!checkIn || !checkOut) return;
+            
+            const checkInDate = new Date(checkIn);
+            const checkOutDate = new Date(checkOut);
+            if (checkOutDate <= checkInDate) return;
+
+            // Clear existing timeout for this item
+            if (saveTimeouts[roomId]) {
+                clearTimeout(saveTimeouts[roomId]);
+            }
+
+            // Set new timeout (save after 1 second of no changes)
+            saveTimeouts[roomId] = setTimeout(async () => {
+                try {
+                    const response = await fetch('@Url.Action("Update", "Cart")', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            roomId: roomId,
+                            checkIn: checkIn,
+                            checkOut: checkOut,
+                            numberOfGuests: numberOfGuests
+                        })
+                    });
+
+                    const result = await response.json();
+                    if (response.ok && result.success) {
+                        console.log(`Cart item ${roomId} auto-saved`);
+                        // Show brief success indicator
+                        const subtotalElement = cartItemCard.querySelector('.item-subtotal');
+                        if (subtotalElement) {
+                            const originalColor = subtotalElement.style.color;
+                            subtotalElement.style.color = '#10b981';
+                            setTimeout(() => {
+                                subtotalElement.style.color = originalColor || '';
+                            }, 500);
+                        }
+                    } else {
+                        console.error('Auto-save failed:', result.error);
+                    }
+                } catch (error) {
+                    console.error('Auto-save error:', error);
+                }
+            }, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Auto-update price and save when dates/guests change
+            document.querySelectorAll('.check-in-input, .check-out-input, .guests-input').forEach(input => {
+                input.addEventListener('change', function() {
+                    const cartItemCard = this.closest('.cart-item-card');
+                    if (cartItemCard) {
+                        updateItemPrice(cartItemCard);
+                        autoSaveCartItem(cartItemCard);
+                    }
+                });
+
+                // Also update on input (for better UX - real-time price update)
+                input.addEventListener('input', function() {
+                    const cartItemCard = this.closest('.cart-item-card');
+                    if (cartItemCard) {
+                        updateItemPrice(cartItemCard);
+                    }
+                });
+            });
+
+            // Remove item handler
+            document.querySelectorAll('.remove-item-btn').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const roomId = parseInt(this.dataset.roomId);
+                    const originalText = this.innerHTML;
+                    this.disabled = true;
+                    this.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+
+                    try {
+                        const response = await fetch('@Url.Action("Remove", "Cart")?roomId=' + roomId, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            }
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.success) {
+                            // Remove the item card from DOM
+                            const card = this.closest('.cart-item-card');
+                            card.style.transition = 'opacity 0.3s';
+                            card.style.opacity = '0';
+                            setTimeout(() => {
+                                card.remove();
+                                // Reload if cart is empty
+                                if (document.querySelectorAll('.cart-item-card').length === 0) {
+                                    window.location.reload();
+                                } else {
+                                    // Reload to update totals
+                                    window.location.reload();
+                                }
+                            }, 300);
+                        } else {
+                            alert(result.error || 'Failed to remove item from cart');
+                            this.innerHTML = originalText;
+                            this.disabled = false;
+                        }
+                    } catch (error) {
+                        console.error('Error removing cart item:', error);
+                        alert('An error occurred while removing item from cart');
+                        this.innerHTML = originalText;
+                        this.disabled = false;
+                    }
+                });
+            });
+        });
+    </script>
+}
+
