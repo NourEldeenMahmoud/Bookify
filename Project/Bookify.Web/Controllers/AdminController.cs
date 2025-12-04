@@ -188,21 +188,21 @@ public class AdminController : Controller
                 {
                     // Validate file size (max 5MB)
                     if (model.ImageFile.Length > 5 * 1024 * 1024)
-                    {
+                {
                         _logger.LogWarning("Image file too large: {Size} bytes", model.ImageFile.Length);
                         ModelState.AddModelError("ImageFile", "Image file size must be less than 5MB.");
                         return View(model);
-                    }
+                }
 
                     // Validate file type
                     var allowedExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
                     var fileExtension = Path.GetExtension(model.ImageFile.FileName).ToLowerInvariant();
                     if (!allowedExtensions.Contains(fileExtension))
-                    {
+                {
                         _logger.LogWarning("Invalid file type: {Extension}", fileExtension);
                         ModelState.AddModelError("ImageFile", "Invalid file type. Allowed types: JPG, JPEG, PNG, GIF.");
                         return View(model);
-                    }
+                }
                 }
 
                 // Create RoomType entity from ViewModel
@@ -296,7 +296,7 @@ public class AdminController : Controller
                 {
                     // validate file size (max 5MB)
                     if (model.ImageFile.Length > 5 * 1024 * 1024)
-                    {
+                {
                         _logger.LogWarning("Image file too large: {Size} bytes for room type {Id}", model.ImageFile.Length, id);
                         ModelState.AddModelError("ImageFile", "Image file size must be less than 5MB.");
                         return View(model);

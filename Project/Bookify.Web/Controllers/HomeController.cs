@@ -76,6 +76,7 @@ namespace Bookify.Web.Controllers
                     .Where(r => r.IsAvailable && 
                         !r.Bookings.Any(b => 
                             b.Status != BookingStatus.Cancelled &&
+                            b.Status != BookingStatus.Completed &&
                             b.CheckOutDate > today)) 
                     .ToList();
                 

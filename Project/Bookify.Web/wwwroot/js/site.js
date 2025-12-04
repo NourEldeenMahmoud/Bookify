@@ -96,7 +96,7 @@ $(document).ready(function() {
                         'opacity': '1',
                         'transform': 'translateY(0)'
                     });
-                    alert('حدث خطأ أثناء تحميل الصفحة. يرجى المحاولة مرة أخرى.');
+                    alert('Error loading the page.');
                     $('.pagination-link').removeClass('loading');
                     isLoading = false;
                 }

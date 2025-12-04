@@ -68,10 +68,15 @@
                     <td>
                         @if (currentBooking != null)
                         {
-                            <span class="text-info">
-                                Booked from @currentBooking.CheckInDate.ToString("MM/dd/yyyy")
-                                to @currentBooking.CheckOutDate.ToString("MM/dd/yyyy")
-                            </span>
+                            <div>
+                                <span class="badge badge-@(currentBooking.Status == Bookify.Data.Data.Enums.BookingStatus.Paid ? "success" : "warning")">
+                                    @(currentBooking.Status == Bookify.Data.Data.Enums.BookingStatus.Paid ? "Booked (Paid)" : "Booked (Pending)")
+                                </span>
+                                <br />
+                                <small class="text-muted">
+                                    @currentBooking.CheckInDate.ToString("MM/dd/yyyy") - @currentBooking.CheckOutDate.ToString("MM/dd/yyyy")
+                                </small>
+                            </div>
                         }
                         else
                         {

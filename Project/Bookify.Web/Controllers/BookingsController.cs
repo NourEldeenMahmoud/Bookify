@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Json;
 
 namespace Bookify.Web.Controllers;
 
@@ -37,7 +38,7 @@ public class BookingsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Checkout(int roomId, string? checkIn, string? checkOut, int? numberOfGuests)
+    public async Task<IActionResult> Checkout(int? roomId, string? checkIn, string? checkOut, int? numberOfGuests)
     {
         try
         {
@@ -48,151 +49,171 @@ public class BookingsController : Controller
             if (string.IsNullOrEmpty(userId))
             {
                 _logger.LogWarning("Unauthenticated user attempted checkout - redirecting to login");
-                var returnUrl = Url.Action("Checkout", "Bookings", new { roomId, checkIn, checkOut, numberOfGuests });
+                var returnUrl = Url.Action("Checkout", "Bookings");
                 return RedirectToAction("Login", "Account", new { returnUrl });
             }
 
             _logger.LogInformation("Authenticated user {UserId} attempting checkout", userId);
 
-            // Validation
-            if (roomId <= 0)
+            // Check if cart data exists in TempData (from CartController.ProceedToCheckout)
+            CartViewModel? cartViewModel = null;
+            if (TempData["Cart"] != null)
             {
-                _logger.LogWarning("Invalid roomId provided: {RoomId}", roomId);
-                TempData["Error"] = "Invalid room selected.";
-                return RedirectToAction("Index", "Home");
+                try
+                {
+                    var cartJson = TempData["Cart"]?.ToString();
+                    if (!string.IsNullOrEmpty(cartJson))
+                    {
+                        cartViewModel = System.Text.Json.JsonSerializer.Deserialize<CartViewModel>(cartJson);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning(ex, "Error deserializing cart from TempData");
+                }
             }
 
-            DateTime checkInDate;
-            DateTime checkOutDate;
-            
-            if (!string.IsNullOrEmpty(checkIn) && DateTime.TryParse(checkIn, out var parsedCheckIn))
+            // If no cart data, check for legacy single room checkout
+            if (cartViewModel == null || cartViewModel.Items == null || !cartViewModel.Items.Any())
             {
-                checkInDate = parsedCheckIn;
-            }
-            else
-            {
-                checkInDate = DateTime.Today.AddDays(1);
-            }
-            
-            if (!string.IsNullOrEmpty(checkOut) && DateTime.TryParse(checkOut, out var parsedCheckOut))
-            {
-                checkOutDate = parsedCheckOut;
-            }
-            else
-            {
-                checkOutDate = DateTime.Today.AddDays(2);
-            }
-            
-            _logger.LogInformation("Parsed dates - CheckIn: {CheckIn}, CheckOut: {CheckOut}", checkInDate, checkOutDate);
+                if (roomId.HasValue && roomId.Value > 0)
+                {
+                    // Legacy single room checkout - convert to cart format
+                    DateTime checkInDate;
+                    DateTime checkOutDate;
+                    
+                    if (!string.IsNullOrEmpty(checkIn) && DateTime.TryParse(checkIn, out var parsedCheckIn))
+                    {
+                        checkInDate = parsedCheckIn;
+                    }
+                    else
+                    {
+                        checkInDate = DateTime.Today.AddDays(1);
+                    }
+                    
+                    if (!string.IsNullOrEmpty(checkOut) && DateTime.TryParse(checkOut, out var parsedCheckOut))
+                    {
+                        checkOutDate = parsedCheckOut;
+                    }
+                    else
+                    {
+                        checkOutDate = DateTime.Today.AddDays(2);
+                    }
 
-            var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(roomId);
-            if (room == null || room.RoomType == null)
-            {
-                _logger.LogWarning("Room {RoomId} not found", roomId);
-                TempData["Error"] = "Room not found.";
-                return RedirectToAction("Index", "Home");
+                    var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(roomId.Value);
+                    if (room == null || room.RoomType == null)
+                    {
+                        _logger.LogWarning("Room {RoomId} not found", roomId.Value);
+                        TempData["Error"] = "Room not found.";
+                        return RedirectToAction("Index", "Home");
+                    }
+
+                    var numberOfGuestsValue = numberOfGuests ?? room.RoomType.MaxOccupancy;
+
+                    // Get room image
+                    var roomImageUrl = room.GalleryImages?.FirstOrDefault()?.ImageUrl ?? room.RoomType.ImageUrl;
+                    if (string.IsNullOrEmpty(roomImageUrl))
+                    {
+                        roomImageUrl = "~/images/G1.jpg";
+                    }
+                    else if (!roomImageUrl.StartsWith("http") && !roomImageUrl.StartsWith("/") && !roomImageUrl.StartsWith("~/"))
+                    {
+                        roomImageUrl = $"~/images/{roomImageUrl}";
+                    }
+
+                    var cartItem = new CartItemViewModel
+                    {
+                        RoomId = room.Id,
+                        RoomNumber = room.RoomNumber,
+                        RoomTypeName = room.RoomType.Name ?? string.Empty,
+                        PricePerNight = room.RoomType.PricePerNight,
+                        MaxOccupancy = room.RoomType.MaxOccupancy,
+                        ImageUrl = roomImageUrl,
+                        Description = room.RoomType.Description,
+                        CheckIn = checkInDate,
+                        CheckOut = checkOutDate,
+                        NumberOfGuests = numberOfGuestsValue
+                    };
+
+                    cartViewModel = new CartViewModel
+                    {
+                        Items = new List<CartItemViewModel> { cartItem }
+                    };
+                }
+                else
+                {
+                    // No cart and no roomId - redirect to cart
+                    TempData["Error"] = "Your cart is empty. Please add rooms to your cart first.";
+                    return RedirectToAction("Index", "Cart");
+                }
             }
 
-            var numberOfGuestsValue = numberOfGuests ?? room.RoomType.MaxOccupancy;
-
-            // Validate dates - but allow user to change them on checkout page
-            if (checkInDate >= checkOutDate)
-            {
-                _logger.LogWarning("Invalid date range - CheckIn {CheckIn} must be before CheckOut {CheckOut}", checkInDate, checkOutDate);
-                TempData["Warning"] = "Please select valid dates. Check-in date must be before check-out date.";
-                checkInDate = DateTime.Today.AddDays(1);
-                checkOutDate = DateTime.Today.AddDays(2);
-            }
-
-            if (checkInDate < DateTime.Today)
-            {
-                _logger.LogWarning("Check-in date is in the past: {CheckIn}", checkInDate);
-                TempData["Warning"] = "Check-in date cannot be in the past. Using tomorrow's date.";
-                checkInDate = DateTime.Today.AddDays(1);
-                checkOutDate = DateTime.Today.AddDays(2);
-            }
-
-            if (numberOfGuestsValue <= 0 || numberOfGuestsValue > room.RoomType.MaxOccupancy)
-            {
-                _logger.LogWarning("Invalid numberOfGuests provided: {NumberOfGuests}", numberOfGuestsValue);
-                TempData["Warning"] = $"Number of guests must be between 1 and {room.RoomType.MaxOccupancy}. Using default value.";
-                numberOfGuestsValue = Math.Min(room.RoomType.MaxOccupancy, Math.Max(1, numberOfGuestsValue));
-            }
-
-            var numberOfNights = (checkOutDate - checkInDate).Days;
-            var pricePerNight = room.RoomType.PricePerNight;
-            var subtotal = pricePerNight * numberOfNights;
-            var taxRate = 0.14m; 
+            // Calculate totals
+            var subtotal = cartViewModel.Items.Sum(item => item.Subtotal);
+            var taxRate = 0.14m;
             var taxAmount = subtotal * taxRate;
-            var discount = 0m; 
-            var totalAmount = subtotal + taxAmount - discount;
+            var totalAmount = subtotal + taxAmount;
 
-            // Get room image
-            var roomImageUrl = room.GalleryImages?.FirstOrDefault()?.ImageUrl ?? room.RoomType.ImageUrl;
-            if (string.IsNullOrEmpty(roomImageUrl))
-            {
-                roomImageUrl = Url.Content("~/images/G1.jpg");
-            }
-            else if (!roomImageUrl.StartsWith("http") && !roomImageUrl.StartsWith("/") && !roomImageUrl.StartsWith("~/"))
-            {
-                // Only add ~/images/ if the URL doesn't already contain it
-                roomImageUrl = Url.Content($"~/images/{roomImageUrl}");
-            }
-            else if (roomImageUrl.StartsWith("~/"))
-            {
-                // If it already starts with ~/, just use Url.Content to convert it
-                roomImageUrl = Url.Content(roomImageUrl);
-            }
-
-            var includedServices = new List<string>();
-            var typeName = room.RoomType.Name?.ToLower() ?? string.Empty;
+            // Get included services and amenities from all room types in cart (without duplicates)
+            var allIncludedServices = new List<string>();
+            var allAmenities = new List<string>();
             
-            if (typeName.Contains("suite"))
+            foreach (var item in cartViewModel.Items)
             {
-                includedServices = new List<string> { "Cleaning", "Open Buffet", "Room Service", "Concierge" };
+                var roomTypeName = item.RoomTypeName?.ToLower() ?? string.Empty;
+                var itemServices = new List<string>();
+                
+                // Determine services based on room type
+                if (roomTypeName.Contains("suite"))
+                {
+                    itemServices = new List<string> { "Cleaning", "Open Buffet", "Room Service", "Concierge" };
+                }
+                else if (roomTypeName.Contains("deluxe"))
+                {
+                    itemServices = new List<string> { "Breakfast", "Airport Pickup", "WiFi", "Room Service" };
+                }
+                else 
+                {
+                    itemServices = new List<string> { "WiFi", "Breakfast", "Air Conditioning" };
+                }
+                
+                // Add services to the collection (will be deduplicated later)
+                allIncludedServices.AddRange(itemServices);
+                
+                // All rooms have the same amenities
+                var itemAmenities = new List<string> 
+                { 
+                    "Free WiFi", 
+                    "Flat-screen TV", 
+                    "Air Conditioning", 
+                    "Mini Bar", 
+                    "Room Service",
+                    "Private Bathroom",
+                    "Safe"
+                };
+                
+                allAmenities.AddRange(itemAmenities);
             }
-            else if (typeName.Contains("deluxe"))
-            {
-                includedServices = new List<string> { "Breakfast", "Airport Pickup", "WiFi", "Room Service" };
-            }
-            else 
-            {
-                includedServices = new List<string> { "WiFi", "Breakfast", "Air Conditioning" };
-            }
-
-            var amenities = new List<string> 
-            { 
-                "Free WiFi", 
-                "Flat-screen TV", 
-                "Air Conditioning", 
-                "Mini Bar", 
-                "Room Service",
-                "Private Bathroom",
-                "Safe"
-            };
+            
+            // Remove duplicates and sort
+            var includedServices = allIncludedServices.Distinct().OrderBy(s => s).ToList();
+            var amenities = allAmenities.Distinct().OrderBy(a => a).ToList();
 
             var viewModel = new CheckoutViewModel
             {
-                RoomId = roomId,
-                RoomNumber = room.RoomNumber,
-                RoomTypeName = room.RoomType!.Name ?? string.Empty,
-                RoomImageUrl = roomImageUrl,
-                RoomDescription = room.RoomType!.Description,
-                MaxOccupancy = room.RoomType!.MaxOccupancy,
-                CheckIn = checkInDate,
-                CheckOut = checkOutDate,
-                NumberOfGuests = numberOfGuestsValue,
-                PricePerNight = pricePerNight,
-                NumberOfNights = numberOfNights,
+                CartItems = cartViewModel.Items,
                 Subtotal = subtotal,
                 TaxRate = taxRate,
                 TaxAmount = taxAmount,
-                Discount = discount,
+                Discount = 0m,
                 TotalAmount = totalAmount,
                 IncludedServices = includedServices,
                 Amenities = amenities,
                 StripePublishableKey = _configuration["Stripe:PublishableKey"]
             };
+
+            // Store cart in TempData for payment confirmation
+            TempData["Cart"] = System.Text.Json.JsonSerializer.Serialize(cartViewModel);
 
             return View(viewModel);
         }
