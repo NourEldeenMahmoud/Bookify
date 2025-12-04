@@ -116,6 +116,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.SlidingExpiration = true;
 });
 
+// Add Session services
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Strict;
+});
+
 // Add HealthChecks UI services
 builder.Services.AddHealthChecksUI(setup =>
 {
@@ -171,36 +180,9 @@ else
     }
 }
 
-// Add request logging middleware to track all incoming requests
-// This middleware runs BEFORE ASP.NET Core's built-in logging
-app.Use(async (context, next) =>
-{
-    try
-    {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        
-        // Log incoming request details - this should appear BEFORE "Request starting HTTP"
-        logger.LogInformation("[MIDDLEWARE] Incoming Request - Method: {Method}, Path: {Path}, ContentType: {ContentType}, ContentLength: {ContentLength}", 
-            context.Request.Method, 
-            context.Request.Path, 
-            context.Request.ContentType ?? "null",
-            context.Request.ContentLength?.ToString() ?? "null");
-        
-        await next();
-    }
-    catch (Exception ex)
-    {
-        var logger = context.RequestServices.GetRequiredService<ILogger<Program>>();
-        logger.LogError(ex, "[MIDDLEWARE] Unhandled exception in request pipeline - Method: {Method}, Path: {Path}, ContentType: {ContentType}", 
-            context.Request.Method, 
-            context.Request.Path,
-            context.Request.ContentType ?? "null");
-        throw;
-    }
-});
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+app.UseSession();
 app.UseRouting();
 
 app.UseAuthentication();
@@ -225,8 +207,6 @@ app.MapHealthChecksUI(options =>
     options.UIPath = "/health-ui";       
     options.ApiPath = "/health-ui-api";  
 });
-
-
 
 
 app.Run();

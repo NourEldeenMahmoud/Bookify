@@ -5,69 +5,69 @@
     <p class="gallery-desc mb-5">Where elegance meets tranquility — explore moments of timeless luxury in every corner of our haven.</p>
 
     <div class="row g-4 justify-content-center">
-      <!-- 12 Images -->
+      <!-- 12 Images with Lazy Loading - First 3 load immediately, rest lazy load -->
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G1.jpg")" alt="Hotel View" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G1.jpg")" alt="Hotel View" class="img-fluid" loading="eager" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G2.jpg")" alt="Luxury Room" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G2.jpg")" alt="Luxury Room" class="img-fluid" loading="eager" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G3.jpg")" alt="Lobby" class="img-fluid" asp-append-version="true">
-        </div>
-      </div>
-
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="gallery-item">
-          <img src="@Url.Content("~/images/G4.jpg")" alt="Pool" class="img-fluid" asp-append-version="true">
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="gallery-item">
-          <img src="@Url.Content("~/images/G5.jpg")" alt="Restaurant" class="img-fluid" asp-append-version="true">
-        </div>
-      </div>
-      <div class="col-lg-4 col-md-6 col-sm-12">
-        <div class="gallery-item">
-          <img src="@Url.Content("~/images/G6.jpg")" alt="Spa" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G3.jpg")" alt="Lobby" class="img-fluid" loading="eager" decoding="async" asp-append-version="true">
         </div>
       </div>
 
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G11.jpg")" alt="Balcony" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G4.jpg")" alt="Pool" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G7.jpg")" alt="Dining" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G5.jpg")" alt="Restaurant" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G12.jpg")" alt="Suite" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G6.jpg")" alt="Spa" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
+        </div>
+      </div>
+
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="gallery-item">
+          <img src="@Url.Content("~/images/G11.jpg")" alt="Balcony" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="gallery-item">
+          <img src="@Url.Content("~/images/G7.jpg")" alt="Dining" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
+        </div>
+      </div>
+      <div class="col-lg-4 col-md-6 col-sm-12">
+        <div class="gallery-item">
+          <img src="@Url.Content("~/images/G12.jpg")" alt="Suite" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
 
       <!-- Extra 3 images -->
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G8.jpg")" alt="Terrace" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G8.jpg")" alt="Terrace" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G9.jpg")" alt="Lounge" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G9.jpg")" alt="Lounge" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
       <div class="col-lg-4 col-md-6 col-sm-12">
         <div class="gallery-item">
-          <img src="@Url.Content("~/images/G10.jpg")" alt="Reception" class="img-fluid" asp-append-version="true">
+          <img src="@Url.Content("~/images/G10.jpg")" alt="Reception" class="img-fluid" loading="lazy" decoding="async" asp-append-version="true">
         </div>
       </div>
     </div>

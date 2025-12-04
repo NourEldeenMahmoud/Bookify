@@ -29,15 +29,12 @@ namespace Bookify.Web.HealthChecks
                     return HealthCheckResult.Unhealthy("Stripe API key is not configured.");
                 }
 
-                // Validate API key format
-                // Stripe secret keys start with "sk_" (live) or "sk_test_" (test)
                 if (!apiKey.StartsWith("sk_", StringComparison.OrdinalIgnoreCase))
                 {
                     return HealthCheckResult.Unhealthy("Stripe API key format is invalid. Secret keys should start with 'sk_' or 'sk_test_'.");
                 }
 
-                // Make a real API call to Stripe to verify the key is valid
-                // We'll use the Balance API which is lightweight and doesn't require special permissions
+
                 StripeConfiguration.ApiKey = apiKey;
 
                 var balanceService = new BalanceService();
@@ -53,7 +50,6 @@ namespace Bookify.Web.HealthChecks
             }
             catch (StripeException ex)
             {
-                // Handle specific Stripe errors
                 if (ex.StripeError?.Code == "api_key_expired" || ex.StripeError?.Code == "invalid_api_key")
                 {
                     return HealthCheckResult.Unhealthy($"Stripe API key is invalid or expired: {ex.Message}");
