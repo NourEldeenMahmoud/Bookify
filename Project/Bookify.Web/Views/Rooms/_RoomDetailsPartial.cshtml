@@ -202,20 +202,17 @@
 
                         <!-- Actions -->
                         <div class="d-flex flex-wrap gap-2 justify-content-start align-items-center mt-4">
-                            @{
-                                var checkInDate = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd");
-                                var checkOutDate = DateTime.Today.AddDays(2).ToString("yyyy-MM-dd");
-                                var guests = Model.RoomType?.MaxOccupancy ?? 1;
-                                var checkoutUrl = Url.Action("Checkout", "Bookings", new { 
-                                    roomId = Model.Id, 
-                                    checkIn = checkInDate, 
-                                    checkOut = checkOutDate, 
-                                    numberOfGuests = guests 
-                                });
-                            }
-                            <a href="@checkoutUrl" class="btn btn-primary px-4 py-2">
-                                Book Now
-                            </a>
+                            <button type="button" class="btn px-4 py-2 add-to-cart-btn" 
+                                    data-room-id="@Model.Id"
+                                    data-room-number="@Model.RoomNumber"
+                                    data-room-type-name="@(Model.RoomType?.Name ?? "")"
+                                    data-price-per-night="@(Model.RoomType?.PricePerNight ?? 0)"
+                                    data-max-occupancy="@(Model.RoomType?.MaxOccupancy ?? 1)"
+                                    data-image-url="@(Model.GalleryImages?.FirstOrDefault()?.ImageUrl ?? Model.RoomType?.ImageUrl ?? "~/images/G1.jpg")"
+                                    data-description="@(Model.RoomType?.Description ?? "")"
+                                    style="background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%); color: #fff; border: none; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);">
+                                <i class="fas fa-cart-plus me-2"></i>Add to Cart
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -331,6 +328,16 @@
         color: #ea580c;
     }
 
+    .add-to-cart-btn:hover {
+        background: linear-gradient(135deg, #ea580c 0%, #d97706 100%) !important;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+    }
+
+    .add-to-cart-btn:active {
+        transform: translateY(0);
+    }
+
     .btn-primary {
         background: linear-gradient(135deg, #f59e0b 0%, #ea580c 100%);
         border: none;
@@ -377,3 +384,122 @@
         }
     }
 </style>
+
+@if (User.Identity?.IsAuthenticated == true)
+{
+    <script src="~/js/cart.js" asp-append-version="true"></script>
+    <script>
+        // Add to cart button handler - must be outside DOMContentLoaded for AJAX-loaded content
+        // Use event delegation that works even when modal is loaded dynamically
+        (function() {
+            // Remove any existing handlers first to prevent duplicates
+            $(document).off('click', '.add-to-cart-btn');
+            
+            // Add new handler using event delegation
+            $(document).on('click', '.add-to-cart-btn', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Add to cart button clicked in modal');
+                
+                const btnElement = this;
+                const originalText = btnElement.innerHTML;
+                const originalStyle = btnElement.style.cssText;
+                btnElement.disabled = true;
+                btnElement.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding...';
+                
+                const roomId = parseInt(btnElement.dataset.roomId);
+                const maxOccupancy = parseInt(btnElement.dataset.maxOccupancy);
+                
+                console.log('Room ID:', roomId, 'Max Occupancy:', maxOccupancy);
+                
+                if (!roomId || isNaN(roomId)) {
+                    alert('Invalid room ID. Please try again.');
+                    btnElement.disabled = false;
+                    btnElement.innerHTML = originalText;
+                    btnElement.style.cssText = originalStyle;
+                    return;
+                }
+                
+                const checkInDate = new Date();
+                checkInDate.setDate(checkInDate.getDate() + 1);
+                const checkOutDate = new Date(checkInDate);
+                checkOutDate.setDate(checkOutDate.getDate() + 1);
+
+                const requestData = {
+                    roomId: roomId,
+                    checkIn: checkInDate.toISOString().split('T')[0],
+                    checkOut: checkOutDate.toISOString().split('T')[0],
+                    numberOfGuests: maxOccupancy || 1
+                };
+
+                console.log('Adding to cart:', requestData);
+                console.log('URL:', '@Url.Action("Add", "Cart")');
+
+                $.ajax({
+                    url: '@Url.Action("Add", "Cart")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestData),
+                    success: function(data) {
+                        console.log('Add to cart response:', data);
+                        
+                        if (data && data.success) {
+                            // Update cart badge
+                            if (typeof window.cartManager !== 'undefined' && window.cartManager.updateCartBadge) {
+                                window.cartManager.updateCartBadge();
+                            }
+                            
+                            // Show success message
+                            btnElement.innerHTML = '<i class="fas fa-check me-2"></i>Added!';
+                            btnElement.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                            
+                            // Close modal if open
+                            const modalElement = document.getElementById('roomDetailsModal');
+                            if (modalElement) {
+                                const modal = bootstrap.Modal.getInstance(modalElement);
+                                if (modal) {
+                                    setTimeout(() => {
+                                        modal.hide();
+                                    }, 500);
+                                }
+                            }
+                            
+                            // Redirect to cart page after a short delay
+                            setTimeout(() => {
+                                window.location.href = '@Url.Action("Index", "Cart")';
+                            }, 1000);
+                        } else {
+                            const errorMsg = (data && data.error) ? data.error : 'Failed to add room to cart';
+                            btnElement.disabled = false;
+                            btnElement.innerHTML = originalText;
+                            btnElement.style.cssText = originalStyle;
+                            alert(errorMsg);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr, status, error);
+                        console.error('Response:', xhr.responseText);
+                        let errorMessage = 'Failed to add room to cart';
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        } else if (xhr.responseText) {
+                            try {
+                                const errorData = JSON.parse(xhr.responseText);
+                                errorMessage = errorData.error || errorMessage;
+                            } catch (e) {
+                                errorMessage = xhr.responseText.substring(0, 100);
+                            }
+                        }
+                        
+                        btnElement.disabled = false;
+                        btnElement.innerHTML = originalText;
+                        btnElement.style.cssText = originalStyle;
+                        alert(errorMessage);
+                    }
+                });
+            });
+        })();
+    </script>
+}
