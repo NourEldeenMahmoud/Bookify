@@ -752,10 +752,18 @@
                             // Don't fail the payment if cart clearing fails
                         }
                         
-                        // Success - redirect to confirmation page (use first booking ID)
+                        // Success - redirect to confirmation page
+                        // If multiple bookings, use paymentIntentId; otherwise use bookingId
                         showToast('Payment successful! Redirecting...', 'success');
                         setTimeout(() => {
-                            const confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { bookingId = "__BOOKING_ID__" })'.replace('__BOOKING_ID__', bookingIds[0]);
+                            let confirmationUrl;
+                            if (bookingIds.length > 1 && confirmResponseData.paymentIntentId) {
+                                // Multiple bookings - use paymentIntentId to show all bookings
+                                confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { paymentIntentId = "__PAYMENT_INTENT_ID__" })'.replace('__PAYMENT_INTENT_ID__', confirmResponseData.paymentIntentId);
+                            } else {
+                                // Single booking - use bookingId
+                                confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { bookingId = "__BOOKING_ID__" })'.replace('__BOOKING_ID__', bookingIds[0]);
+                            }
                             window.location.href = confirmationUrl;
                         }, 1500);
                     } else {

@@ -1338,12 +1338,11 @@ background: #efefef !important;
 
 /* ---------- Pagination: force visible text + orange on hover/focus ---------- */
 
-/* قاعدة أساسية للأزرار */
 .dataTables_wrapper .dataTables_paginate .paginate_button,
 .dataTables_wrapper .dataTables_paginate .paginate_button a,
 .dataTables_wrapper .dataTables_paginate .paginate_button button {
-    background: transparent !important;      /* شفافة افتراضياً */
-    color: #2563eb !important;               /* لون النص الأساسي (أزرق روابط) */
+    background: transparent !important;      
+    color: #2563eb !important;          
     padding: 8px 10px !important;
     min-width: 36px;
     display: flex !important;
@@ -1364,7 +1363,6 @@ background: #efefef !important;
     transform: translateY(-2px);
 }
 
-/* Focus / active / focus-visible — نفس تأثير hover (حتى لو بالكيبورد) */
 .dataTables_wrapper .dataTables_paginate .paginate_button:focus,
 .dataTables_wrapper .dataTables_paginate .paginate_button:active,
 .dataTables_wrapper .dataTables_paginate .paginate_button:focus-visible,
@@ -1380,14 +1378,12 @@ background: #efefef !important;
     transform: translateY(-2px);
 }
 
-/* الحالة النشطة (الصفحة المختارة) */
 .dataTables_wrapper .dataTables_paginate .paginate_button.current,
 .dataTables_wrapper .dataTables_paginate .paginate_button.current a {
     background: transparent !important;
     color: #fff !important;
 }
 
-/* Disabled — خليه شفاف وخط رمادي */
 .dataTables_wrapper .dataTables_paginate .paginate_button.disabled,
 .dataTables_wrapper .dataTables_paginate .paginate_button.disabled a {
     background: transparent !important;
@@ -1397,14 +1393,12 @@ background: #efefef !important;
     transform: none !important;
 }
 
-/* تأكد إن أي <a> داخل يكون مرئي ويرث اللون */
 .dataTables_wrapper .dataTables_paginate .paginate_button a,
 .dataTables_wrapper .dataTables_paginate .paginate_button button {
     color: inherit !important;
     background: transparent !important;
 }
 
-/* إزالة تأثيرات متصفحات الجوال */
 .dataTables_wrapper .dataTables_paginate .paginate_button,
 .dataTables_wrapper .dataTables_paginate .paginate_button a,
 .dataTables_wrapper .dataTables_paginate .paginate_button button {

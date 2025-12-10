@@ -232,7 +232,7 @@ public class BookingsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Confirmation(int bookingId)
+    public async Task<IActionResult> Confirmation(int? bookingId, string? paymentIntentId)
     {
         try
         {
@@ -243,32 +243,85 @@ public class BookingsController : Controller
                 return RedirectToAction("Login", "Account");
             }
 
-            if (bookingId <= 0)
-            {
-                _logger.LogWarning("Invalid bookingId provided: {BookingId}", bookingId);
-                return NotFound();
-            }
+            List<Booking> bookings = new List<Booking>();
 
-            var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(bookingId);
+            // If paymentIntentId is provided, get all bookings for that payment
+            if (!string.IsNullOrEmpty(paymentIntentId))
+            {
+                _logger.LogInformation("Loading confirmation for PaymentIntentId: {PaymentIntentId}", paymentIntentId);
+                
+                var allPayments = (await _unitOfWork.BookingPayments.GetAllAsync())
+                    .Where(p => p.PaymentIntentId == paymentIntentId)
+                    .ToList();
+
+                if (!allPayments.Any())
+                {
+                    _logger.LogWarning("No payments found for PaymentIntentId: {PaymentIntentId}", paymentIntentId);
+                    TempData["Error"] = "Booking not found.";
+                    return RedirectToAction("Index", "Profile");
+                }
+
+                var bookingIds = allPayments.Select(p => p.BookingId).Distinct().ToList();
+                
+                foreach (var id in bookingIds)
+                {
+                    var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(id);
+                    if (booking != null && booking.UserId == userId)
+                    {
+                        bookings.Add(booking);
+                    }
+                }
+
+                if (!bookings.Any())
+                {
+                    _logger.LogWarning("No bookings found for PaymentIntentId: {PaymentIntentId} and UserId: {UserId}", paymentIntentId, userId);
+                    TempData["Error"] = "Access denied.";
+                    return RedirectToAction("Index", "Profile");
+            }
+            }
+            // If bookingId is provided, get single booking
+            else if (bookingId.HasValue && bookingId.Value > 0)
+            {
+                var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(bookingId.Value);
             if (booking == null)
             {
-                _logger.LogWarning("Booking {BookingId} not found", bookingId);
+                    _logger.LogWarning("Booking {BookingId} not found", bookingId.Value);
                 TempData["Error"] = "Booking not found.";
                 return RedirectToAction("Index", "Profile");
             }
 
             if (booking.UserId != userId)
             {
-                _logger.LogWarning("User {UserId} attempted to access booking {BookingId} belonging to another user", userId, bookingId);
+                    _logger.LogWarning("User {UserId} attempted to access booking {BookingId} belonging to another user", userId, bookingId.Value);
                 TempData["Error"] = "Access denied.";
                 return RedirectToAction("Index", "Profile");
             }
 
-            return View(booking);
+                bookings.Add(booking);
+            }
+            else
+            {
+                _logger.LogWarning("Neither bookingId nor paymentIntentId provided");
+                return NotFound();
+            }
+
+            // If only one booking, use the existing view model (single booking)
+            if (bookings.Count == 1)
+            {
+                return View(bookings[0]);
+            }
+            else
+            {
+                // Multiple bookings - pass to view with a different model
+                ViewBag.Bookings = bookings;
+                ViewBag.IsMultiple = true;
+                // Use the first booking as the main model for backward compatibility
+                return View(bookings[0]);
+            }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Error loading confirmation - BookingId: {BookingId}", bookingId);
+            _logger.LogError(ex, "Error loading confirmation - BookingId: {BookingId}, PaymentIntentId: {PaymentIntentId}", bookingId, paymentIntentId);
             TempData["Error"] = "An error occurred while loading confirmation. Please try again.";
             return RedirectToAction("Index", "Profile");
         }
