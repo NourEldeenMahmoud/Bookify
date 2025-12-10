@@ -97,50 +97,50 @@ public class PaymentController : Controller
             {
                 // Convert single room request to cart format
                 _logger.LogInformation("Converting single room request to cart format - RoomId: {RoomId}, Amount: {Amount}, CheckIn: {CheckIn}, CheckOut: {CheckOut}, Guests: {Guests}", 
-                    request.RoomId, request.Amount, request.CheckIn, request.CheckOut, request.NumberOfGuests);
+                request.RoomId, request.Amount, request.CheckIn, request.CheckOut, request.NumberOfGuests);
 
-                // Parse dates from strings
-                if (string.IsNullOrEmpty(request.CheckIn))
-                {
-                    _logger.LogWarning("CheckIn is null or empty");
-                    return BadRequest(new { error = "Check-in date is required" });
-                }
+            // Parse dates from strings
+            if (string.IsNullOrEmpty(request.CheckIn))
+            {
+                _logger.LogWarning("CheckIn is null or empty");
+                return BadRequest(new { error = "Check-in date is required" });
+            }
 
-                if (!DateTime.TryParse(request.CheckIn, out var checkInDate))
-                {
-                    _logger.LogWarning("Invalid CheckIn date format: {CheckIn}", request.CheckIn);
-                    return BadRequest(new { error = $"Invalid check-in date format: '{request.CheckIn}'. Use YYYY-MM-DD" });
-                }
+            if (!DateTime.TryParse(request.CheckIn, out var checkInDate))
+            {
+                _logger.LogWarning("Invalid CheckIn date format: {CheckIn}", request.CheckIn);
+                return BadRequest(new { error = $"Invalid check-in date format: '{request.CheckIn}'. Use YYYY-MM-DD" });
+            }
 
-                if (string.IsNullOrEmpty(request.CheckOut))
-                {
-                    _logger.LogWarning("CheckOut is null or empty");
-                    return BadRequest(new { error = "Check-out date is required" });
-                }
+            if (string.IsNullOrEmpty(request.CheckOut))
+            {
+                _logger.LogWarning("CheckOut is null or empty");
+                return BadRequest(new { error = "Check-out date is required" });
+            }
 
-                if (!DateTime.TryParse(request.CheckOut, out var checkOutDate))
-                {
-                    _logger.LogWarning("Invalid CheckOut date format: {CheckOut}", request.CheckOut);
-                    return BadRequest(new { error = $"Invalid check-out date format: '{request.CheckOut}'. Use YYYY-MM-DD" });
-                }
+            if (!DateTime.TryParse(request.CheckOut, out var checkOutDate))
+            {
+                _logger.LogWarning("Invalid CheckOut date format: {CheckOut}", request.CheckOut);
+                return BadRequest(new { error = $"Invalid check-out date format: '{request.CheckOut}'. Use YYYY-MM-DD" });
+            }
 
-                if (request.RoomId <= 0)
-                {
-                    _logger.LogWarning("Invalid RoomId: {RoomId}", request.RoomId);
-                    return BadRequest(new { error = $"Invalid room ID: {request.RoomId}" });
-                }
+            if (request.RoomId <= 0)
+            {
+                _logger.LogWarning("Invalid RoomId: {RoomId}", request.RoomId);
+                return BadRequest(new { error = $"Invalid room ID: {request.RoomId}" });
+            }
 
-                if (request.Amount <= 0)
-                {
-                    _logger.LogWarning("Invalid Amount: {Amount}", request.Amount);
-                    return BadRequest(new { error = $"Amount must be greater than zero. Received: {request.Amount}" });
-                }
+            if (request.Amount <= 0)
+            {
+                _logger.LogWarning("Invalid Amount: {Amount}", request.Amount);
+                return BadRequest(new { error = $"Amount must be greater than zero. Received: {request.Amount}" });
+            }
 
-                if (checkOutDate <= checkInDate)
-                {
-                    _logger.LogWarning("Check-out must be after check-in - CheckIn: {CheckIn}, CheckOut: {CheckOut}", checkInDate, checkOutDate);
-                    return BadRequest(new { error = "Check-out date must be after check-in date" });
-                }
+            if (checkOutDate <= checkInDate)
+            {
+                _logger.LogWarning("Check-out must be after check-in - CheckIn: {CheckIn}, CheckOut: {CheckOut}", checkInDate, checkOutDate);
+                return BadRequest(new { error = "Check-out date must be after check-in date" });
+            }
 
                 // Get room details to convert to cart format
                 var room = await _unitOfWork.Rooms.GetRoomDetailsAsync(request.RoomId);
@@ -313,58 +313,58 @@ public class PaymentController : Controller
             }
 
             // Use cart method for both single room and multiple rooms
-            var cartSuccess = await _paymentService.ConfirmPaymentAndCreateBookingsAsync(
-                request.PaymentIntentId,
-                userId,
-                cartItemDtos,
-                request.SpecialRequests
-            );
+                var cartSuccess = await _paymentService.ConfirmPaymentAndCreateBookingsAsync(
+                    request.PaymentIntentId,
+                    userId,
+                    cartItemDtos,
+                    request.SpecialRequests
+                );
 
-            if (!cartSuccess)
-            {
-                return BadRequest(new { error = "Payment confirmation failed or already processed" });
-            }
+                if (!cartSuccess)
+                {
+                    return BadRequest(new { error = "Payment confirmation failed or already processed" });
+                }
 
-            // Get all booking IDs directly from BookingPayments table (more reliable)
-            var allPayments = (await _unitOfWork.BookingPayments.GetAllAsync())
-                .Where(p => p.PaymentIntentId == request.PaymentIntentId)
-                .ToList();
+                // Get all booking IDs directly from BookingPayments table (more reliable)
+                var allPayments = (await _unitOfWork.BookingPayments.GetAllAsync())
+                    .Where(p => p.PaymentIntentId == request.PaymentIntentId)
+                    .ToList();
 
-            if (!allPayments.Any())
-            {
-                _logger.LogWarning("No payments found for PaymentIntentId: {PaymentIntentId}", request.PaymentIntentId);
-                return StatusCode(500, new { error = "Payment confirmed but bookings not found" });
-            }
+                if (!allPayments.Any())
+                {
+                    _logger.LogWarning("No payments found for PaymentIntentId: {PaymentIntentId}", request.PaymentIntentId);
+                    return StatusCode(500, new { error = "Payment confirmed but bookings not found" });
+                }
 
-            var bookingIds = allPayments.Select(p => p.BookingId).Distinct().ToList();
+                var bookingIds = allPayments.Select(p => p.BookingId).Distinct().ToList();
 
-            _logger.LogInformation("Found {Count} bookings for PaymentIntentId: {PaymentIntentId}", bookingIds.Count, request.PaymentIntentId);
+                _logger.LogInformation("Found {Count} bookings for PaymentIntentId: {PaymentIntentId}", bookingIds.Count, request.PaymentIntentId);
 
             // Send confirmation emails for all bookings
             try
             {
                 foreach (var bookingId in bookingIds)
-                {
+            {
                     var booking = await _unitOfWork.Bookings.GetBookingWithDetailsAsync(bookingId);
-                    if (booking?.User != null && !string.IsNullOrEmpty(booking.User.Email))
-                    {
-                        await _emailService.SendPaymentConfirmationAsync(
-                            booking.User.Email,
-                            $"{booking.User.FirstName} {booking.User.LastName}",
-                            booking.Id,
-                            booking.TotalAmount
-                        );
+                if (booking?.User != null && !string.IsNullOrEmpty(booking.User.Email))
+                {
+                    await _emailService.SendPaymentConfirmationAsync(
+                        booking.User.Email,
+                        $"{booking.User.FirstName} {booking.User.LastName}",
+                        booking.Id,
+                        booking.TotalAmount
+                    );
 
-                        await _emailService.SendBookingConfirmationAsync(
-                            booking.User.Email,
-                            booking.Id,
-                            $"{booking.User.FirstName} {booking.User.LastName}",
-                            booking.CheckInDate,
-                            booking.CheckOutDate,
-                            booking.TotalAmount
-                        );
+                    await _emailService.SendBookingConfirmationAsync(
+                        booking.User.Email,
+                        booking.Id,
+                        $"{booking.User.FirstName} {booking.User.LastName}",
+                        booking.CheckInDate,
+                        booking.CheckOutDate,
+                        booking.TotalAmount
+                    );
 
-                        _logger.LogInformation("Confirmation emails sent for booking {BookingId}", booking.Id);
+                    _logger.LogInformation("Confirmation emails sent for booking {BookingId}", booking.Id);
                     }
                 }
             }
@@ -389,6 +389,7 @@ public class PaymentController : Controller
             return Ok(new { 
                 bookingIds = bookingIds, 
                 firstBookingId = bookingIds.First(),
+                paymentIntentId = request.PaymentIntentId,
                 success = true 
             });
         }

@@ -37,7 +37,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label asp-for="PricePerNight" class="form-label">Price Per Night *</label>
-                    <input asp-for="PricePerNight" class="form-control" type="number" step="0.01" min="0.01" required />
+                    <input asp-for="PricePerNight" class="form-control" type="number" step="100" min="1000" required />
                     <span asp-validation-for="PricePerNight" class="text-danger"></span>
                 </div>
             </div>
