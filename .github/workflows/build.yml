@@ -19,6 +19,10 @@ jobs:
       with:
         dotnet-version: '9.0.x'
         
+    - name: dotnet restore
+      working-directory: Project/Bookify.Web
+      run: dotnet restore
+      
     - name: Build with dotnet
       working-directory: Project/Bookify.Web
       run: dotnet build --configuration Release
@@ -31,6 +35,8 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: dotnet-app
+        path: ./publish
+        path: ./publish
         path: Project/Bookify.Web/publish
         
   deploy:
@@ -43,3 +49,12 @@ jobs:
       uses: actions/download-artifact@v4
       with:
         name: dotnet-app
+        path: ./publish
+        path: ./publish
+        path: ./publish
+        
+    - name: Deploy to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+        package: ./publish/publish/publish
