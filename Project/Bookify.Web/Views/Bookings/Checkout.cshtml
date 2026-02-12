@@ -11,6 +11,17 @@
             padding: 0 1rem;
         }
 
+        .btn[style*="border: 2px solid #5C2F0F"]:hover {
+            background: #5C2F0F !important;
+            color: #fff !important;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(92, 47, 15, 0.3);
+        }
+
+        .btn[style*="border: 2px solid #5C2F0F"]:active {
+            transform: translateY(0);
+        }
+
         .booking-summary-card {
             background: #fff;
             border-radius: 16px;
@@ -25,6 +36,24 @@
             object-fit: cover;
             border-radius: 12px;
             margin-bottom: 1rem;
+        }
+
+        .cart-item-summary {
+            border-bottom: 1px solid #e5e7eb;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .cart-item-summary:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
         }
 
         .price-breakdown {
@@ -199,6 +228,13 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <!-- Back to Rooms Button -->
+    <div class="mb-3">
+        <a href="@Url.Action("Index", "Home")#rooms" class="btn" style="background: transparent; color: #5C2F0F; border: 2px solid #5C2F0F; text-decoration: none;">
+            <i class="fas fa-arrow-left me-2"></i>Back to Rooms
+        </a>
+    </div>
+
     <!-- Error Messages -->
     @if (TempData["Error"] != null)
     {
@@ -225,57 +261,48 @@
             <div class="booking-summary-card">
                 <h4 class="fw-bold mb-4">Booking Summary</h4>
                 
-                <!-- Room Image -->
-                <img src="@Model.RoomImageUrl" alt="@Model.RoomTypeName" class="room-image" />
-                
-                <!-- Room Details -->
-                <h5 class="fw-semibold mb-2">@Model.RoomTypeName</h5>
-                <p class="text-muted mb-3">Room #@Model.RoomNumber</p>
-                
-                <!-- Editable Dates -->
-                <div class="mb-3">
-                    <h6 class="fw-semibold mb-3">Booking Details</h6>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Check-in Date</label>
-                        <input type="date" 
-                               id="checkInDate" 
-                               class="form-control" 
-                               value="@Model.CheckIn.ToString("yyyy-MM-dd")" 
-                               min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")"
-                               required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Check-out Date</label>
-                        <input type="date" 
-                               id="checkOutDate" 
-                               class="form-control" 
-                               value="@Model.CheckOut.ToString("yyyy-MM-dd")" 
-                               min="@DateTime.Today.AddDays(2).ToString("yyyy-MM-dd")"
-                               required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label text-muted small">Number of Guests</label>
-                        <input type="number" 
-                               id="numberOfGuests" 
-                               class="form-control" 
-                               value="@Model.NumberOfGuests" 
-                               min="1" 
-                               max="@Model.MaxOccupancy"
-                               required />
-                        <small class="text-muted">Max @Model.MaxOccupancy guests</small>
-                    </div>
-                    <div class="d-flex justify-content-between mb-2">
-                        <span class="text-muted">Nights:</span>
-                        <span class="fw-semibold" id="numberOfNights">@Model.NumberOfNights</span>
-                    </div>
-                </div>
-
-                <!-- Room Description -->
-                @if (!string.IsNullOrEmpty(Model.RoomDescription))
+                <!-- Cart Items List -->
+                @if (Model.CartItems != null && Model.CartItems.Any())
                 {
-                    <div class="mb-3">
-                        <h6 class="fw-semibold mb-2">Description</h6>
-                        <p class="text-muted small">@Model.RoomDescription</p>
+                    <div class="mb-4">
+                        <h6 class="fw-semibold mb-3">Rooms (@Model.CartItems.Count)</h6>
+                        @foreach (var item in Model.CartItems)
+                        {
+                            var imageUrl = item.ImageUrl;
+                            if (!string.IsNullOrEmpty(imageUrl))
+                            {
+                                if (imageUrl.StartsWith("~/"))
+                                {
+                                    imageUrl = Url.Content(imageUrl);
+                                }
+                                else if (!imageUrl.StartsWith("http") && !imageUrl.StartsWith("/"))
+                                {
+                                    imageUrl = Url.Content($"~/images/{imageUrl}");
+                                }
+                            }
+                            else
+                            {
+                                imageUrl = Url.Content("~/images/G1.jpg");
+                            }
+                            
+                            <div class="cart-item-summary">
+                                <div class="d-flex gap-3">
+                                    <img src="@imageUrl" alt="@item.RoomTypeName" class="cart-item-image" />
+                                    <div class="flex-grow-1">
+                                        <h6 class="mb-1">@item.RoomTypeName</h6>
+                                        <p class="text-muted small mb-1">Room #@item.RoomNumber</p>
+                                        <p class="text-muted small mb-1">
+                                            @item.CheckIn.ToString("MMM dd") - @item.CheckOut.ToString("MMM dd, yyyy")
+                                        </p>
+                                        <p class="text-muted small mb-0">
+                                            @item.NumberOfNights nights × @item.PricePerNight.ToString("N0") EGP = 
+                                            <strong>@item.Subtotal.ToString("N0") EGP</strong>
+                                        </p>
+                                        <p class="text-muted small mb-0">@item.NumberOfGuests guest(s)</p>
+                                    </div>
+                                </div>
+                            </div>
+                        }
                     </div>
                 }
 
@@ -315,7 +342,7 @@
                 <div class="price-breakdown">
                     <h6 class="fw-semibold mb-3">Price Breakdown</h6>
                     <div class="price-row">
-                        <span id="pricePerNightText">@Model.PricePerNight.ToString("N0") EGP × <span id="nightsText">@Model.NumberOfNights</span> nights</span>
+                        <span>Subtotal</span>
                         <span id="subtotalText">@Model.Subtotal.ToString("N0") EGP</span>
                     </div>
                     <div class="price-row">
@@ -343,11 +370,17 @@
                 <h4 class="fw-bold mb-4">Complete Your Booking</h4>
                 
                 <form id="checkoutForm" asp-action="Checkout" method="post">
-                    <input type="hidden" asp-for="RoomId" />
-                    <input type="hidden" asp-for="CheckIn" />
-                    <input type="hidden" asp-for="CheckOut" />
-                    <input type="hidden" asp-for="NumberOfGuests" />
                     <input type="hidden" asp-for="TotalAmount" />
+                    @if (Model.CartItems != null && Model.CartItems.Any())
+                    {
+                        @for (int i = 0; i < Model.CartItems.Count; i++)
+                        {
+                            <input type="hidden" name="CartItems[@i].RoomId" value="@Model.CartItems[i].RoomId" />
+                            <input type="hidden" name="CartItems[@i].CheckIn" value="@Model.CartItems[i].CheckIn.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="CartItems[@i].CheckOut" value="@Model.CartItems[i].CheckOut.ToString("yyyy-MM-dd")" />
+                            <input type="hidden" name="CartItems[@i].NumberOfGuests" value="@Model.CartItems[i].NumberOfGuests" />
+                        }
+                    }
                     
                     <!-- Special Requests -->
                     <div class="mb-4">
@@ -538,32 +571,34 @@
                 
                 try {
                     // Step 1: Create Payment Intent
-                    // Get current values from form (user may have changed dates)
-                    const checkInInput = document.getElementById('checkInDate');
-                    const checkOutInput = document.getElementById('checkOutDate');
-                    const guestsInput = document.getElementById('numberOfGuests');
+                    // Get cart items from hidden inputs
+                    const cartItems = [];
+                    @if (Model.CartItems != null && Model.CartItems.Any())
+                    {
+                        @for (int i = 0; i < Model.CartItems.Count; i++)
+                        {
+                            <text>
+                            cartItems.push({
+                                roomId: @Model.CartItems[i].RoomId,
+                                roomNumber: '@Model.CartItems[i].RoomNumber',
+                                roomTypeName: '@Html.Raw(Model.CartItems[i].RoomTypeName.Replace("'", "\\'"))',
+                                pricePerNight: @Model.CartItems[i].PricePerNight,
+                                maxOccupancy: @Model.CartItems[i].MaxOccupancy,
+                                imageUrl: '@(Model.CartItems[i].ImageUrl ?? "")',
+                                description: '@(Model.CartItems[i].Description ?? "")',
+                                checkIn: '@Model.CartItems[i].CheckIn.ToString("yyyy-MM-dd")',
+                                checkOut: '@Model.CartItems[i].CheckOut.ToString("yyyy-MM-dd")',
+                                numberOfGuests: @Model.CartItems[i].NumberOfGuests
+                            });
+                            </text>
+                        }
+                    }
                     
-                    const currentCheckIn = checkInInput ? checkInInput.value : '@Model.CheckIn.ToString("yyyy-MM-dd")';
-                    const currentCheckOut = checkOutInput ? checkOutInput.value : '@Model.CheckOut.ToString("yyyy-MM-dd")';
-                    const currentGuests = guestsInput ? parseInt(guestsInput.value) : @Model.NumberOfGuests;
-                    
-                    // Calculate amount dynamically based on current dates
-                    const checkIn = new Date(currentCheckIn);
-                    const checkOut = new Date(currentCheckOut);
-                    const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-                    const pricePerNight = @Model.PricePerNight;
-                    const taxRate = @Model.TaxRate;
-                    const subtotal = pricePerNight * nights;
-                    const taxAmount = subtotal * taxRate;
-                    const calculatedTotal = subtotal + taxAmount - @Model.Discount;
-                    
+                    const totalAmount = @Model.TotalAmount;
                     const requestData = {
-                        roomId: @Model.RoomId,
-                        amount: calculatedTotal,
-                        currency: 'usd',
-                        checkIn: currentCheckIn,
-                        checkOut: currentCheckOut,
-                        numberOfGuests: currentGuests
+                        cartItems: cartItems,
+                        amount: totalAmount,
+                        currency: 'usd'
                     };
 
                     console.log('📤 Sending payment intent request:', requestData);
@@ -646,22 +681,10 @@
                     }
                     
                     if (paymentIntent.status === 'succeeded') {
-                        // Step 3: Confirm payment on server and create booking
-                        // Get current values from form
-                        const checkInInput = document.getElementById('checkInDate');
-                        const checkOutInput = document.getElementById('checkOutDate');
-                        const guestsInput = document.getElementById('numberOfGuests');
-                        
-                        const confirmCheckIn = checkInInput ? checkInInput.value : '@Model.CheckIn.ToString("yyyy-MM-dd")';
-                        const confirmCheckOut = checkOutInput ? checkOutInput.value : '@Model.CheckOut.ToString("yyyy-MM-dd")';
-                        const confirmGuests = guestsInput ? parseInt(guestsInput.value) : @Model.NumberOfGuests;
-                        
+                        // Step 3: Confirm payment on server and create bookings
                         const confirmRequestData = {
                             paymentIntentId: paymentIntent.id,
-                            roomId: @Model.RoomId,
-                            checkIn: confirmCheckIn,
-                            checkOut: confirmCheckOut,
-                            numberOfGuests: confirmGuests,
+                            cartItems: cartItems,
                             specialRequests: document.querySelector('[name="SpecialRequests"]')?.value || ''
                         };
 
@@ -700,15 +723,47 @@
                         const confirmResponseData = await confirmResponse.json();
                         console.log('✅ Payment confirmed:', confirmResponseData);
 
-                        const { bookingId } = confirmResponseData;
-                        if (!bookingId) {
-                            throw new Error('Booking ID not received from server');
+                        // دعم الحالتين: bookingIds (لل كارت) و bookingId (للغرفة الواحدة)
+                        let bookingIds = confirmResponseData.bookingIds;
+                        if (!bookingIds && confirmResponseData.bookingId) {
+                            // حالة single room checkout
+                            bookingIds = [confirmResponseData.bookingId];
+                        }
+
+                        // Fallback: إذا لم يوجد أي منهما، استخدم firstBookingId
+                        if ((!bookingIds || !Array.isArray(bookingIds) || bookingIds.length === 0) && confirmResponseData.firstBookingId) {
+                            bookingIds = [confirmResponseData.firstBookingId];
+                        }
+
+                        if (!bookingIds || !Array.isArray(bookingIds) || bookingIds.length === 0) {
+                            console.error('❌ Response data:', confirmResponseData);
+                            throw new Error('Booking IDs not received from server. Response: ' + JSON.stringify(confirmResponseData));
+                        }
+                        
+                        // Clear cart after successful payment
+                        try {
+                            await fetch('@Url.Action("Clear", "Cart")', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' }
+                            });
+                            console.log('Cart cleared after successful payment');
+                        } catch (error) {
+                            console.warn('Failed to clear cart:', error);
+                            // Don't fail the payment if cart clearing fails
                         }
                         
                         // Success - redirect to confirmation page
+                        // If multiple bookings, use paymentIntentId; otherwise use bookingId
                         showToast('Payment successful! Redirecting...', 'success');
                         setTimeout(() => {
-                            const confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { bookingId = "__BOOKING_ID__" })'.replace('__BOOKING_ID__', bookingId);
+                            let confirmationUrl;
+                            if (bookingIds.length > 1 && confirmResponseData.paymentIntentId) {
+                                // Multiple bookings - use paymentIntentId to show all bookings
+                                confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { paymentIntentId = "__PAYMENT_INTENT_ID__" })'.replace('__PAYMENT_INTENT_ID__', confirmResponseData.paymentIntentId);
+                            } else {
+                                // Single booking - use bookingId
+                                confirmationUrl = '@Url.Action("Confirmation", "Bookings", new { bookingId = "__BOOKING_ID__" })'.replace('__BOOKING_ID__', bookingIds[0]);
+                            }
                             window.location.href = confirmationUrl;
                         }, 1500);
                     } else {
@@ -728,89 +783,7 @@
             });
         }
         
-        // Price calculation variables
-        const pricePerNight = @Model.PricePerNight;
-        const taxRate = @Model.TaxRate;
-        const discount = @Model.Discount;
-
-        // Function to calculate and update price
-        function updatePrice() {
-            const checkInInput = document.getElementById('checkInDate');
-            const checkOutInput = document.getElementById('checkOutDate');
-            const nightsElement = document.getElementById('numberOfNights');
-            const subtotalElement = document.getElementById('subtotalText');
-            const taxAmountElement = document.getElementById('taxAmountText');
-            const totalAmountElement = document.getElementById('totalAmountText');
-            const nightsTextElement = document.getElementById('nightsText');
-
-            if (!checkInInput || !checkOutInput) return;
-
-            const checkIn = new Date(checkInInput.value);
-            const checkOut = new Date(checkOutInput.value);
-
-            if (checkIn >= checkOut) {
-                return; // Invalid dates
-            }
-
-            const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-            const subtotal = pricePerNight * nights;
-            const taxAmount = subtotal * taxRate;
-            const total = subtotal + taxAmount - discount;
-
-            // Update UI
-            if (nightsElement) nightsElement.textContent = nights;
-            if (nightsTextElement) nightsTextElement.textContent = nights;
-            if (subtotalElement) subtotalElement.textContent = subtotal.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
-            if (taxAmountElement) taxAmountElement.textContent = taxAmount.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
-            if (totalAmountElement) totalAmountElement.textContent = total.toLocaleString('en-US', { maximumFractionDigits: 0 }) + ' EGP';
-        }
-
-        // Add event listeners for date changes
-        document.addEventListener('DOMContentLoaded', function() {
-            const checkInInput = document.getElementById('checkInDate');
-            const checkOutInput = document.getElementById('checkOutDate');
-            const guestsInput = document.getElementById('numberOfGuests');
-
-            if (checkInInput) {
-                checkInInput.addEventListener('change', function() {
-                    // Set minimum check-out date to check-in + 1 day
-                    const minCheckOut = new Date(this.value);
-                    minCheckOut.setDate(minCheckOut.getDate() + 1);
-                    if (checkOutInput) {
-                        checkOutInput.min = minCheckOut.toISOString().split('T')[0];
-                        if (new Date(checkOutInput.value) <= new Date(this.value)) {
-                            checkOutInput.value = minCheckOut.toISOString().split('T')[0];
-                        }
-                    }
-                    updatePrice();
-                });
-            }
-
-            if (checkOutInput) {
-                checkOutInput.addEventListener('change', function() {
-                    // Ensure check-out is after check-in
-                    const checkIn = new Date(checkInInput?.value || '@Model.CheckIn.ToString("yyyy-MM-dd")');
-                    if (new Date(this.value) <= checkIn) {
-                        const minCheckOut = new Date(checkIn);
-                        minCheckOut.setDate(minCheckOut.getDate() + 1);
-                        this.value = minCheckOut.toISOString().split('T')[0];
-                    }
-                    updatePrice();
-                });
-            }
-
-            if (guestsInput) {
-                guestsInput.addEventListener('change', function() {
-                    const maxGuests = @Model.MaxOccupancy;
-                    if (this.value > maxGuests) {
-                        this.value = maxGuests;
-                    }
-                    if (this.value < 1) {
-                        this.value = 1;
-                    }
-                });
-            }
-        });
+        // Prices are already calculated on server side, no need for client-side calculation
 
         // Toast notification function
         function showToast(message, type) {

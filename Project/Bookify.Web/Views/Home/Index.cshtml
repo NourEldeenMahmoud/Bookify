@@ -373,5 +373,105 @@ $(document).ready(function () {
         });
 
     </script>
+    
+    <!-- Add to cart handler - must be outside $(function()) for AJAX-loaded content -->
+    <script>
+        // Ensure this runs after DOM is ready
+        $(document).ready(function() {
+            console.log('Add to cart handler initialized');
+            
+            // Handle quick add to cart button (using event delegation for AJAX-loaded content)
+            $(document).on('click', '.add-to-cart-quick-btn', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                console.log('Add to cart button clicked');
+                
+                const $btn = $(this);
+                const originalHTML = $btn.html();
+                const roomId = parseInt($btn.data('room-id'));
+                const maxOccupancy = parseInt($btn.data('max-occupancy'));
+                
+                console.log('Room ID:', roomId, 'Max Occupancy:', maxOccupancy);
+                
+                if (!roomId || isNaN(roomId)) {
+                    console.error('Invalid room ID:', roomId);
+                    alert('Invalid room ID. Please try again.');
+                    return;
+                }
+                
+                $btn.prop('disabled', true);
+                $btn.html('<i class="fas fa-spinner fa-spin"></i>');
+                
+                const checkInDate = new Date();
+                checkInDate.setDate(checkInDate.getDate() + 1);
+                const checkOutDate = new Date(checkInDate);
+                checkOutDate.setDate(checkOutDate.getDate() + 1);
+
+                const requestData = {
+                    roomId: roomId,
+                    checkIn: checkInDate.toISOString().split('T')[0],
+                    checkOut: checkOutDate.toISOString().split('T')[0],
+                    numberOfGuests: maxOccupancy || 1
+                };
+
+                console.log('Adding to cart:', requestData);
+                console.log('URL:', '@Url.Action("Add", "Cart")');
+
+                $.ajax({
+                    url: '@Url.Action("Add", "Cart")',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(requestData),
+                    success: function(data) {
+                        console.log('Add to cart response:', data);
+                        
+                        if (data && data.success) {
+                            // Update cart badge
+                            if (typeof window.cartManager !== 'undefined' && window.cartManager.updateCartBadge) {
+                                window.cartManager.updateCartBadge();
+                            }
+                            
+                            // Show success message
+                            $btn.html('<i class="fas fa-check"></i>');
+                                $btn.css('background', 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)');
+                            
+                            // Reset button after 2 seconds
+                            setTimeout(function() {
+                                $btn.html(originalHTML);
+                                $btn.css('background', 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)');
+                                $btn.prop('disabled', false);
+                            }, 2000);
+                        } else {
+                            const errorMsg = (data && data.error) ? data.error : 'Failed to add room to cart';
+                            $btn.prop('disabled', false);
+                            $btn.html(originalHTML);
+                            alert(errorMsg);
+                        }
+                    },
+                    error: function(xhr, status, error) {
+                        console.error('AJAX Error:', xhr, status, error);
+                        console.error('Response:', xhr.responseText);
+                        let errorMessage = 'Failed to add room to cart';
+                        
+                        if (xhr.responseJSON && xhr.responseJSON.error) {
+                            errorMessage = xhr.responseJSON.error;
+                        } else if (xhr.responseText) {
+                            try {
+                                const errorData = JSON.parse(xhr.responseText);
+                                errorMessage = errorData.error || errorMessage;
+                            } catch (e) {
+                                errorMessage = xhr.responseText.substring(0, 100);
+                            }
+                        }
+                        
+                        $btn.prop('disabled', false);
+                        $btn.html(originalHTML);
+                        alert(errorMessage);
+                    }
+                });
+            });
+        });
+    </script>
 }
 

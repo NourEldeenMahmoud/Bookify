@@ -426,22 +426,14 @@ Bookify-Dev/
 - Retention: 30 days
 - Rolling interval: Daily
 
----
-## Support & Contact
-
-For questions or issues:
-- Check the codebase documentation
-- Review the `req.txt` file for original requirements
-- Contact the development team
 
 ---
 
-**Document Version**: 1.0  
 **Last Updated**: 30/11/2025  
 - **Maintained By**:
 	- Nour Eldeen Mahmoud ( Team Leader / Back End | [GitHub](https://github.com/NourEldeenMahmoud))
 	- Hazem Hany Samy (Front End | [GitHub](https://github.com/Hazem7any))
-	- Omar Ashraf (Front End | [GitHub](https://github.com/omarabaset11))
+	- Omar Ashraf (Front End | [GitHub](https://github.com/omarashraf23))
 	- Shahd Ayman ( Back End | [GitHub](https://github.com/shahdayman315315))
 	- Alia Harb (Back End | [GitHub](https://github.com/AliaHarb))
 	- Mohamed Soultan (Back End | [LinkedIn](https://www.linkedin.com/in/mohamedsoultann/))
