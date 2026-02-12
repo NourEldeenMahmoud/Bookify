@@ -20,12 +20,10 @@ jobs:
         dotnet-version: '9.0.x'
         
     - name: Build with dotnet
-      working-directory: Project/Bookify.Web
-      run: dotnet build --configuration Release
+      run: dotnet build Project/Bookify.Web/Bookify.Web.sln --configuration Release
       
     - name: dotnet publish
-      working-directory: Project/Bookify.Web
-      run: dotnet publish --configuration Release --output ./publish
+      run: dotnet publish Project/Bookify.Web/Bookify.Web.csproj --configuration Release --output Project/Bookify.Web/publish
       
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v4
