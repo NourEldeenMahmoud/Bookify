@@ -429,7 +429,6 @@ Bookify-Dev/
 
 ---
 
-**Document Version**: 1.0  
 **Last Updated**: 30/11/2025  
 - **Maintained By**:
 	- Nour Eldeen Mahmoud ( Team Leader / Back End | [GitHub](https://github.com/NourEldeenMahmoud))
