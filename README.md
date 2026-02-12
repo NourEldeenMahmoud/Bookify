@@ -426,13 +426,6 @@ Bookify-Dev/
 - Retention: 30 days
 - Rolling interval: Daily
 
----
-## Support & Contact
-
-For questions or issues:
-- Check the codebase documentation
-- Review the `req.txt` file for original requirements
-- Contact the development team
 
 ---
 
